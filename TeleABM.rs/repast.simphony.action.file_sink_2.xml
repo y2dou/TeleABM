@@ -1,0 +1,13 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>A File Sink</name>
+  <dataSet>receiving farmers production and environmental use</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>total soy production</string>
+    <string>total fertilizer use</string>
+    <string>total fuel use</string>
+  </sourceIds>
+  <fileName>C:\Users\DOU Yue\Desktop\output.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

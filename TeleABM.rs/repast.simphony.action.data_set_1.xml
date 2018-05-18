@@ -1,0 +1,50 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>receiving farmers production and environmental use</name>
+  <type>AGGREGATE</type>
+  <sourceType>teleABM.ReceivingSoybeanAgent</sourceType>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <pType>LAST</pType>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+    <hashCode>-1326782167</hashCode>
+  </scheduleParams>
+  <atEnd>false</atEnd>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>total fertilizer use</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>total fertilizer use</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getTotalFertilizerInput</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>total fuel use</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>total fuel use</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getTotalFuelInput</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>total soy production</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>total soy production</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getSoyProduction</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

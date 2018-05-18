@@ -1,0 +1,13 @@
+<context id="TeleABM" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context">
+  	<context id="OrganicSpace">
+		<projection id="Grid" type="grid" />
+		<projection id="CurrentOrganic" type="value layer" />
+		<projection id="MaxOrganic" type="value layer" />
+			<projection id="Elevation" type="value layer" />
+		<projection id="Land Holder Field" type="value layer" />
+			<projection id="Land Use Field" type="value layer" />
+			
+			<projection id="Trader Agent Field" type="value layer" />
+		
+</context>
+</context>

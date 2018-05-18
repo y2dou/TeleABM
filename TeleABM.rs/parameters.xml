@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameters>
+
+	<parameter name="randomSeed" displayName="Default Random Seed" type="int" defaultValue="__NULL__" />
+	
+	<parameter name="mode of adding agents" displayName="Mode of Agents Adding" type="int" 
+						defaultValue="0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+	<parameter name="sending system representation" displayName="Sending System Representation" type="boolean" 
+						defaultValue="false" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									
+		/>
+		
+		<parameter name="receiving system representation" displayName="Receiving System Representation" type="boolean" 
+						defaultValue="true" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+									
+		/>
+	<parameter name="initialNumAgents" displayName="Initial Num Agents" type="int" 
+						defaultValue="1000" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+		
+		<parameter name="initialNumTradeAgents" displayName="Initial Num of Trade Agents" type="int" 
+						defaultValue="50" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+		<parameter name="worldHeight" displayName="World Height" type="int" 
+						defaultValue="2152" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+			<parameter name="worldWidth" displayName="World Width" type="int" 
+						defaultValue="1244" 
+						
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+		
+		<parameter name="cellSize" displayName="Cell Size" type="int" 
+						defaultValue="30" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+		<parameter name="vision" displayName="Farmer Vision" type="int" 
+						defaultValue="500" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+		
+		<parameter name="organicGrowRate" displayName="Organic Grow Rate" type="double" 
+						defaultValue="1" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+		
+		<parameter name="soyPrice" displayName="Soy Price" type="double" 
+						defaultValue="-1.2" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+		<parameter name="cornPrice" displayName="Corn Price" type="double" 
+						defaultValue="-2.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+		<parameter name="ricePrice" displayName="Rice Price" type="double" 
+						defaultValue="-1.2" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+		<parameter name="otherPrice" displayName="Other Price" type="double" 
+						defaultValue="0.8" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+</parameters>
