@@ -516,7 +516,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				totalFuelInput+=c.getFuelInput();
 				
 			  }
-			System.out.println("when max==0 but they have soy"+totalFertilizerInput);
+		//	System.out.println("when max==0 but they have soy"+totalFertilizerInput);
 		}
 		
 		if(max==1) {

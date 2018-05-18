@@ -78,7 +78,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 				new WrapAroundBorders(), xdim, ydim);
 		GridValueLayer maxOrganic= new GridValueLayer("MaxOrganic", true, 
 				new WrapAroundBorders(), xdim, ydim);
-		this.addValueLayer(currentOrganic);
+	
 		this.addValueLayer(maxOrganic);
     
 		
@@ -89,9 +89,6 @@ public class OrganicSpace extends DefaultContext<Object> {
 		createValueLayerFromRandom(this, maxOrganic);
 //		System.out.println("test "+currentOrganic.get(100,100));
 		
-		
-	
-
 		//read ascii file from here
 		stream = null;
 		Range<Double> soilOrganicCarbon = new Range<Double>(0d, 0d);
@@ -117,7 +114,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		}
 		
 		this.addValueLayer(currentOrganic);
-		
+	//	System.out.println("current organic "+this.getOrganicAt(100, 100));
 	//	elevation = createValueLayerFromRandom(this);
 		GridValueLayer elevation = new GridValueLayer("Elevation",true,
 				new WrapAroundBorders(), xdim, ydim);
@@ -188,7 +185,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 
 
 	// The actual implementation of growback rule G, pg 182 (Appendix B).
-	@ScheduledMethod(start=0,interval=1)
+//	@ScheduledMethod(start=0,interval=1)
 	public void updateOrganic() {
 		int organicAtSpot;
 		int maxOrganicAtSpot;
@@ -228,6 +225,11 @@ public class OrganicSpace extends DefaultContext<Object> {
 	public int getOrganicAt(int x, int y) {		
 		GridValueLayer currentOrganic = (GridValueLayer)getValueLayer("CurrentOrganic");
 		return (int) currentOrganic.get(x,y);
+	}
+	
+	public void setOrganicAt(double soc, int x, int y){
+		GridValueLayer currentOrganic = (GridValueLayer)getValueLayer("CurrentOrganic");
+		currentOrganic.set(soc, x,y);
 	}
 	public double getElevationAt(int x, int y){
 		

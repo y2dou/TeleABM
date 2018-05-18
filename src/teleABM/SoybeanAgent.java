@@ -384,7 +384,7 @@ public class SoybeanAgent extends SimpleAgent{
 		    	cornCells.add(c);
 		    } else if (c.getLastLandUse()==LandUse.SOY) {
 		    	soyProduction+=c.getCropYield();
-		   // 	  System.out.println("yiled= "+c.getCropYield());
+		    //	  System.out.println("soyyiled= "+c.getCropYield());
 		    	soyCells.add(c);
 		    } else if(c.getLastLandUse()==LandUse.OTHERCROPS){
 		    	otherProduction+=c.getCropYield();
@@ -417,8 +417,8 @@ public class SoybeanAgent extends SimpleAgent{
 	//   System.out.println(tick+" "+this.getID()+" corn Production "+cornProduction);
 	//   System.out.println(tick+" "+this.getID()+" soy Production "+soyProduction);
 	//   System.out.println(tick+" "+this.getID()+" other Production "+otherProduction);
-	  System.out.println("soySize = "+this.soyCells.size());
-	   System.out.println("grown soy years = "+this.getGrownSoyYears());
+	//  System.out.println("soySize = "+this.soyCells.size());
+	//   System.out.println("grown soy years = "+this.getGrownSoyYears());
 	}
 	
 //	@ScheduledMethod(start = 0, interval = 1)
@@ -1078,7 +1078,7 @@ private void updateProfit(){
 	 					 organicSpace.getOrganicAt(p.x, p.y));
 		  //  	 System.out.println("initial soc-- "+organicSpace.getOrganicAt(p.x, p.y));    
 				  c.setLandHolder(true,this);
-				  c.setSoc(organicSpace.getOrganicAt(p.x, p.y));
+		//		  c.setSoc(organicSpace.getOrganicAt(p.x, p.y));
 			      
 				  c.setLastLandUse(c.getLandUse());
 				  this.tenureCells.add(c);

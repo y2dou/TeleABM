@@ -8,6 +8,6 @@
     <string>total fertilizer use</string>
     <string>total fuel use</string>
   </sourceIds>
-  <fileName>C:\Users\DOU Yue\Desktop\output.txt</fileName>
+  <fileName>C:\Users\DOU Yue\Dropbox\CSIS\environment nexus\model output\test</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

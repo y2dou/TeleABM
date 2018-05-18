@@ -95,7 +95,7 @@ import teleABM.SoybeanAgent;
 			OrganicSpace organicSpace = new OrganicSpace(organicFile);
 			context.addSubContext(organicSpace);
 			context.add(organicSpace);
-	//		System.out.println(organicSpace.getValueLayer("Elevation").get(10,10));
+		//	System.out.println(organicSpace.getValueLayer("Current Organic").get(10,10));
 		//	System.out.println(1);
 			// Create the initial agents and add to the sugar space.
 	

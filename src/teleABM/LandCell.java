@@ -13,6 +13,22 @@ import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 import teleABM.SoybeanAgent;
 
+import cern.jet.random.AbstractDistribution;
+import repast.simphony.context.DefaultContext;
+import repast.simphony.context.space.grid.GridFactoryFinder;
+import repast.simphony.space.grid.GridBuilderParameters;
+import repast.simphony.space.grid.GridPoint;
+import repast.simphony.space.grid.RandomGridAdder;
+import repast.simphony.space.grid.WrapAroundBorders;
+
+
+
+import  teleABM.PGMReader;
+import teleABM.Range.*;
+import teleABM.OrganicSpace;
+
+
+
 
 public class LandCell {
 	Parameters p = RunEnvironment.getInstance().getParameters();
@@ -27,7 +43,7 @@ public class LandCell {
 	 private int ylocation;
 	 private double elevation;
 	 private double soc;
-	 private double initialSoc;
+	 private double lastyearSoc;
 	 private boolean taken;
 	 
 //	 private double soyHealth;
@@ -58,7 +74,7 @@ public class LandCell {
 	 private double soil2=0;
 	 private double soil3=0;
 	 
-	 private double recommendedSoyUnitFertilizerUse=0;
+	 private double recommendedSoyUnitFertilizerUse=10;
 	 //according to a chinese paper, the average is 148 kg/ha,
 	 //each cell is 30*30=900 sq m, that is 0.09hectare, 
 	 //hence the recommended soy unit fertilizer use =
@@ -97,46 +113,33 @@ public class LandCell {
 	public void transition() {
 	
 //	System.out.println("soy Yield: "+soyYield);
+		 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this.landHolder);
+		//if it's only getContext(this), because land cells are not added to organicspace,
+		 //has to be this.landholder
+		
+//		 GridValueLayer currentOrganic = (GridValueLayer) organicSpace.getValueLayer("CurrentOrganic");
+		 soc = organicSpace.getOrganicAt(this.getXlocation(), this.getYlocation());	
+	//	 System.out.println("previous organic = "+ 	soc);
+	
+		 
 		age();
 		setFertilizerInput(this.getLandUse());
 	//	System.out.println(this.getSoc());
-		setSoc(this.getSoc());
-	//	setCropYield();
-		/*if (soc>=0.5) {
-			//if organic is on the upper half, 
-			soyHealth = RandomHelper.nextDoubleFromTo(0.5, soc);
-			cornHealth = RandomHelper.nextDoubleFromTo(0.5, soc);
-			riceHealth = RandomHelper.nextDoubleFromTo(0.5, soc);
-			otherHealth = RandomHelper.nextDoubleFromTo(0.5, soc);
-		}
-		else {
-			soyHealth = RandomHelper.nextDoubleFromTo(soc,0.5);
-			cornHealth = RandomHelper.nextDoubleFromTo(soc,0.5);
-			riceHealth = RandomHelper.nextDoubleFromTo(soc,0.5);
-			otherHealth = RandomHelper.nextDoubleFromTo(soc,0.5);
-		}*/
+	
+		//soc used in this year's crop growing is last year's soc
 		
-	//	System.out.println("riceHEALTH "+riceHealth);
-		
-/*		soyYield = soyHealth * RandomHelper.getDistribution("soyYield").nextDouble()
-				             *this.getFertilizerInput();
-		cornYield = cornHealth * RandomHelper.getDistribution("cornYield").nextDouble()
-				          *this.getFertilizerInput();
-		riceYield = riceHealth * RandomHelper.getDistribution("riceYield").nextDouble()
-				          *this.getFertilizerInput();
-		otherYield = otherHealth * RandomHelper.getDistribution("otherYield").nextDouble()
-				*this.getFertilizerInput();*/
-		soyYield = 2000.0*this.getFertilizerInput()/recommendedSoyUnitFertilizerUse
-				+RandomHelper.nextDoubleFromTo(-10.0,20.0);
+		soyYield = 2010.0/(this.getFertilizerInput()/recommendedSoyUnitFertilizerUse ) 
+				+ RandomHelper.nextDoubleFromTo(-100.0,100.0);
+		soyYield = soyYield*(cellsize*cellsize/10000.0);
 	//	soyYield=2000;
 		cornYield =( (double) -0.019*this.getFertilizerInput()*this.getFertilizerInput()
 				    + 10.85*this.getFertilizerInput()
 				    + 1840.6) * soc;
 		
 		if (this.getFertilizerInput()>recommendedRiceUnitFertilizerUse)
-			riceYield = (double) (8112.4*(cellsize*cellsize/10000))*soc;
-		 else riceYield = (double) (8112.4*(cellsize*cellsize/10000)
-				                   -RandomHelper.nextDoubleFromTo(10, 50))*soc;
+			riceYield = (double) (8112.4*(cellsize*cellsize/10000.0))*soc;
+		 else riceYield = (double) (8112.4*(cellsize*cellsize/10000.0)
+				                   -RandomHelper.nextDoubleFromTo(10.0, 50.0))*soc;
 	//	riceYield = (double)  8000.0*this.getFertilizerInput()/recommendedRiceUnitFertilizerUse;
 		
 		otherYield = (double) 1000.0*this.getFertilizerInput()/recommendedOtherUnitFertilizerUse;
@@ -155,15 +158,20 @@ public class LandCell {
 		}
 		if(this.getLandUse()==LandUse.RICE) setCropYield(riceYield);
 		if(this.getLandUse()==LandUse.SOY) { setCropYield(soyYield);
-		                                    // System.out.println("soy yield="+this.getCropYield());
+		                                 //    System.out.println("soy yield="+soyYield);
 		                                   //  System.out.println("get fertilizer input = "+this.getFertilizerInput());
 		                                   //  System.out.println(this.getFertilizerInput()/recommendedSoyUnitFertilizerUse);
 		                                    }
 		if(this.getLandUse()==LandUse.OTHERCROPS) setCropYield(otherYield);
 		
+		carbonProcess();
+		//for this to work, crop yield has to be set there
+	//	 System.out.println("current organic = "+  getLastyearSoc());
+		organicSpace.setOrganicAt(getLastyearSoc(), this.getXlocation(), this.getYlocation());
 		
 	}
-	
+
+
 	private void age() {
 		// TODO Auto-generated method stub
 		if (lastLandUse==LandUse.SOY) soyAge++;
@@ -373,23 +381,38 @@ public class LandCell {
 		public double getSoc() {
 			return soc;
 		}
+		
+		public double getLastyearSoc(){
+			return lastyearSoc;
+		}
 
-		public void setSoc(double soc) {
-			double sci=0;
+		public void carbonProcess() {
+			//based on Yuxin's paper, to get the soc change 
+			//with feedback of fertilizer use
+			//soc is short for soil organic carbon
+			
+			double sci = 0;
+			double newsoc = 0;
+			double biomass = 0;
 			
 			if(this.getLandUse()==LandUse.SOY){
+				biomass = 1.0818*this.getCropYield()+269.6;
 				sci= // this is straw, (this.getCropYield()*1.0818+269.6)*0.445
-						+ 0.262*this.getCropYield()
-						+ 0.262*this.getCropYield()*0.4;
-				 
-				soc = soc-(0.13*tempZone-0.04*precipitation-0.27*soc
+						 0.445*biomass  //straw
+						 +0.262*biomass //roots
+						 +0.436*biomass //grain
+						 +0.4*biomass; //rhizodeposition
+						               //should have seed and fertilizer 
+				                       //but i don't have it now				 
+				newsoc = (0.13*tempZone-0.04*precipitation-0.27*soc
 						+0.03*getFertilizerInput()+0.68*sci);
+		//		System.out.println("biomass "+biomass+"  sci = "+sci+" //soc = "+newsoc);
 			}
 		
-			else soc=0.95*soc;
+			else newsoc=0.95*soc;
 			
-			System.out.println("soc="+soc);
-			this.soc=soc;
+			
+			this.lastyearSoc=newsoc;
 		}
 
 }
