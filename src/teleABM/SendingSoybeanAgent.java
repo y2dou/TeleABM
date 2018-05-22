@@ -119,9 +119,9 @@ int landUseNumber=0;
 		}
 		else {
 				soyProfit=
-				soyUnitYield*lastYearSoyPrice-soyUnitFertilizerInput*fertilizerUnitCost;
+				soyPerHaYield*lastYearSoyPrice-soyPerHaFertilizerInput*fertilizerUnitCost;
 		otherProfit=
-				otherUnitYield*lastYearOtherPrice-otherUnitFertilizerInput*fertilizerUnitCost;
+				otherPerHaYield*lastYearOtherPrice-otherPerHaFertilizerInput*fertilizerUnitCost;
 		}
 		
 		if (soyProfit>otherProfit) {
@@ -140,7 +140,7 @@ int landUseNumber=0;
 				 c.setLastLandUse(c.getLandUse());
 				 c.setLandUse(highestLandUse);
 				 organicSpace.setLandUse(landUseNumber, c.getXlocation(), c.getYlocation());
-				 count-=soyUnitFertilizerInput*fertilizerUnitCost;
+				 count-=soyPerHaFertilizerInput*fertilizerUnitCost;
 			 }
 			 else {
 				 c.setLastLandUse(c.getLandUse());

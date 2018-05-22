@@ -4,10 +4,18 @@
   <delimiter>,</delimiter>
   <format>TABULAR</format>
   <sourceIds class="linked-hash-set">
-    <string>total soy production</string>
-    <string>total fertilizer use</string>
-    <string>total fuel use</string>
+    <string>tick</string>
+    <string>soy cell size</string>
+    <string>corn cell size</string>
+    <string>rice cell size</string>
+    <string>soy production</string>
+    <string>corn production</string>
+    <string>rice production</string>
+    <string>soc</string>
+    <string>fertilizer input</string>
+    <string>fuel input</string>
+    <string>water input</string>
   </sourceIds>
-  <fileName>C:\Users\DOU Yue\Dropbox\CSIS\environment nexus\model output\test</fileName>
+  <fileName>C:\Users\DOU Yue\Dropbox\CSIS\environment nexus\model output\modelOutput.txt</fileName>
   <addTimeStamp>true</addTimeStamp>
 </repast.simphony.data2.engine.FileSinkDescriptor>

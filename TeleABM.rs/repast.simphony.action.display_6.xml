@@ -1,15 +1,15 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>land holder</name>
+  <name>soil organic carbon</name>
   <type>2D</type>
   <styles>
     <entry>
-      <string>teleABM.SoybeanAgent</string>
+      <string>teleABM.LandCell</string>
       <string>repast.simphony.visualizationOGL2D.DefaultStyleOGL2D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>teleABM.SoybeanAgent</string>
+      <string>teleABM.LandCell</string>
       <null/>
     </entry>
   </editedStyles>
@@ -23,14 +23,14 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1732558331</hashCode>
+    <hashCode>2058973501</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>Grid</layoutProjection>
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>teleABM.SoybeanAgent</string>
+      <string>teleABM.LandCell</string>
       <int>0</int>
     </entry>
   </layerOrder>
@@ -78,8 +78,8 @@
     <blue>255</blue>
     <alpha>255</alpha>
   </backgroundColor>
-  <valueLayerStyleName>teleABM.LandHolderFieldStyle</valueLayerStyleName>
+  <valueLayerStyleName>teleABM.OrganicMatterStyle</valueLayerStyleName>
   <valueLayers>
-    <string>Land Holder Field</string>
+    <string>CurrentOrganic</string>
   </valueLayers>
 </repast.simphony.visualization.engine.CartesianDisplayDescriptor>

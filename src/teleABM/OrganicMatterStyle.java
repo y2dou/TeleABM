@@ -1,6 +1,7 @@
 package teleABM;
 
 import java.awt.Color;
+import java.awt.Paint;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ public class OrganicMatterStyle implements ValueLayerStyleOGL {
 	
 	  protected ValueLayer layer;
 	  Map<Integer,Color> colorMap; 
+	
 	/* (non-Javadoc)
 	 * @see repast.simphony.visualizationOGL2D.ValueLayerStyleOGL#getColor(double[])
 	 */
@@ -21,31 +23,37 @@ public class OrganicMatterStyle implements ValueLayerStyleOGL {
 			colorMap = new HashMap<Integer,Color>();
 
 			
-		/*	colorMap.put(6, new Color(240,0, 0));
+			colorMap.put(6, new Color(240,0, 0));
 			colorMap.put(5, new Color(240,0, 0));
 			
 			colorMap.put(4, new Color(255, 255, 0));
 			colorMap.put(3, new Color(255, 255, 255 / 3));
 			colorMap.put(2, new Color(255, 255, 255 / 2));
-			colorMap.put(1, new Color(255, 255, (int) (255 / 1.2)));
-			colorMap.put(0, Color.white);*/
-			
+			colorMap.put(1, new Color(0, 255, (int) (255 / 1.2)));
 			colorMap.put(0, Color.white);
-			colorMap.put(1, new Color(0,255,0));
-			colorMap.put(2, new Color(255,100,0));
 			
+	   
+		
 		}
+	
 	@Override
 	public Color getColor(double... coordinates) {
 		
-	    int organicMatter = (int)layer.get(coordinates);
-		if (organicMatter > 10) {
+	    double organicMatter = (double)layer.get(coordinates);
+	    
+	
+	    
+	//    return new Color(0, green, 0);
+	    
+		if (organicMatter > 30) {
+			return colorMap.get(3);
+		}
+		else if (organicMatter >20) {
 			return colorMap.get(2);
 		}
-		else if (organicMatter >0) {
+		else if(organicMatter >10) {
 			return colorMap.get(1);
 		}
-		else 
 		return colorMap.get(0);
 	}
 

@@ -68,26 +68,30 @@ public class LandCell {
 	 private double fuelInput;
 	 
 	
-	private int tempZone = 0;
+	private double tempZone = 0;
 	private double precipitation = 0;
 	 private double soil1=0;
 	 private double soil2=0;
 	 private double soil3=0;
 	 
-	 private double recommendedSoyUnitFertilizerUse=10;
+	 private double recommendedSoyPerHaFertilizerUse=10;
 	 //according to a chinese paper, the average is 148 kg/ha,
 	 //each cell is 30*30=900 sq m, that is 0.09hectare, 
 	 //hence the recommended soy unit fertilizer use =
-	 private double recommendedCornUnitFertilizerUse=200.0;
-	 private double recommendedRiceUnitFertilizerUse=150.0;
-	 private double recommendedOtherUnitFertilizerUse=100.0;
+	 private double recommendedCornPerHaFertilizerUse=200.0;  //kg/ha
+	 private double recommendedRicePerHaFertilizerUse=150.0;   //kg/ha
+	 private double recommendedOtherPerHaFertilizerUse=100.0;  //kg/ha
 	 
-	 private double observedSoyUnitFertilizerUse = 63.0;
-	 private double observedCornUnitFertilizerUse = 224.0;
-	 private double observedRiceUnitFertilizerUse = 146.0;
-	 private double observedOtherUnitFertilizerUse = 120.0;
+	 private double observedSoyPerHaFertilizerUse = 63.0;      //kg/ha
+	 private double observedCornPerHaFertilizerUse = 224.0;    //kg/ha
+	 private double observedRicePerHaFertilizerUse = 146.0;    //kg/ha
+	 private double observedOtherPerHaFertilizerUse = 120.0;   //kg/ha
+	 
+	 private double waterRequirement;
+	 
 	
 
+	
 	public boolean isTaken() {
 		return taken;
 	}
@@ -118,32 +122,98 @@ public class LandCell {
 		 //has to be this.landholder
 		
 //		 GridValueLayer currentOrganic = (GridValueLayer) organicSpace.getValueLayer("CurrentOrganic");
+		 organicSpace.setTempAt(20.0, this.getXlocation(), this.getYlocation());
+		 setTempZone(organicSpace.getTempAt(this.getXlocation(), this.getYlocation()));
+		 organicSpace.setPrecipitationAt(50.0, this.getXlocation(), this.getYlocation()); //unit: cm/year
+		 setPrecipitation(organicSpace.getPrecipitationAt(this.getXlocation(), this.getYlocation()));
+		 //tempretuare can be updated yearly later
+		 
 		 soc = organicSpace.getOrganicAt(this.getXlocation(), this.getYlocation());	
 	//	 System.out.println("previous organic = "+ 	soc);
 	
 		 
 		age();
-		setFertilizerInput(this.getLandUse());
+	//	setFertilizerInput(this.getLandUse());
+	//	setWaterRequirement(this.getLandUse());
 	//	System.out.println(this.getSoc());
 	
 		//soc used in this year's crop growing is last year's soc
 		
-		soyYield = 2010.0/(this.getFertilizerInput()/recommendedSoyUnitFertilizerUse ) 
-				+ RandomHelper.nextDoubleFromTo(-100.0,100.0);
-		soyYield = soyYield*(cellsize*cellsize/10000.0);
+		//this is from the paper
+		// The Influences of Different Nitrogen on the Soybean Production of 'Henong60'
+		// Shen Xiaohui, et al. 2013
+		// Journal of Agriculture 2013, 3(06):17-19
+		// in Chinese
+		if(this.getFertilizerInput()==0){
+			soyYield = 2416.0;   //unit: kg/ha
+		} else if (this.getFertilizerInput()<30.0){
+			soyYield = 2643.0;   //unit: kg/ha
+		} else if(this.getFertilizerInput()<60.0){
+			soyYield = 2734.0;   //unit: kg/ha
+		} else {
+			soyYield = 2242.0;  //unit: kg/ha
+		}
+		soyYield = soyYield+RandomHelper.nextDoubleFromTo(-10.0,10.0);
+		//soyYield = 2010.0/(this.getFertilizerInput()/recommendedSoyPerHaFertilizerUse ) 
+		//		+ RandomHelper.nextDoubleFromTo(-100.0,100.0);
+		soyYield = soyYield*(cellsize*cellsize/10000.0);  //per cell size yield
 	//	soyYield=2000;
-		cornYield =( (double) -0.019*this.getFertilizerInput()*this.getFertilizerInput()
-				    + 10.85*this.getFertilizerInput()
-				    + 1840.6) * soc;
 		
-		if (this.getFertilizerInput()>recommendedRiceUnitFertilizerUse)
-			riceYield = (double) (8112.4*(cellsize*cellsize/10000.0))*soc;
-		 else riceYield = (double) (8112.4*(cellsize*cellsize/10000.0)
-				                   -RandomHelper.nextDoubleFromTo(10.0, 50.0))*soc;
-	//	riceYield = (double)  8000.0*this.getFertilizerInput()/recommendedRiceUnitFertilizerUse;
+		//corn yield is from this paper:
+		//Feiliao Xiaoying Hanshu zai Peifang Shifei zhong de yingyong
+		//Jilin Feiliao xiaoying hanshu 
+		//by Zhang Kuan, Wang XiuFang, Wu Wei, Hu Heyun, Wang Xiaocun
+		//1990
+		//in chinese
+		if (this.getSoc()>20.0)// high fertility
+			{
+			double fertilizerPerMu = (this.getFertilizerInput()/(cellsize*cellsize))*666.67;
+			cornYield = 803.3+12.84* fertilizerPerMu
+			            -0.22*fertilizerPerMu*fertilizerPerMu
+			              ;  
+			//the unit for this is kg/mu
+			cornYield = (cornYield*15/10000.0)*(cellsize*cellsize); //per cell size yield
+			
+		} else {
+			//medium fertility field
+			double fertilizerPerMu = (this.getFertilizerInput()/(cellsize*cellsize))*666.67;
+			cornYield = 518.6+31.34* fertilizerPerMu
+		            -0.66*fertilizerPerMu*fertilizerPerMu
+		             ;  
+		//the unit for this is kg/mu
+			cornYield = (cornYield*15/10000.0)*(cellsize*cellsize); //per cell size yield
+		}
 		
-		otherYield = (double) 1000.0*this.getFertilizerInput()/recommendedOtherUnitFertilizerUse;
 		
+		//rice yield is from this paper:
+		//Effects of Nitrogen Application Rate and Planting Density on Grain Yields, 
+		//Yield Components and Nitrogen Use Efficiencies of Rice
+		//DENG Zhong-hua et al, 2015
+		//in chinese
+		// y= 577.79 + 34.87X1 + 419.04X2 - 0.07X1^2 -0.34X1X2, 
+		//   X1 N fertilizer, X2 seed density,
+		//use seed density = 22.1 , get new equation for N fertilizer only
+		// y = 5926.41 + 27.356X-0.07X^2
+		
+		riceYield = 5926.41 + 27.356*(this.getFertilizerInput()/(cellsize*cellsize))*10000.0
+				    -0.07*(this.getFertilizerInput()/(cellsize*cellsize))*10000.0*(this.getFertilizerInput()/(cellsize*cellsize))*10000.0;
+	    //unit is kg/ha
+		
+		if(riceAge > 0){
+			//this is from 
+			//Effects of Chemical Fertilizer and Organic Manure on Rice Yield and Soil Fertility
+			//ZHANG Guorong, et al, 2009 at
+			//Scientia Agricultura Sinica
+			//in Chinese
+			riceYield = riceYield -100*riceAge;
+		}
+		
+		
+		riceYield = (riceYield/10000.0)*(cellsize*cellsize);//per cell size yield
+		
+		
+		otherYield = (double) 1000.0*this.getFertilizerInput()/recommendedOtherPerHaFertilizerUse;
+		otherYield = otherYield * (cellsize*cellsize/10000.0);
 		//May 5, simplified yield function;
 		
 	//	System.out.println("riceYield "+riceYield);
@@ -297,6 +367,7 @@ public class LandCell {
 		}
 		
 		public double getFertilizerInput() {
+		//    System.out.println(" fertilizer input = "+fertilizerInput);
 			return fertilizerInput;
 		}
 
@@ -307,49 +378,53 @@ public class LandCell {
 
 			if(this.landUse==LandUse.SOY){
 			//	fertilizerInput=recommendedSoyUnitFertilizerUse*(1+soyAge);
-			//	fertilizerInput = recommendedSoyUnitFertilizerUse * ((cellsize*cellsize)/10000);
-				fertilizerInput = observedSoyUnitFertilizerUse * ((cellsize*cellsize)/10000.0);
-		//		System.out.println("observed fertilizer input = "+observedSoyUnitFertilizerUse);
-		//		System.out.println("cellsize = "+cellsize);
-		//		System.out.println("soy fertilizer input = "+fertilizerInput);
-		//		fertilizerInput=recommendedSoyUnitFertilizerUse;
+				fertilizerInput = observedSoyPerHaFertilizerUse * ((cellsize*cellsize)/10000.0);
+
 				 //problem before is that crop age can be zero to start with, 
 				 //so when multiplied it's zero for fertilizer input
 				
 			}
 			if(this.landUse==LandUse.CORN){
-			//	fertilizerInput=recommendedCornUnitFertilizerUse*((cellsize*cellsize)/10000);
-				fertilizerInput = observedCornUnitFertilizerUse*((cellsize*cellsize)/10000.0);
-		//		 System.out.println("CORN fertilizer input = "+fertilizerInput);
-		//		fertilizerInput=recommendedCornUnitFertilizerUse;
+			
+				fertilizerInput = observedCornPerHaFertilizerUse*((cellsize*cellsize)/10000.0);
+			
+			//	 System.out.println("CORN fertilizer input = "+fertilizerInput);
+	
 			}
 			if(this.landUse==LandUse.RICE){
-			//	fertilizerInput=recommendedRiceUnitFertilizerUse*((cellsize*cellsize)/10000);
-				fertilizerInput = observedRiceUnitFertilizerUse*((cellsize*cellsize)/10000.0);
-		//		 System.out.println("OTHER fertilizer input = "+fertilizerInput);
-		//		fertilizerInput=recommendedRiceUnitFertilizerUse;
+			
+				fertilizerInput = observedRicePerHaFertilizerUse*((cellsize*cellsize)/10000.0);
+		
 			}
 			if(this.landUse==LandUse.OTHERCROPS){
 			//	fertilizerInput=recommendedOtherUnitFertilizerUse*((cellsize*cellsize)/10000);
-				fertilizerInput = observedOtherUnitFertilizerUse*((cellsize*cellsize)/10000.0);
+				fertilizerInput = observedOtherPerHaFertilizerUse*((cellsize*cellsize)/10000.0);
 		//		fertilizerInput=recommendedOtherUnitFertilizerUse;
 			}
 			
 			
 			//simplied fertilizer usage, longer year, more fertilizer. 
 			//should overwrite to  
-			    this.fertilizerInput = fertilizerInput+RandomHelper.nextIntFromTo(-5,5);
-			   
-			//	this.fertilizerInput = RandomHelper.nextDoubleFromTo(0.8, 1.2);
+			    this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-2.5,2.5);
+			
+		
 		}
 		
 		
-		public void setTempZone(){
-			this.tempZone=1;
-			this.precipitation = 500;
+		public void setTempZone(double temp){
+			this.tempZone=temp;
+		
 		}
-		public int getTempZone(){
+		public double getTempZone(){
 			return tempZone;
+		}
+		
+		public void setPrecipitation( double precipitation){
+			this.precipitation = precipitation;
+		}
+		
+		public double getPrecipitation(){
+			return precipitation;
 		}
 		public void setSoil1(){
 			this.soil1=0.2;
@@ -389,30 +464,137 @@ public class LandCell {
 		public void carbonProcess() {
 			//based on Yuxin's paper, to get the soc change 
 			//with feedback of fertilizer use
-			//soc is short for soil organic carbon
+			//soc is short for soil organic carbon, the unit is g/kg
+			//sci is short for soil carbon input, the unit is Mg/ha
 			
 			double sci = 0;
 			double newsoc = 0;
-			double biomass = 0;
+			double strawbiomass = 0;
 			
 			if(this.getLandUse()==LandUse.SOY){
-				biomass = 1.0818*this.getCropYield()+269.6;
-				sci= // this is straw, (this.getCropYield()*1.0818+269.6)*0.445
-						 0.445*biomass  //straw
-						 +0.262*biomass //roots
-						 +0.436*biomass //grain
-						 +0.4*biomass; //rhizodeposition
-						               //should have seed and fertilizer 
-				                       //but i don't have it now				 
-				newsoc = (0.13*tempZone-0.04*precipitation-0.27*soc
-						+0.03*getFertilizerInput()+0.68*sci);
-		//		System.out.println("biomass "+biomass+"  sci = "+sci+" //soc = "+newsoc);
+				strawbiomass = 1.0818*this.getCropYield()+269.6;
+				
+				
+				sci= // this is straw, biomass*0.445
+						 0.445*strawbiomass  //straw
+						 +0.262*((strawbiomass/1.26)*0.33) //roots
+						// +0.436*biomass //grain is removed
+						 + (100.0/10000.0)*(cellsize*cellsize) //rhizodeposition, yuxin's paper
+				         + (10.0/10000.0)*(cellsize*cellsize)  //fertilizer carbon, yuxin's paper
+				         + (20.0/10000.0)*(cellsize*cellsize)  //seed, yuxin's paper
+				         ;
+				//use cellsize*cellsize/10000.0 to make sci adjustable to cellsize
+				//but follow change it back to per hectare 
+			    sci = (sci/(cellsize*cellsize))*10000.0;				 
+				newsoc = 0.13*this.getTempZone()-0.04*precipitation-0.27*soc
+						+ 0.03*(getFertilizerInput()/(cellsize*cellsize))*10000.0 
+						+ 0.68*(sci/1000.0);
+				soc = soc + newsoc;
+				
 			}
 		
-			else newsoc=0.95*soc;
+			else if(this.getLandUse()==LandUse.CORN) {
+			
+	         	strawbiomass = 
+	         		        	0.8509*((this.getCropYield()/(cellsize*cellsize))*10000.0 )
+	         			        +2974.1
+	         			       ;   //kg/ha
+	         	sci =  //   0.453*strawbiomass                  //straw 
+	         			//remove all straw
+	         			+ 0.448*((strawbiomass/1.24)*0.28)    //roots
+	         			+ 650.0                              //rhizodeposition, yuxin's paper
+	         			+ 60.0                                //fertilizer carbon, yuxin's paper
+	         			+ 10.0                               //seed, yuxin's paper
+	         			;
+	         	newsoc = 0.13*tempZone - 0.04*precipitation -0.27*soc 
+						  + 0.03*(getFertilizerInput()/(cellsize*cellsize))*10000.0   //corn fertilizer is per ha
+						  + 0.68*(sci/1000.0) ;
+	         	soc = soc + newsoc;
+			//	System.out.println("crop yield "+this.getCropYield()+" fertilizerInput: "+getFertilizerInput());
+	        // 	System.out.println("strawbiomass "+strawbiomass+"  sci = "+sci+
+	        // 			             " //newsoc = "+newsoc+" soc="+soc);
+	         	
+			}   else if(this.getLandUse()==LandUse.RICE){
+				//ref: change characteristics of rice yield and soil organic matter 
+				//and nitrogen contents under various long-term fertilization regims
+				//Huang Jing et al, . Chinese Journal of Applied Ecology, 
+				//2013, 24(7): 1889-1894
+				//rice soc increased from 21.0 g/kg to 28.1 g/kg from 1980 to 2010
+				//yearly increase is 0.25 g/kg
+				//if it's NPK fertilizer (non organic fertilizer)
+				newsoc = 0.25;
+				soc = soc + newsoc; 
+				
+			}    else soc = soc*0.95;
+				
+		//	double newsoc =0;
+			/*if (this.getLandUse()==LandUse.SOY){
+				if (this.getLastLandUse()==LandUse.CORN) 
+					newsoc = soc-0.0096*soc; //9.6% for ten years
+				if (this.getLastLandUse()==LandUse.SOY)
+					newsoc = soc-0.0377*soc; //37.7% for ten years
+				if (this.getLastLandUse() ==LandUse.RICE) 
+					newsoc = soc+RandomHelper.nextDoubleFromTo(0.79,1.37);
+				}
+			if (this.getLandUse()==LandUse.CORN){
+				if(this.getLastLandUse()==LandUse.CORN)
+					newsoc = soc+soc*0.0127;
+				if(this.getLastLandUse()==LandUse.SOY)
+					newsoc = soc-0.0096*soc;
+				if(this.getLastLandUse()==LandUse.RICE)
+					newsoc = soc+RandomHelper.nextDoubleFromTo(0.79,1.37);
+			}
+			if (this.getLandUse()==LandUse.RICE){
+				
+				newsoc = soc+RandomHelper.nextDoubleFromTo(0.79,1.37);
+			}*/
 			
 			
-			this.lastyearSoc=newsoc;
+	//		System.out.println("land use  "+this.getLandUse()+"  new soc: "+newsoc
+	//				           +" soc="+soc);
+			this.lastyearSoc=soc;
 		}
+		
+		public double getWaterRequirement() {
+			return waterRequirement;
+		}
+
+		public void setWaterRequirement(LandUse landuse) {
+			double waterR = 0.0;
+			double fertilizer=(this.getFertilizerInput()/(cellsize*cellsize))*10000.0;
+			
+			if(landuse == LandUse.RICE)
+				{//unit is m^3/per ha
+				//or should it be the real water usage, which is from 7500-22500;
+				  waterR = 8913.4;  //this is calculated water requirement
+			//	  waterR = RandomHelper.nextDoubleFromTo(7500, 22500);
+				}
+			
+			   
+			if(landuse == LandUse.SOY)
+			{
+				
+		    	waterR=268.27+0.1737*fertilizer
+			                       -0.0007*fertilizer*fertilizer;
+		    	//unit is mm/ha
+		    	waterR = waterR*10.0;  //unit is m^3/ha
+		   
+			}
+			if (landuse == LandUse.CORN){
+				if(this.getPrecipitation()*10.0>500)
+					waterR = 583.34+RandomHelper.nextDoubleFromTo(-14.6, 14.6);
+				else if(this.getPrecipitation()*10.0>400)
+					waterR = 505.1+RandomHelper.nextDoubleFromTo(-5.0, 5.0);
+				else waterR = 457.53+RandomHelper.nextDoubleFromTo(-4.4, 4.4);
+			//above unit is mm
+			   waterR = waterR*10.0; //now unit is m^3/ha
+		
+			}
+			
+			waterR = (waterR/10000.0)*(cellsize*cellsize);
+	//		System.out.println("water "+waterR);
+			this.waterRequirement=waterR;
+		}
+
 
 }

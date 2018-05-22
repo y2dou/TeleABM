@@ -143,6 +143,14 @@ public class OrganicSpace extends DefaultContext<Object> {
 	//	 System.out.println(	this.getElevationAt(10, 10));
 	//	System.out.println("elevation field created in OrganicSpace");
 		
+		GridValueLayer tempField = new GridValueLayer("temp zone", true, 
+				new WrapAroundBorders(),xdim, ydim);
+		this.addValueLayer(tempField);
+		
+		GridValueLayer precipitationField = new GridValueLayer("precipitation zone", true, 
+				new WrapAroundBorders(),xdim, ydim);
+		this.addValueLayer(precipitationField);
+		
 		GridValueLayer landUseField = new GridValueLayer("Land Use Field", true,
 				new WrapAroundBorders(), xdim, ydim);		
 		
@@ -231,6 +239,27 @@ public class OrganicSpace extends DefaultContext<Object> {
 		GridValueLayer currentOrganic = (GridValueLayer)getValueLayer("CurrentOrganic");
 		currentOrganic.set(soc, x,y);
 	}
+	
+	public void setTempAt(double temp, int x, int y){
+		GridValueLayer tempField = (GridValueLayer)getValueLayer("temp zone");
+		tempField.set(temp, x,y);
+	}
+	
+	public double getTempAt(int x, int y){
+		GridValueLayer tempField = (GridValueLayer)getValueLayer("temp zone");
+		return tempField.get(x,y);
+	}
+	
+	public void setPrecipitationAt(double precipitation, int x, int y){
+		GridValueLayer precipitationField = (GridValueLayer)getValueLayer("precipitation zone");
+		precipitationField.set(precipitation, x,y);
+	}
+	
+	public double getPrecipitationAt(int x, int y){
+		GridValueLayer precipitationField = (GridValueLayer)getValueLayer("precipitation zone");
+		return precipitationField.get(x,y);
+	}
+	
 	public double getElevationAt(int x, int y){
 		
 	
@@ -392,6 +421,7 @@ private GridValueLayer createField(OrganicSpace context, String fieldName, boole
 	}
 //	return valueLayer;
 }
+
 	public  void populateLandCells(){
 	//	Grid<Object> grid = (Grid) this.getProjection("Grid");
 		int count=0;

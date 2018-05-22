@@ -8,6 +8,8 @@
 			<projection id="Land Use Field" type="value layer" />
 			
 			<projection id="Trader Agent Field" type="value layer" />
+			<projection id="temp zone" type="value layer"/>
+			<projection id ="precipitation zone" type ="value layer" />
 		
 </context>
 </context>

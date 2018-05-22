@@ -63,8 +63,11 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	
 	protected double totalFuelInput=0;
 	
+	protected double totalWaterInput = 0;
 
 
+
+	
 	public ReceivingSoybeanAgent() {
 		super();
 	}
@@ -208,8 +211,16 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
 //		int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		//	
-		setTotalFertilizerInput(0);
-		setTotalFuelInput(0);
+		
+		totalFuelInput = 0.0;
+		totalFertilizerInput = 0.0;
+		totalWaterInput = 0.0;
+		
+		soyCells.clear();
+		   cornCells.clear();
+		   riceCells.clear();
+		   otherCells.clear();
+		
 		
 		int landUseNumber;
 		 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
@@ -417,44 +428,54 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				
 				if(c.getLandUse()==LandUse.RICE){
 				c.setLandUse(LandUse.RICE);
-		//		c.setFertilizerInput(LandUse.RICE);
-				c.setFuelInput(riceUnitFuelInput);
+				c.setFertilizerInput(LandUse.RICE);
+				c.setFuelInput(ricePerHaFuelInput);
+				c.setWaterRequirement(LandUse.RICE);
+				riceCells.add(c);
 				organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
 		        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
 		        	              - c.getFuelInput()*fuelUnitCost;}
 				
 				
 				if(c.getLandUse()==LandUse.CORN){
-					if(lastYearCornUnitProfit>lastYearRiceUnitProfit)
+					if(lastYearCornPerHaProfit>lastYearRicePerHaProfit)
 					{
 						c.setLandUse(LandUse.CORN);
-		//				c.setFertilizerInput(LandUse.CORN);
-						c.setFuelInput(cornUnitFuelInput);
+						c.setFertilizerInput(LandUse.CORN);
+						c.setFuelInput(cornPerHaFuelInput);
+						c.setWaterRequirement(LandUse.CORN);
+						cornCells.add(c);
 						organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
 						capital=capital- c.getFertilizerInput()*fertilizerUnitCost
 								-c.getFuelInput()*fuelUnitCost;
 					}
-					else if (lastYearRiceUnitProfit>1.5*lastYearCornUnitProfit)
+					else if (lastYearRicePerHaProfit>1.5*lastYearCornPerHaProfit)
 					{
 						//convert to rice
 						c.setLandUse(LandUse.RICE);
-		//				c.setFertilizerInput(LandUse.RICE);
-						c.setFuelInput(riceUnitFuelInput);
+						c.setFertilizerInput(LandUse.RICE);
+						c.setFuelInput(ricePerHaFuelInput);
+						c.setWaterRequirement(LandUse.RICE);
+						riceCells.add(c);
 						organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
 						capital=capital-costConvertToRicePaddy-c.getFertilizerInput()*fertilizerUnitCost
 								-c.getFuelInput()*fuelUnitCost;
 					} else {
 						if(RandomHelper.nextDouble()>0.7&&(capital>costConvertToRicePaddy)) {
 							c.setLandUse(LandUse.RICE);
-		//					c.setFertilizerInput(LandUse.RICE);
-							c.setFuelInput(riceUnitFuelInput);
+							c.setFertilizerInput(LandUse.RICE);
+							c.setFuelInput(ricePerHaFuelInput);
+							c.setWaterRequirement(LandUse.RICE);
+							riceCells.add(c);
 							organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
 							capital=capital-costConvertToRicePaddy-c.getFertilizerInput()*fertilizerUnitCost
 									-c.getFuelInput()*fuelUnitCost;
 						} else {
 							c.setLandUse(LandUse.CORN);
-		//					c.setFertilizerInput(LandUse.CORN);
-							c.setFuelInput(cornUnitFuelInput);
+							c.setFertilizerInput(LandUse.CORN);
+							c.setFuelInput(cornPerHaFuelInput);
+							c.setWaterRequirement(LandUse.CORN);
+							cornCells.add(c);
 							organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
 							capital=capital-c.getFertilizerInput()*fertilizerUnitCost
 									-c.getFuelInput()*fuelUnitCost;
@@ -465,11 +486,11 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				}
 			  totalFertilizerInput+=c.getFertilizerInput();
 			  totalFuelInput+=c.getFuelInput();
-			  
-			  
+			  totalWaterInput+=c.getWaterRequirement();
+			  //end of land cell iteration
 			  } 
 		//end of if(	max==0 && this.grownSoyYears==0 )
-			System.out.println("when max==0 "+totalFertilizerInput);
+
 		}
 		
 		if(max==0 && this.grownSoyYears>0 ) {
@@ -483,40 +504,48 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				
 				if(c.getLandUse()==LandUse.CORN){
 				c.setLandUse(LandUse.CORN);
-		//		c.setFertilizerInput(LandUse.CORN);
-				c.setFuelInput(cornUnitFuelInput);
+				c.setFertilizerInput(LandUse.CORN);
+				c.setFuelInput(cornPerHaFuelInput);
+				c.setWaterRequirement(LandUse.CORN);
+				cornCells.add(c);
 				organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
 		        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
 		        	              - c.getFuelInput()*fuelUnitCost;}
 				
 				if(c.getLandUse()==LandUse.RICE){
 					c.setLandUse(LandUse.RICE);
-		//			c.setFertilizerInput(LandUse.RICE);
-					c.setFuelInput(riceUnitFuelInput);
+					c.setFertilizerInput(LandUse.RICE);
+					c.setFuelInput(ricePerHaFuelInput);
+					c.setWaterRequirement(LandUse.RICE);
+					riceCells.add(c);
 					organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
 					capital=capital-c.getFertilizerInput()*fertilizerUnitCost
 							-c.getFuelInput()*fuelUnitCost;}
 				
 				if(c.getLandUse()==LandUse.SOY){
 					c.setLandUse(LandUse.CORN);
-		//			c.setFertilizerInput(LandUse.CORN);
-					c.setFuelInput(cornUnitFuelInput);
+					c.setFertilizerInput(LandUse.CORN);
+					c.setFuelInput(cornPerHaFuelInput);
+					c.setWaterRequirement(LandUse.CORN);
+					cornCells.add(c);
 					organicSpace.setLandUse(6,c.getXlocation(),c.getYlocation());
 					capital=capital-c.getFertilizerInput()*fertilizerUnitCost
 							-c.getFuelInput()*fuelUnitCost;
 				}
 				if(c.getLandUse()==LandUse.OTHERCROPS){
 					c.setLandUse(LandUse.OTHERCROPS);
-		//			c.setFertilizerInput(LandUse.OTHERCROPS);
-					c.setFuelInput(otherUnitFuelInput);
+					c.setFertilizerInput(LandUse.OTHERCROPS);
+					c.setFuelInput(otherPerHaFuelInput);
+					c.setWaterRequirement(LandUse.OTHERCROPS);
+					otherCells.add(c);
 					
 				}
 				
 				totalFertilizerInput+=c.getFertilizerInput();
 				totalFuelInput+=c.getFuelInput();
-				
+				totalWaterInput+=c.getWaterRequirement();
 			  }
-		//	System.out.println("when max==0 but they have soy"+totalFertilizerInput);
+
 		}
 		
 		if(max==1) {
@@ -528,16 +557,20 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				
 				if(c.getLandUse()==LandUse.RICE){
 					c.setLandUse(LandUse.RICE);
-		//			c.setFertilizerInput(LandUse.RICE);
-					c.setFuelInput(riceUnitFuelInput);
+					c.setFertilizerInput(LandUse.RICE);
+					c.setFuelInput(ricePerHaFuelInput);
+					c.setWaterRequirement(LandUse.RICE);
+					riceCells.add(c);
 					organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
 			        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
 	                                  - c.getFuelInput()*fuelUnitCost;
 				}
 				if(c.getLandUse()==LandUse.CORN||c.getLandUse()==LandUse.SOY){
 					c.setLandUse(LandUse.CORN);
-		//			c.setFertilizerInput(LandUse.CORN);
-					c.setFuelInput(cornUnitFuelInput);
+					c.setFertilizerInput(LandUse.CORN);
+					c.setFuelInput(cornPerHaFuelInput);
+					c.setWaterRequirement(LandUse.CORN);
+					cornCells.add(c);
 					organicSpace.setLandUse(6,c.getXlocation(),c.getYlocation());
 					capital=capital-c.getFertilizerInput()*fertilizerUnitCost
 							-c.getFuelInput()*fuelUnitCost;
@@ -545,8 +578,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			
 				totalFertilizerInput+=c.getFertilizerInput();
 				totalFuelInput+=c.getFuelInput();
+				totalWaterInput+=c.getWaterRequirement();
 			  }
-			System.out.println("when max = 1, fertilizer use =  "+totalFertilizerInput);
+
 		}
 		
 		if(max==2){
@@ -560,8 +594,10 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				
 				if(c.getLandUse()==LandUse.RICE){
 					c.setLandUse(LandUse.RICE);
-		//			c.setFertilizerInput(LandUse.RICE);
-					c.setFuelInput(riceUnitFuelInput);
+					c.setFertilizerInput(LandUse.RICE);
+					c.setFuelInput(ricePerHaFuelInput);
+					c.setWaterRequirement(LandUse.RICE);
+					riceCells.add(c);
 					organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
 			        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
 	                                  - c.getFuelInput()*fuelUnitCost;
@@ -572,16 +608,20 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 					if(soySize>0)
 					{
 					c.setLandUse(LandUse.SOY);
-		//			c.setFertilizerInput(LandUse.SOY);
-					c.setFuelInput(soyUnitFuelInput);
+					c.setFertilizerInput(LandUse.SOY);
+					c.setFuelInput(soyPerHaFuelInput);
+					c.setWaterRequirement(LandUse.SOY);
+					soyCells.add(c);
 					organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
 			        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
 	                                  - c.getFuelInput()*fuelUnitCost;
 			        soySize-=1;
 			        } else {
 			        	c.setLandUse(LandUse.CORN);
-		//				c.setFertilizerInput(LandUse.CORN);
-						c.setFuelInput(cornUnitFuelInput);
+						c.setFertilizerInput(LandUse.CORN);
+						c.setFuelInput(cornPerHaFuelInput);
+						c.setWaterRequirement(LandUse.CORN);
+						cornCells.add(c);
 						organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
 				        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
 		                                  - c.getFuelInput()*fuelUnitCost;
@@ -591,8 +631,10 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				
 				if(c.getLandUse()==LandUse.CORN){
 					c.setLandUse(LandUse.CORN);
-		//			c.setFertilizerInput(LandUse.CORN);
-					c.setFuelInput(cornUnitFuelInput);
+					c.setFertilizerInput(LandUse.CORN);
+					c.setFuelInput(cornPerHaFuelInput);
+					c.setWaterRequirement(LandUse.CORN);
+					cornCells.add(c);
 					organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
 			        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
 	                                  - c.getFuelInput()*fuelUnitCost;
@@ -600,8 +642,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				
 				totalFertilizerInput+=c.getFertilizerInput();
 				totalFuelInput+=c.getFuelInput();
+				totalWaterInput+=c.getWaterRequirement();
 			  }
-			System.out.println("when max = 2, fertilizer use =  "+totalFertilizerInput);
+
 		}
 		
 		if(max==3){
@@ -613,15 +656,18 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				c.setLastLandUse(c.getLandUse());
 				
 				c.setLandUse(LandUse.SOY);
-		//		c.setFertilizerInput(LandUse.SOY);
-				c.setFuelInput(soyUnitFuelInput);
+				c.setFertilizerInput(LandUse.SOY);
+				c.setFuelInput(soyPerHaFuelInput);
+				c.setWaterRequirement(LandUse.SOY);
+				soyCells.add(c);
 				organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
 		        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
                                   - c.getFuelInput()*fuelUnitCost;
 		        totalFertilizerInput+=c.getFertilizerInput();
 				totalFuelInput+=c.getFuelInput();
+				totalWaterInput+=c.getWaterRequirement();
 			  }
-			System.out.println("when max=3  fertilizer use ="+totalFertilizerInput);
+		
 		}
 		
 //	System.out.println("total fertilizer use = "+totalFertilizerInput);	
@@ -630,7 +676,11 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	
 	setTotalFertilizerInput(totalFertilizerInput);
 	setTotalFuelInput(totalFuelInput);
+	setTotalWaterInput(totalWaterInput);
 	
+	System.out.println("farmer id: "+ this.getID()+ " has size "+ this.tenureCells.size()
+	                 +" soy size "+soyCells.size()+ " corn size " +cornCells.size()
+	                 + " rice size "+riceCells.size());
 	}
 	
 	
@@ -744,5 +794,14 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	public void setTotalFuelInput(double totalFuelInput) {
 		this.totalFuelInput = totalFuelInput;
 	}
+	
+	public double getTotalWaterInput() {
+		return totalWaterInput;
+	}
+
+	public void setTotalWaterInput(double totalWaterInput) {
+		this.totalWaterInput = totalWaterInput;
+	}
+
 
 }

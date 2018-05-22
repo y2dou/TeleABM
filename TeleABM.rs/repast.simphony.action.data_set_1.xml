@@ -17,29 +17,92 @@
   <atEnd>false</atEnd>
   <methodDataSources class="linked-hash-map">
     <entry>
-      <string>total fertilizer use</string>
+      <string>soy cell size</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>total fertilizer use</id>
+        <id>soy cell size</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getSoyCellSize</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>corn cell size</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>corn cell size</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getCornCellSize</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>rice cell size</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>rice cell size</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getRiceCellSize</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>soy production</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>soy production</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getSoyProduction</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>corn production</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>corn production</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getCornProduction</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>rice production</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>rice production</id>
+        <className>teleABM.ReceivingSoybeanAgent</className>
+        <methodName>getRiceProduction</methodName>
+        <aggType>SUM</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>soc</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>soc</id>
+        <className>teleABM.LandCell</className>
+        <methodName>getSoc</methodName>
+        <aggType>MEAN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>fertilizer input</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>fertilizer input</id>
         <className>teleABM.ReceivingSoybeanAgent</className>
         <methodName>getTotalFertilizerInput</methodName>
         <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>total fuel use</string>
+      <string>fuel input</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>total fuel use</id>
+        <id>fuel input</id>
         <className>teleABM.ReceivingSoybeanAgent</className>
         <methodName>getTotalFuelInput</methodName>
         <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>total soy production</string>
+      <string>water input</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>total soy production</id>
+        <id>water input</id>
         <className>teleABM.ReceivingSoybeanAgent</className>
-        <methodName>getSoyProduction</methodName>
+        <methodName>getTotalWaterInput</methodName>
         <aggType>SUM</aggType>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
