@@ -138,7 +138,7 @@ import teleABM.SoybeanAgent;
 														
 					for(int i =0; i<numAgents && i<corners.size(); i++){
 				 //      System.out.println("i = "+i);
-						receivingSoybeanAgents.get(i).initialize();							
+				//		receivingSoybeanAgents.get(i).initialize();							
 						organicSpace.add(receivingSoybeanAgents.get(i));	
 						
 						receivingSoybeanAgents.get(i).addSoybeanAgentFromLandscape(organicSpace, corners.get(i));
@@ -146,6 +146,9 @@ import teleABM.SoybeanAgent;
 				//		                        corners.get(i).x+" "+corners.get(i).y);
 						
 						receivingSoybeanAgents.get(i).addLandUseFromField(organicSpace);
+				//		System.out.println(receivingSoybeanAgents.get(i).getID()+
+				//				       " receiving agents tenure size: "+
+				//	             receivingSoybeanAgents.get(i).getTenureCells().size());
 				//		System.out.println("i = "+i+" add land use from field");
 						
 					}
@@ -154,24 +157,45 @@ import teleABM.SoybeanAgent;
 						for(int i =0; i<numAgents; i++)
 						{
 							
-							receivingSoybeanAgents.get(i).initialize();
+					//		receivingSoybeanAgents.get(i).initialize();
 						
 							organicSpace.add(receivingSoybeanAgents.get(i));
 							receivingSoybeanAgents.get(i).addSoybeanAgentFromField(organicSpace, corners.get(i));
-							receivingSoybeanAgents.get(i).addLandUseFromField(organicSpace);												
+							receivingSoybeanAgents.get(i).addLandUseFromField(organicSpace);		
+					//		System.out.println("receiving agents tenure size: "+
+					//		             receivingSoybeanAgents.get(i).getTenureCells().size());
 						}
 												
 					}
 				
 		//	System.out.println("how many agents: "+receivingSoybeanAgents.size());	
-               for( int i = 0; i<receivingSoybeanAgents.size(); i++)
+				List<Integer> listToRemove = new ArrayList<Integer>();
+				 for( int i = 0; i<receivingSoybeanAgents.size(); i++) {
+				if (receivingSoybeanAgents.get(i).getTenureCells().size()==0)
+				  {
+					listToRemove.add(i);
+				   }
+				else receivingSoybeanAgents.get(i).initialize();
+				 }
+				 
+				 for(Integer i:listToRemove){
+					 organicSpace.remove(receivingSoybeanAgents.get(i));
+				 }
+				 receivingSoybeanAgents.removeAll(listToRemove);
+		//		 System.out.println(listToRemove);
+              /* for( int i = 0; i<receivingSoybeanAgents.size(); i++)
 				if (receivingSoybeanAgents.get(i).getTenureCells().size()==0)
 				{
-			//	System.out.println("remove some agents "+i);
+			//	
 				organicSpace.remove(receivingSoybeanAgents.get(i));
 				receivingSoybeanAgents.remove(i);
+			//	receivingSoybeanAgents.
+				System.out.println("remove some agents "+i+" "+receivingSoybeanAgents.size());
 			//	break;
-				}
+				} else {
+					receivingSoybeanAgents.get(i).initialize();	
+				
+				        }	*/
               for ( ReceivingSoybeanAgent h:receivingSoybeanAgents) {
             	  Range<Integer> ws = dependentRatioSelector.sample();
 				  Integer dependentRatio = RandomHelper.nextIntFromTo(ws.getLower(), ws.getUpper());
@@ -259,7 +283,7 @@ import teleABM.SoybeanAgent;
 		  if (receivingSystem) {
 			RandomHelper.registerDistribution("farmCost", RandomHelper.createUniform(100.0,500.0));
 			
-			RandomHelper.registerDistribution("capital", RandomHelper.createNormal(10000, 500000));
+			RandomHelper.registerDistribution("capital", RandomHelper.createNormal(10000, 500));
 			RandomHelper.registerDistribution("labour", RandomHelper.createUniform(2,10));
 			RandomHelper.registerDistribution("elevationRange", RandomHelper.createUniform(1, 50));
 			RandomHelper.registerDistribution("hectares", RandomHelper.createUniform(30,200));

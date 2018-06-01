@@ -77,8 +77,9 @@ public class SoybeanAgent extends SimpleAgent{
 	   //if true, they use less fertilizer
 	   //if false, they use as much as possible
 
-	protected double fertilizerUnitCost=100; //price of fertilizer
-	protected double fuelUnitCost=5;  //unit price for fuel
+	protected double fertilizerUnitCost=0.8; //price of fertilizer 
+	//n fertilizer price is 80 yuan/bag, which is 0.8yuan/kg
+	protected double fuelUnitCost=6.21;  //unit price for diesel, 6.21 yuan/litre
 	
 	protected double riceProduction = 0;
 	protected double soyProduction = 0;	
@@ -130,11 +131,12 @@ public class SoybeanAgent extends SimpleAgent{
 		protected double ricePerHaFertilizerInput;
 		protected double otherPerHaFertilizerInput;
 		
-		protected double soyPerHaFuelInput=10;
-		protected double cornPerHaFuelInput=50;
-		protected double ricePerHaFuelInput=20;
-		protected double otherPerHaFuelInput=30;
-		//above fuel unit cost are all simplifed
+		protected double soyPerHaFuelInput=80.43;
+		protected double cornPerHaFuelInput=102.6;
+		protected double ricePerHaFuelInput=163.6;
+		protected double otherPerHaFuelInput=30.0;
+		//above fuel unit cost are all from direct fossil fuel energy cost (in tab energy in Equations.xlsx) 
+		//
 		
 		protected double lastYearSoyPrice;
 		protected double lastYearCornPrice;
@@ -177,7 +179,8 @@ public class SoybeanAgent extends SimpleAgent{
 			setFarmCost(RandomHelper.getDistribution("farmCost").nextDouble());	
 			 
 			    setCapital(RandomHelper.getDistribution("capital").nextDouble());
-			  
+			//    System.out.println(this.getCapital());
+		//	    System.out.println("size "+this.getTenureCells().size());
 			    setLabour(RandomHelper.getDistribution("labour").nextDouble());
 			    
 		//	    setCredit(RandomHelper.getDistribution("credit").nextDouble());		
@@ -214,8 +217,8 @@ public class SoybeanAgent extends SimpleAgent{
 					marketPrices.setPrice(LandUse.SOY, staticPrice);
 			//		System.out.println ("soyPrice =" + staticPrice);
 				} else {
-				//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
-					priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
+					priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
+				//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
 				}
 			} catch (FileNotFoundException e1) {
 				e1.printStackTrace();
@@ -290,18 +293,24 @@ public class SoybeanAgent extends SimpleAgent{
 				prices.put(e.getKey(), cPrices);
 						}
 	    	}
-	//    	System.out.println(this.getID()+" rice price "+prices.get(LandUse.RICE));
+	  //  	System.out.println(this.getID()+" soy price "+prices.get(LandUse.SOY));
 	 //the following should only be temperary solution because this is 
 	 //for receiving systems 
-	    	soyPrices.add(0, 1.31);
-	    	soyPrices.add(1, 2.27);
+	   	soyPrices.add(0, 1.31+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+	       cornPrices.add(0, 0.6+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+	       ricePrices.add(0, 1.3+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+	   //have to assign the first year price here becuase the price is only updated 
+	       //at "update profit"
+	       //which won't happen after land use decision
+	       
+	  /*  	soyPrices.add(1, 2.27);
 	    	soyPrices.add(2, 3.20);
-	    	cornPrices.add(0, 0.6);
+	    	
 	    	cornPrices.add(1, 0.59);
 	    	cornPrices.add(2, 0.56);
-	    	ricePrices.add(0, 1.3);
+	    	
 	    	ricePrices.add(1, 1.32);
-	    	ricePrices.add(2, 1.32);
+	    	ricePrices.add(2, 1.32);*/
 	    }
 	    
 	    public double getCommodityPrice(LandUse landuse){
@@ -317,7 +326,7 @@ public class SoybeanAgent extends SimpleAgent{
 	    	 if(prices.containsKey(landuse))  
 	    			 {
 	    	     
-	    		 tempPrice=prices.get(landuse).get(tick-1);
+	    		 tempPrice=prices.get(landuse).get(tick);
 	    		 //note that it has to be get(tick-1), otherwise it's more than what it needs.
 	    		 double r = new Random().nextDouble();
 	    		 tempPrice= tempPrice+ (2*r-1.0)*0.05;  
@@ -348,7 +357,11 @@ public class SoybeanAgent extends SimpleAgent{
 		
 	//   OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
 	 //   Grid grid = (Grid) organicSpace.getProjection("Grid");
-		
+		soyCells.clear();
+		   cornCells.clear();
+		   riceCells.clear();
+		   otherCells.clear();
+		   
 		   riceProduction = 0;
 		   cornProduction = 0;
 		   soyProduction = 0;
@@ -367,7 +380,7 @@ public class SoybeanAgent extends SimpleAgent{
 	    
 	//    updateLabor();
 	  // to start maybe not count labour;
-	    landUseDecision();
+	   
 	//make decision first
 	    //following are actual land use change;
 	    
@@ -380,22 +393,22 @@ public class SoybeanAgent extends SimpleAgent{
 		   	
 		 //   if (c.getLastLandUse()==LandUse.RICE) {
 		    if (c.getLandUse()==LandUse.RICE) { 	
-		 //   	riceCells.add(c);
+		    	this.riceCells.add(c);
 		    	riceProduction+=c.getCropYield();
 		//    	System.out.println(c.getCropYield());
 		    	
 		  //  	System.out.println("rice++");
 		    } else if (c.getLandUse()==LandUse.CORN) {
-		  //  	cornCells.add(c);
+		    	this.cornCells.add(c);
 		    	cornProduction+=c.getCropYield();
 		    	
 		    } else if (c.getLandUse()==LandUse.SOY) {
-		   // 	soyCells.add(c);
+		    	this.soyCells.add(c);
 		    	soyProduction+=c.getCropYield();
 		    //	  System.out.println("soyyiled= "+c.getCropYield());
 		    	
 		    } else if(c.getLandUse()==LandUse.OTHERCROPS){
-		   // 	otherCells.add(c);
+		   	    this.otherCells.add(c);
 		    	otherProduction+=c.getCropYield();
 		    	
 		    }
@@ -413,21 +426,30 @@ public class SoybeanAgent extends SimpleAgent{
 	   updateCost();
 //	   setCommodityPrices();
 //	   decidingTradingPartner();
-	   updateProfit();
+	  
 	   //also update the price memory list
 	   setGrownSoyYears(grownSoyYears);
 	setSoyProduction(soyProduction);
 	setCornProduction(cornProduction);
 	setRiceProduction(riceProduction);
 	setOtherProduction(otherProduction);
+	
+	 
 	//   System.out.println("this year profit="+profit);
 	//   updateLandUse();
-	//   System.out.println(tick+" "+this.getID()+" rice Production "+riceProduction);
-	//   System.out.println(tick+" "+this.getID()+" corn Production "+cornProduction);
-	//   System.out.println(tick+" "+this.getID()+" soy Production "+soyProduction);
+	   System.out.println(tick+" "+this.getID()+" rice Production "+riceProduction);
+	   System.out.println(" corn Production "+cornProduction);
+	   System.out.println(" soy Production "+soyProduction);
 	//   System.out.println(tick+" "+this.getID()+" other Production "+otherProduction);
-	//  System.out.println("soySize = "+this.soyCells.size());
+	  System.out.println("soy Size last year = "+this.soyCells.size());
+	  System.out.println("corn size last year="+this.cornCells.size());
+	  System.out.println("rice size last year="+this.riceCells.size());
+	
+	  
+	  updateProfit();
 	//   System.out.println("grown soy years = "+this.getGrownSoyYears());
+	  
+	  landUseDecision();
 	}
 	
 
@@ -475,13 +497,14 @@ public int getGrownSoyYears() {
 		
 		double totalCost = 0;
 		double cost=0;
-		if(soyCells.size()>0){
+		if(grownSoy){
 		for (int i=0; i<soyCells.size();i++){
 			//setFertilizerInput() has already been put at land use decision ();
 			totalCost+=soyCells.get(i).getFertilizerInput()*fertilizerUnitCost;
 			cost+=soyCells.get(i).getFertilizerInput();
 		}
 		soyPerHaFertilizerInput=cost/soyCells.size();
+		soyPerHaFertilizerInput = soyPerHaFertilizerInput/(cellsize*cellsize)*10000.0;
 	//	System.out.println("soy average cost"+ soyUnitFertilizerInput);
 		cost=0;
 		}
@@ -491,6 +514,7 @@ public int getGrownSoyYears() {
 				cost+=cornCells.get(i).getFertilizerInput();
 			}
 			cornPerHaFertilizerInput=cost/cornCells.size();
+			cornPerHaFertilizerInput = cornPerHaFertilizerInput/(cellsize*cellsize)*10000.0;
 	//		System.out.println("soy average cost"+ cornUnitFertilizerInput);
 			cost=0;
 			}
@@ -501,6 +525,7 @@ public int getGrownSoyYears() {
 				cost+=riceCells.get(i).getFertilizerInput();
 			}
 			ricePerHaFertilizerInput=cost/riceCells.size();
+			ricePerHaFertilizerInput = ricePerHaFertilizerInput/(cellsize*cellsize)*10000.0;
 	//		System.out.println("rice average cost"+ riceUnitFertilizerInput);
 			cost=0;
 			}
@@ -511,6 +536,7 @@ public int getGrownSoyYears() {
 				cost+=otherCells.get(i).getFertilizerInput();
 			}
 			otherPerHaFertilizerInput=cost/otherCells.size();
+			otherPerHaFertilizerInput = otherPerHaFertilizerInput/(cellsize*cellsize)*10000.0;
 	//		System.out.println("other average cost"+ otherUnitFertilizerInput);
 			cost=0;
 			}
@@ -518,6 +544,7 @@ public int getGrownSoyYears() {
 		
 		
 	//	capital-=totalCost;
+		//cost has been taken out at decisionmaking() at receiving soybean agent class
 		
 		
 	}
@@ -536,9 +563,15 @@ public int getGrownSoyYears() {
 	   }
 
 private void updateProfit(){
-	
-	double yield=0;
+	   
+	int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+	//	tick has to be called everytime it is used;
 	double cPrice=0;
+	
+//	lastYearSoyPerHaProfit=0;
+//	lastYearCornPerHaProfit=0;
+//	lastYearRicePerHaProfit=0;
+//	lastYearOtherPerHaProfit=0;
 	//current year price	
 	profit=0;
 	
@@ -563,86 +596,92 @@ private void updateProfit(){
 		ricePrices.remove(0); //remove least recent price
 	}
 	
-	if (grownSoy) {
-		double soyYield=0;
-		for (int i=0; i < soyCells.size();i++) {
-			yield = soyCells.get(i).getCropYield();
-			soyYield+=yield;
+//	if (grownSoy && soyCells.size()>0) {
+	if(soyProduction>0 && soyCells.size()>0)	{
+//		double soyYield=0;
+//		for (int i=0; i < soyCells.size();i++) {
+//			yield = soyCells.get(i).getCropYield();
+//			soyYield+=yield;
 		//	cPrice=this.soySoldToTraderAgent.getCommodityPrice(LandUse.SOY);
 			
 			cPrice=this.getCommodityPrice(LandUse.SOY);
 
 			
 	//		System.out.println("update profit: "+tick+ " "+
-	//		         cPrice);
-			profit+=yield*cPrice;		
+		//	         cPrice+" yield "+yield);
+			profit+=soyProduction*cPrice;		
 	//		this.soySoldToTraderAgent.addSoyAmount(yield);
 	//		this.soySoldToTraderAgent.purchaseCommodity(yield*cPrice);
 			
-		}
-		soyPerHaYield = soyYield/soyCells.size();
+		
+		soyPerHaYield = soyProduction/soyCells.size();
+		soyPerHaYield = soyPerHaYield /(cellsize*cellsize)*10000.0;
+		//has to convert this to from cell yield to per ha yield
+	//	System.out.println(soyYield+" cell "+soyCells.size());
 		lastYearSoyPerHaProfit = soyPerHaYield*cPrice-soyPerHaFuelInput*fuelUnitCost
 				                 -soyPerHaFertilizerInput*fertilizerUnitCost;
+	//	System.out.println("soy per ha yield="+soyPerHaYield+" per ha fuel inpu="+soyPerHaFuelInput+
+	//			" "+soyPerHaFertilizerInput);
+	//	System.out.println("capital = "+capital+" soy profit = "+lastYearSoyPerHaProfit);
+		
 	}
 	
 //	System.out.println("soy yield: "
  //           +this.getCommodityPrice(LandUse.CORN));
-	if (grownCorn) {
-		yield=0;
-		double cornYield=0;
-		for (int i =0; i <cornCells.size();i++) {
-			yield=cornCells.get(i).getCropYield();
-			cornYield+=yield;
-	//		cPrice=this.cornSoldToTraderAgent.getCommodityPrice(LandUse.CORN);		
+	if (cornProduction>0) {
+			
 			cPrice=this.getCommodityPrice(LandUse.CORN);
 
-			profit+=yield*cPrice;
+			profit+=cornProduction*cPrice;
 	//		this.cornSoldToTraderAgent.addCornAmount(yield);
 	//		this.cornSoldToTraderAgent.purchaseCommodity(yield*cPrice);
-		}		
-		cornPerHaYield=cornYield/cornCells.size();
+			
+		cornPerHaYield=cornProduction/cornCells.size();
+		cornPerHaYield = (cornPerHaYield/(cellsize*cellsize))*10000.0;
 		lastYearCornPerHaProfit = cornPerHaYield*cPrice-cornPerHaFuelInput*fuelUnitCost
                 -cornPerHaFertilizerInput*fertilizerUnitCost;
+	//	System.out.println("corn size="+cornCells.size()*900/10000.0+" corn per ha yield="+cornPerHaYield
+	//			+" corn per ha fuel inpu=" +cornPerHaFuelInput+
+	//			" corn fertilizer input "+cornPerHaFertilizerInput);
+	//	System.out.println("capital = "+capital+" corn profit = "+ lastYearCornPerHaProfit);
 	}
-	if (grownRice) {
-		yield=0;
-		double riceYield=0;
-	//	System.out.println("rice cells: "+riceCells.size());
-		for (int i =0; i <riceCells.size();i++) {
-			yield=riceCells.get(i).getCropYield();
-			riceYield+=yield;
-	//		cPrice=this.riceSoldToTraderAgent.getCommodityPrice(LandUse.RICE);
+	if (riceProduction>0) {
+		
 			cPrice=this.getCommodityPrice(LandUse.RICE);
-			profit+=yield*cPrice;
+			profit+=riceProduction*cPrice;
 	//		this.riceSoldToTraderAgent.addRiceAmount(yield);
 	//		this.riceSoldToTraderAgent.purchaseCommodity(yield*cPrice);
-		}	
-		ricePerHaYield=riceYield/riceCells.size();
+			
+		ricePerHaYield=riceProduction/riceCells.size();
+		ricePerHaYield=(ricePerHaYield/(cellsize*cellsize))*10000.0;
 		lastYearRicePerHaProfit = ricePerHaYield*cPrice-ricePerHaFuelInput*fuelUnitCost
                 -ricePerHaFertilizerInput*fertilizerUnitCost;
+	//	System.out.println("capital = "+capital+"rice profit = "+ lastYearRicePerHaProfit);
 	}
 	if (grownOther) {
-		yield=0;
-		double otherYield=0;
-		for (int i=0; i<otherCells.size();i++) {
-			yield=otherCells.get(i).getCropYield();
-			otherYield+=yield;
-	//		cPrice=this.otherSoldToTraderAgent.getCommodityPrice(LandUse.OTHERCROPS);
+		
 			cPrice=this.getCommodityPrice(LandUse.OTHERCROPS);
 			otherPrices.add(cPrice);
 			if (otherPrices.size()>priceMemoryLimit) {
 				otherPrices.remove(0); //remove least recent price
-			}
-			profit+=yield*cPrice;
+			
+			profit+=otherProduction*cPrice;
 	//		this.otherSoldToTraderAgent.addOtherAmount(yield);
 	//		this.otherSoldToTraderAgent.purchaseCommodity(yield*cPrice);
-		}
-		otherPerHaYield=otherYield/otherCells.size();
+			}
+		otherPerHaYield=otherProduction/otherCells.size();
 		lastYearOtherPerHaProfit = otherPerHaYield*cPrice-otherPerHaFuelInput*fuelUnitCost
                 -otherPerHaFertilizerInput*fertilizerUnitCost;
+	//	System.out.println("capital = "+capital+"other profit = "+lastYearOtherPerHaProfit);
 	}
 	
 	capital+=profit;
+	
+	System.out.println("capital: = "+profit);
+	System.out.println(tick +" "+this.getID()+"soy profit "+lastYearSoyPerHaProfit);
+	System.out.println(lastYearCornPerHaProfit);
+	System.out.println(lastYearRicePerHaProfit);
+	  System.out.println(" ");
 	}
 	
 	

@@ -165,26 +165,36 @@ public class LandCell {
 		//by Zhang Kuan, Wang XiuFang, Wu Wei, Hu Heyun, Wang Xiaocun
 		//1990
 		//in chinese
+	/*	double fertilizerPerMu = (this.getFertilizerInput()/(cellsize*cellsize))*666.67;
+	//	System.out.println("fertilizer per mu: "+fertilizerPerMu);
 		if (this.getSoc()>20.0)// high fertility
 			{
-			double fertilizerPerMu = (this.getFertilizerInput()/(cellsize*cellsize))*666.67;
+			
+			
 			cornYield = 803.3+12.84* fertilizerPerMu
 			            -0.22*fertilizerPerMu*fertilizerPerMu
 			              ;  
 			//the unit for this is kg/mu
-			cornYield = (cornYield*15/10000.0)*(cellsize*cellsize); //per cell size yield
+			cornYield =( cornYield/667.0)*(cellsize*cellsize); //per cell size yield
+			//this corn yield is a bit too high.
 			
 		} else {
 			//medium fertility field
-			double fertilizerPerMu = (this.getFertilizerInput()/(cellsize*cellsize))*666.67;
+	//		double fertilizerPerMu = (this.getFertilizerInput()/(cellsize*cellsize))*666.67;
 			cornYield = 518.6+31.34* fertilizerPerMu
 		            -0.66*fertilizerPerMu*fertilizerPerMu
 		             ;  
 		//the unit for this is kg/mu
-			cornYield = (cornYield*15/10000.0)*(cellsize*cellsize); //per cell size yield
+			cornYield = ( cornYield/667.0)*(cellsize*cellsize); //per cell size yield
 		}
 		
-		
+		//the corn yield here is too high..
+		cornYield = 0.7*cornYield;*/
+		double fertilizerPerHa = this.getFertilizerInput()*10000.0/(cellsize*cellsize);
+		cornYield = -0.18518 *fertilizerPerHa*fertilizerPerHa+53.133*fertilizerPerHa+4538.0;
+		cornYield =cornYield/0.86; //this is to get wet weight (14% dry) dry weight= wet weight*(1-0.14)
+		cornYield =( cornYield/10000.0)*(cellsize*cellsize);
+	//	System.out.println("in land cell, corn yield = "+cornYield);
 		//rice yield is from this paper:
 		//Effects of Nitrogen Application Rate and Planting Density on Grain Yields, 
 		//Yield Components and Nitrogen Use Efficiencies of Rice
@@ -388,7 +398,7 @@ public class LandCell {
 			
 				fertilizerInput = observedCornPerHaFertilizerUse*((cellsize*cellsize)/10000.0);
 			
-			//	 System.out.println("CORN fertilizer input = "+fertilizerInput);
+		//		 System.out.println("CORN fertilizer input = "+fertilizerInput);
 	
 			}
 			if(this.landUse==LandUse.RICE){
@@ -566,8 +576,8 @@ public class LandCell {
 			if(landuse == LandUse.RICE)
 				{//unit is m^3/per ha
 				//or should it be the real water usage, which is from 7500-22500;
-				  waterR = 8913.4;  //this is calculated water requirement
-			//	  waterR = RandomHelper.nextDoubleFromTo(7500, 22500);
+			//	  waterR = 8913.4;  //this is calculated water requirement
+				  waterR = RandomHelper.nextDoubleFromTo(7500, 22500);
 				}
 			
 			   

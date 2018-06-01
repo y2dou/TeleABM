@@ -1,16 +1,16 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>land holder</name>
+  <name>Land Use</name>
   <type>2D</type>
   <styles>
     <entry>
       <string>teleABM.SoybeanAgent</string>
-      <string>repast.simphony.visualizationOGL2D.DefaultStyleOGL2D</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
       <string>teleABM.SoybeanAgent</string>
-      <null/>
+      <string>teleABM.SoybeanAgent.style_4.xml</string>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -23,7 +23,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>1732558331</hashCode>
+    <hashCode>-1642633394</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>Grid</layoutProjection>
@@ -78,8 +78,8 @@
     <blue>255</blue>
     <alpha>255</alpha>
   </backgroundColor>
-  <valueLayerStyleName>teleABM.LandHolderFieldStyle</valueLayerStyleName>
+  <valueLayerStyleName>teleABM.LandUseStyle</valueLayerStyleName>
   <valueLayers>
-    <string>Land Holder Field</string>
+    <string>Land Use Field</string>
   </valueLayers>
 </repast.simphony.visualization.engine.CartesianDisplayDescriptor>
