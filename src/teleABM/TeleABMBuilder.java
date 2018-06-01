@@ -71,12 +71,14 @@ import teleABM.SoybeanAgent;
 			genderRatioSelector = new 
 					 WeightedSelector<Range<Integer>>("genderRatioSelector");
 			
-			if ( (boolean) p.getValue("sending system representation"))  {
+			if ( (boolean) p.getValue("sending system representation") && 
+					!(boolean) p.getValue("receiving system representation"))  {
 				 sendingSystem=true;
 				 receivingSystem = false;
 				 System.out.println("only sending System");
 			 }
-			 if ( (boolean) p.getValue("receiving system representation")) {
+			 if ( !(boolean) p.getValue("sending system representation") && 
+			 (boolean) p.getValue("receiving system representation")) {
 				 receivingSystem=true;
 				 sendingSystem=false;
 				 System.out.println("only receiving System");
@@ -88,6 +90,13 @@ import teleABM.SoybeanAgent;
 				 sendingSystem=false;
 					System.err.println("TeleABM Creator: Skipping run: invalid parameters.");
 					System.exit(1);
+			 }
+			 
+			 if ( (boolean) p.getValue("sending system representation") &&
+					 (boolean) p.getValue("receiving system representation")) {
+				 receivingSystem=true;
+				 sendingSystem=true;
+				 System.out.println("receiving & sending System");
 			 }
 			 
 			 setUpRandomDistributions();

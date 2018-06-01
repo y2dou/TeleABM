@@ -14,10 +14,12 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javolution.util.FastTable;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.ContextUtils;
@@ -65,7 +67,11 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	
 	protected double totalWaterInput = 0;
 
-
+	protected  FastTable<LandCell> planningSoyCells = new FastTable<LandCell>();
+	protected  FastTable<LandCell> planningCornCells = new FastTable<LandCell>();
+	protected FastTable<LandCell> planningRiceCells = new FastTable<LandCell>();
+	protected  FastTable<LandCell> planningOtherCells = new FastTable<LandCell>();
+	//these are to record all planning cells
 
 	
 	public ReceivingSoybeanAgent() {
@@ -210,21 +216,20 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		//this function is to make current year land use decisions
 		
 		int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		//	
+		//tick has to be called everytime it is used. 	
 		
 		totalFuelInput = 0.0;
 		totalFertilizerInput = 0.0;
 		totalWaterInput = 0.0;
 		
-		soyCells.clear();
-		   cornCells.clear();
-		   riceCells.clear();
-		   otherCells.clear();
-		
+		planningSoyCells.clear();
+		planningCornCells.clear();
+		planningRiceCells.clear();
+		planningOtherCells.clear();
 		
 		int landUseNumber;
 		 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
-		LandUse highestLandUse=LandUse.SOY;
+//		LandUse highestLandUse=LandUse.SOY;
 /*		System.out.println("current soy price: "+cornPrices.get(2));
 		System.out.println("last year soy price: "+cornPrices.get(1));
 		System.out.println("two years ago soy price: "+cornPrices.get(0));	*/
@@ -421,7 +426,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		//[2] continue grow
 		//[3] new grower		
 		//[0] never grow soybean
-		int max=0;
+		int max=2;
 		double maxProb=probability[0];
 //to calculate the max probability
 		   if(probability[1]>maxProb){
@@ -438,270 +443,254 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		                	max=0;
 		                }
 //to calculate the max probability	   
-	//	   System.out.println("most likely "+max);
-	//	   System.out.println(this.getGrownSoyYears());
+		   System.out.println("most likely "+max);
+		   System.out.println("grow soy year: "+this.getGrownSoyYears());
+
+			List<Integer> listToChange = new ArrayList<Integer>();
+			List<Integer> listNotChange = new ArrayList<Integer>();
+	
+	//	this.grownSoyYears=0;
 		if(max==0 && this.grownSoyYears==0 )   //this is the type that never grow soybeans
 		{ 
 			
 			//if it is rice, then keep it rice, 
 			//if it was corn, check if rice is way more profitable. convert to rice
-			
-			for(int i=0; i<this.getTenureCells().size();i++)
-			  {
-				
-				LandCell c= this.getTenureCells().get(i);
-				
-				c.setLastLandUse(c.getLandUse());
-				
-				if(c.getLandUse()==LandUse.RICE){
-				c.setLandUse(LandUse.RICE);
-				c.setFertilizerInput(LandUse.RICE);
-				c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsize*cellsize));
-				c.setWaterRequirement(LandUse.RICE);
-				riceCells.add(c);
-				organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
-		        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
-		        	              - c.getFuelInput()*fuelUnitCost;}
-				
-				
-				if(c.getLandUse()==LandUse.CORN){
-					if(lastYearCornPerHaProfit>lastYearRicePerHaProfit)
-					{
-						c.setLandUse(LandUse.CORN);
-						c.setFertilizerInput(LandUse.CORN);
-						c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsize*cellsize));
-						c.setWaterRequirement(LandUse.CORN);
-						cornCells.add(c);
-						organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
-						capital=capital- c.getFertilizerInput()*fertilizerUnitCost
-								-c.getFuelInput()*fuelUnitCost;
-					}
-					else if (lastYearRicePerHaProfit>1.5*lastYearCornPerHaProfit)
-					{
-						//convert to rice
-						c.setLandUse(LandUse.RICE);
-						c.setFertilizerInput(LandUse.RICE);
-						c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsize*cellsize));
-						c.setWaterRequirement(LandUse.RICE);
-						riceCells.add(c);
-						organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
-						capital=capital-costConvertToRicePaddy-c.getFertilizerInput()*fertilizerUnitCost
-								-c.getFuelInput()*fuelUnitCost;
-					} else {
-						if(RandomHelper.nextDouble()>0.7&&(capital>costConvertToRicePaddy)) {
-							c.setLandUse(LandUse.RICE);
-							c.setFertilizerInput(LandUse.RICE);
-							c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsize*cellsize));
-							c.setWaterRequirement(LandUse.RICE);
-							riceCells.add(c);
-							organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
-							capital=capital-costConvertToRicePaddy-c.getFertilizerInput()*fertilizerUnitCost
-									-c.getFuelInput()*fuelUnitCost;
-						} else {
-							c.setLandUse(LandUse.CORN);
-							c.setFertilizerInput(LandUse.CORN);
-							c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsize*cellsize));
-							c.setWaterRequirement(LandUse.CORN);
-							cornCells.add(c);
-							organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
-							capital=capital-c.getFertilizerInput()*fertilizerUnitCost
-									-c.getFuelInput()*fuelUnitCost;
-						}
-						
-					}
-					
+			if(2.0*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
+			{
+				//if rice is super profitable; change 20% corn to rice;
+				for (int i=0; i <cornCells.size()*0.2;i++){
+					listToChange.add(i);
 				}
-			  totalFertilizerInput+=c.getFertilizerInput();
-			  totalFuelInput+=c.getFuelInput();
-			  totalWaterInput+=c.getWaterRequirement();
-			  //end of land cell iteration
-			  } 
+				for (int i= (int) Math.round(cornCells.size()*0.2);i<cornCells.size();i++){
+					listNotChange.add(i);
+				}
+			}
+			
+			for(Integer i:listToChange) {
+				planningRiceCells.add(cornCells.get(i));
+				capital-=costConvertToRicePaddy;
+			
+			}
+			
+			for( Integer i: listNotChange){
+				planningCornCells.add(cornCells.get(i));
+			}
+			
+			
+		    for(LandCell c:riceCells){
+		    	planningRiceCells.add(c);
+		    }
+			
+			
 		//end of if(	max==0 && this.grownSoyYears==0 )
 
 		}
 		
 		if(max==0 && this.grownSoyYears>0 ) {
+			//reduce soybean growing number
+			//need to overwrite based on the regression;
+			listToChange.clear();
+			listNotChange.clear();
+			//go through soy cell list, change to either corn or rice
+			for (int j =0; j<this.soyCells.size();j++) 
+			 {						
+					if(RandomHelper.nextDouble()>0.5){
+				    	listToChange.add(j);						
+					} else {
+					    listNotChange.add(j);	
+					}
+			 
+			 }	
 			
-			for(int i=0; i<this.getTenureCells().size();i++)
-			  {
-				
-				LandCell c= this.getTenureCells().get(i);
-				
-				c.setLastLandUse(c.getLandUse());
-				
-				if(c.getLandUse()==LandUse.CORN){
-				c.setLandUse(LandUse.CORN);
-				c.setFertilizerInput(LandUse.CORN);
-				c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsize*cellsize));
-				c.setWaterRequirement(LandUse.CORN);
-				cornCells.add(c);
-				organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
-		        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
-		        	              - c.getFuelInput()*fuelUnitCost;}
-				
-				if(c.getLandUse()==LandUse.RICE){
-					c.setLandUse(LandUse.RICE);
-					c.setFertilizerInput(LandUse.RICE);
-					c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsize*cellsize));
-					c.setWaterRequirement(LandUse.RICE);
-					riceCells.add(c);
-					organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
-					capital=capital-c.getFertilizerInput()*fertilizerUnitCost
-							-c.getFuelInput()*fuelUnitCost;}
-				
-				if(c.getLandUse()==LandUse.SOY){
-					c.setLandUse(LandUse.CORN);
-					c.setFertilizerInput(LandUse.CORN);
-					c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsize*cellsize));
-					c.setWaterRequirement(LandUse.CORN);
-					cornCells.add(c);
-					organicSpace.setLandUse(6,c.getXlocation(),c.getYlocation());
-					capital=capital-c.getFertilizerInput()*fertilizerUnitCost
-							-c.getFuelInput()*fuelUnitCost;
+			for(Integer i:listToChange)
+			{
+				if(2.0*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
+				{
+					planningRiceCells.add(soyCells.get(i));
+				    capital-=costConvertToRicePaddy;
 				}
-				if(c.getLandUse()==LandUse.OTHERCROPS){
-					c.setLandUse(LandUse.OTHERCROPS);
-					c.setFertilizerInput(LandUse.OTHERCROPS);
-					c.setFuelInput((otherPerHaFuelInput/10000.0)*(cellsize*cellsize));
-					c.setWaterRequirement(LandUse.OTHERCROPS);
-					otherCells.add(c);
-					
-				}
-				
-				totalFertilizerInput+=c.getFertilizerInput();
-				totalFuelInput+=c.getFuelInput();
-				totalWaterInput+=c.getWaterRequirement();
-			  }
-
-		}
+				else
+					planningCornCells.add(soyCells.get(i));	
+			}
+			
+			for(Integer i:listNotChange)
+			{
+				planningSoyCells.add(soyCells.get(i));
+			}
+			//add last year's corn and rice to planning cell list					
+			for(LandCell c: cornCells)
+			{
+				planningCornCells.add(c);
+			}
+			for (LandCell c:riceCells)
+			{
+				planningRiceCells.add(c);
+			}
+																			
+			}
+			
 		
 		if(max==1) {
+			listToChange.clear();
+			listNotChange.clear();
 			//abandon soy
-			for(int i=0; i<this.getTenureCells().size();i++)
-			  {
-				LandCell c= this.getTenureCells().get(i);
-				c.setLastLandUse(c.getLandUse());
-				
-				if(c.getLandUse()==LandUse.RICE){
-					c.setLandUse(LandUse.RICE);
-					c.setFertilizerInput(LandUse.RICE);
-					c.setFuelInput((ricePerHaFuelInput/10000.0)/(cellsize*cellsize));
-					c.setWaterRequirement(LandUse.RICE);
-					riceCells.add(c);
-					organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
-			        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
-	                                  - c.getFuelInput()*fuelUnitCost;
+			for(LandCell c:soyCells)
+			{
+				//convert all soy cells to corn and rice
+				if(lastYearCornPerHaProfit*2.0<lastYearRicePerHaProfit){
+					planningRiceCells.add(c);
+					capital-=costConvertToRicePaddy;
 				}
-				if(c.getLandUse()==LandUse.CORN||c.getLandUse()==LandUse.SOY){
-					c.setLandUse(LandUse.CORN);
-					c.setFertilizerInput(LandUse.CORN);
-					c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsize*cellsize));
-					c.setWaterRequirement(LandUse.CORN);
-					cornCells.add(c);
-					organicSpace.setLandUse(6,c.getXlocation(),c.getYlocation());
-					capital=capital-c.getFertilizerInput()*fertilizerUnitCost
-							-c.getFuelInput()*fuelUnitCost;
-				}
+				else 
+					planningCornCells.add(c);	
+			}
+			//old corn and rice cells stay in planning
+			for(LandCell c:cornCells){
+				planningCornCells.add(c);
+			}
 			
-				totalFertilizerInput+=c.getFertilizerInput();
-				totalFuelInput+=c.getFuelInput();
-				totalWaterInput+=c.getWaterRequirement();
-			  }
+			for(LandCell c:riceCells){
+				planningRiceCells.add(c);
+			}
+			
 
 		}
 		
 		if(max==2){
 			//continue grow soy, but may change proportion
-			double soySize=this.soyCells.size()*0.8;
+			listToChange.clear();
+			listNotChange.clear();
+			double random = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+			for (int j=0; j<this.soyCells.size()*random;j++) 
+			 {	
+				listToChange.add(j);						
+			 
+			 }	
+			for (int j=(int)Math.round(soyCells.size()*(1-random));j<soyCells.size();j++)
+			{
+				listNotChange.add(j);
+			}
 			
-			for(int i=0; i<this.getTenureCells().size();i++)
-			  {
-				LandCell c= this.getTenureCells().get(i);
-				c.setLastLandUse(c.getLandUse());
-				
-				if(c.getLandUse()==LandUse.RICE){
-					c.setLandUse(LandUse.RICE);
-					c.setFertilizerInput(LandUse.RICE);
-					c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsize*cellsize));
-					c.setWaterRequirement(LandUse.RICE);
-					riceCells.add(c);
-					organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
-			        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
-	                                  - c.getFuelInput()*fuelUnitCost;
+			for(Integer i:listToChange){
+				if(2.0*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
+				{
+					planningRiceCells.add(soyCells.get(i));
+				    capital-=costConvertToRicePaddy;
 				}
-				
-				
-				if(c.getLandUse()==LandUse.SOY){
-					if(soySize>0)
-					{
-					c.setLandUse(LandUse.SOY);
-					c.setFertilizerInput(LandUse.SOY);
-					c.setFuelInput((soyPerHaFuelInput/10000.0)*(cellsize*cellsize));
-					c.setWaterRequirement(LandUse.SOY);
-					soyCells.add(c);
-					organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
-			        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
-	                                  - c.getFuelInput()*fuelUnitCost;
-			        soySize-=1;
-			        } else {
-			        	c.setLandUse(LandUse.CORN);
-						c.setFertilizerInput(LandUse.CORN);
-						c.setFuelInput(cornPerHaFuelInput/10000.0*(cellsize*cellsize));
-						c.setWaterRequirement(LandUse.CORN);
-						cornCells.add(c);
-						organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
-				        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
-		                                  - c.getFuelInput()*fuelUnitCost;
-			        }	
-						
-				}
-				
-				if(c.getLandUse()==LandUse.CORN){
-					c.setLandUse(LandUse.CORN);
-					c.setFertilizerInput(LandUse.CORN);
-					c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsize*cellsize));
-					c.setWaterRequirement(LandUse.CORN);
-					cornCells.add(c);
-					organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
-			        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
-	                                  - c.getFuelInput()*fuelUnitCost;
-				}
-				
-				totalFertilizerInput+=c.getFertilizerInput();
-				totalFuelInput+=c.getFuelInput();
-				totalWaterInput+=c.getWaterRequirement();
-			  }
-
+				else
+					planningCornCells.add(soyCells.get(i));		
+			}
+			
+			for(Integer i:listNotChange){
+				planningSoyCells.add(soyCells.get(i));
+			}
+			
+			for(LandCell c:cornCells){
+				planningCornCells.add(c);
+			}
+			
+			for(LandCell c:riceCells){
+				planningRiceCells.add(c);
+			}
+			
 		}
 		
 		if(max==3){
 			//new grower
+			listToChange.clear();
+			listNotChange.clear();
 			
-			for(int i=0; i<this.getTenureCells().size();i++)
-			  {
-				LandCell c= this.getTenureCells().get(i);
-				c.setLastLandUse(c.getLandUse());
-				
-				c.setLandUse(LandUse.SOY);
-				c.setFertilizerInput(LandUse.SOY);
-				c.setFuelInput((soyPerHaFuelInput/10000.0)*(cellsize*cellsize));
-				c.setWaterRequirement(LandUse.SOY);
-				soyCells.add(c);
-				organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
-		        capital = capital - c.getFertilizerInput()*fertilizerUnitCost
-                                  - c.getFuelInput()*fuelUnitCost;
-		        totalFertilizerInput+=c.getFertilizerInput();
-				totalFuelInput+=c.getFuelInput();
-				totalWaterInput+=c.getWaterRequirement();
-			  }
+			double random = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+			for (int j=0; j<this.cornCells.size()*random;j++) 
+			 {	
+				listToChange.add(j);						
+			 
+			 }				
+			for (int j=(int)Math.round(cornCells.size()*(1-random));j<cornCells.size();j++)
+			{
+				listNotChange.add(j);
+			}
+			
+			for(Integer i:listToChange){
+				planningSoyCells.add(cornCells.get(i));
+			}
+			
+			for(Integer i:listNotChange){
+				planningCornCells.add(cornCells.get(i));
+			}
+		    for(LandCell c:soyCells){
+		    	planningSoyCells.add(c);
+		    }
+			
+			for(LandCell c:riceCells){
+				planningRiceCells.add(c);
+			}
+			
 		
 		}
 		
+		//update land use and environment-nexus:
+		//fertilizer, fuel, and water use
+		for(int j=0;j<planningSoyCells.size();j++){
+			LandCell c = planningSoyCells.get(j);
+			c.setLastLandUse(c.getLandUse());
+			c.setLandUse(LandUse.SOY);
+			organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
+			c.setFertilizerInput(LandUse.SOY);
+			c.setFuelInput((soyPerHaFuelInput/10000.0)*(cellsize*cellsize));
+			c.setWaterRequirement(LandUse.SOY);
+			
+			capital-= c.getFertilizerInput()*fertilizerUnitCost +
+					  c.getFuelInput()*fuelUnitCost;
+			 totalFertilizerInput+= c.getFertilizerInput();
+			  totalFuelInput+= c.getFuelInput();
+			  totalWaterInput+= c.getWaterRequirement();
+		}
+		
+		for(int j=0;j<planningCornCells.size();j++){
+	//		System.out.println("change to corn");
+			LandCell c = planningCornCells.get(j);
+			c.setLastLandUse(c.getLandUse());
+			c.setLandUse(LandUse.CORN);
+			organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
+			c.setFertilizerInput(LandUse.CORN);
+			c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsize*cellsize));
+			c.setWaterRequirement(LandUse.CORN);
+			capital-= c.getFertilizerInput()*fertilizerUnitCost +
+				      c.getFuelInput()*fuelUnitCost;
+			 totalFertilizerInput+= c.getFertilizerInput();
+			  totalFuelInput+= c.getFuelInput();
+			  totalWaterInput+= c.getWaterRequirement();
+			
+		}
+		
+		for(int j=0;j<planningRiceCells.size();j++){
+			LandCell c = planningRiceCells.get(j);
+			c.setLastLandUse(c.getLandUse());
+			c.setLandUse(LandUse.RICE);
+			organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
+			
+			c.setFertilizerInput(LandUse.RICE);
+			c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsize*cellsize));
+			c.setWaterRequirement(LandUse.RICE);
+			capital-= c.getFertilizerInput()*fertilizerUnitCost +
+					  c.getFuelInput()*fuelUnitCost;
+			 totalFertilizerInput+= c.getFertilizerInput();
+			  totalFuelInput+= c.getFuelInput();
+			  totalWaterInput+= c.getWaterRequirement();
+			
+		}
+		
+		
+	 
+	  
+	  
+	  
 //	System.out.println("total fertilizer use = "+totalFertilizerInput);	
 //	System.out.println("total fuel use = "+totalFuelInput);	
-	System.out.println(tick+" soy size at decision: "+soyCells.size());
-	System.out.println("corn size at decision: "+cornCells.size());
-	System.out.println("rice cells: "+riceCells.size());
+	System.out.println(tick+" "+"id"+this.getID()+" soy size at decision: "+planningSoyCells.size());
+	System.out.println("corn size at decision: "+planningCornCells.size());
+	System.out.println("rice cells: "+planningRiceCells.size());
 	System.out.println("\\");
 	setTotalFertilizerInput(totalFertilizerInput);
 	setTotalFuelInput(totalFuelInput);

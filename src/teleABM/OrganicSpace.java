@@ -159,6 +159,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		try {
 			if(TeleABMBuilder.receivingSystem)
 				stream = new BufferedInputStream(new FileInputStream("misc/baoshan_06_crops.asc"));
+		//	stream = new BufferedInputStream(new FileInputStream("misc/baoshan.asc"));
 		//	stream = new BufferedInputStream(new FileInputStream("misc/heilong_2005.asc"));
 			else	if(TeleABMBuilder.sendingSystem)
 			{	stream = new BufferedInputStream(new FileInputStream("misc/2005.txt"));
