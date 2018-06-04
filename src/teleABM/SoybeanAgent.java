@@ -53,7 +53,7 @@ import teleABM.SimpleAgent;
 public class SoybeanAgent extends SimpleAgent{
 	
     private Integer id;
-    private static final AtomicInteger idGenerator = new AtomicInteger (0);
+    private static final AtomicInteger idGenerator = new AtomicInteger (1);
     protected Point location;
     protected Context<?> context;
     Parameters p = RunEnvironment.getInstance().getParameters();
@@ -217,8 +217,8 @@ public class SoybeanAgent extends SimpleAgent{
 					marketPrices.setPrice(LandUse.SOY, staticPrice);
 			//		System.out.println ("soyPrice =" + staticPrice);
 				} else {
-					priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
-				//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
+				//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
+					priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
 				}
 			} catch (FileNotFoundException e1) {
 				e1.printStackTrace();
@@ -351,13 +351,14 @@ public class SoybeanAgent extends SimpleAgent{
 	    
 	    
 	
-	@ScheduledMethod(start = 1, interval = 1)
+	@ScheduledMethod(start = 0, interval = 1)
 	  public void step() {
 	// this is to calculate last year's profit and make this year's decision
 		
 	//   OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
 	 //   Grid grid = (Grid) organicSpace.getProjection("Grid");
-		soyCells.clear();
+		
+		   soyCells.clear();
 		   cornCells.clear();
 		   riceCells.clear();
 		   otherCells.clear();
@@ -437,13 +438,14 @@ public class SoybeanAgent extends SimpleAgent{
 	 
 	//   System.out.println("this year profit="+profit);
 	//   updateLandUse();
-	   System.out.println(tick+" "+this.getID()+" rice Production "+riceProduction);
-	   System.out.println(" corn Production "+cornProduction);
-	   System.out.println(" soy Production "+soyProduction);
+	//   System.out.println(tick+" "+this.getID()+ this.soyCells.size()+this.cornCells.size()+this.riceCells.size());
+//	   System.out.println(tick+" "+this.getID()+ this.getSoyCellSize()+this.getCornCellSize()+this.getRiceCellSize());
+	//   System.out.println(" corn Production "+cornProduction);
+	//   System.out.println(" soy Production "+soyProduction);
 	//   System.out.println(tick+" "+this.getID()+" other Production "+otherProduction);
-	  System.out.println("soy Size last year = "+this.soyCells.size());
-	  System.out.println("corn size last year="+this.cornCells.size());
-	  System.out.println("rice size last year="+this.riceCells.size());
+	//  System.out.println("soy Size last year = "+this.soyCells.size());
+	//  System.out.println("corn size last year="+this.cornCells.size());
+	//  System.out.println("rice size last year="+this.riceCells.size());
 	
 	  
 	  updateProfit();
@@ -677,11 +679,11 @@ private void updateProfit(){
 	
 	capital+=profit;
 	
-	System.out.println("capital: = "+profit);
-	System.out.println(tick +" "+this.getID()+"soy profit "+lastYearSoyPerHaProfit);
-	System.out.println(lastYearCornPerHaProfit);
-	System.out.println(lastYearRicePerHaProfit);
-	  System.out.println(" ");
+//	System.out.println("capital: = "+profit);
+//	System.out.println(tick +" "+this.getID()+"soy profit "+lastYearSoyPerHaProfit);
+//	System.out.println(lastYearCornPerHaProfit);
+//	System.out.println(lastYearRicePerHaProfit);
+//	  System.out.println(" ");
 	}
 	
 	
@@ -985,15 +987,19 @@ private void updateProfit(){
 		    	if (TeleABMBuilder.receivingSystem){
 		    	if (organicSpace.getLandUseAt(x, y)==2){
 		    		this.getTenureCells().get(i).setLandUse(LandUse.SOY);
-		    		this.getTenureCells().get(i).setLastLandUse(LandUse.SOY);
+		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.SOY);
 	
 		    	} else if (organicSpace.getLandUseAt(x, y)==3) {
 		    		this.getTenureCells().get(i).setLandUse(LandUse.RICE);
-		    		this.getTenureCells().get(i).setLastLandUse(LandUse.RICE);
+		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.RICE);
 		    	} else if (organicSpace.getLandUseAt(x, y)==6) {
 		    		this.getTenureCells().get(i).setLandUse(LandUse.CORN);
-		    		this.getTenureCells().get(i).setLastLandUse(LandUse.CORN);
-		    	} else if (organicSpace.getLandUseAt(x, y)==4) {
+		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.CORN);
+		    	} 
+		    
+		    	
+		    	
+		    	/*else if (organicSpace.getLandUseAt(x, y)==4) {
 		    		this.getTenureCells().get(i).setLandUse(LandUse.OTHERCROPS);
 		    		this.getTenureCells().get(i).setLastLandUse(LandUse.OTHERCROPS);
 		    	} else if (organicSpace.getLandUseAt(x, y)==5){
@@ -1002,7 +1008,8 @@ private void updateProfit(){
 		    		this.getTenureCells().get(i).setLandUse(LandUse.BUILDING); 
 		    	} else {
 		    		this.getTenureCells().get(i).setLandUse(LandUse.WATER); 
-		    	}}
+		    	}*/
+		    	}
 		    	
 		    	if (TeleABMBuilder.sendingSystem){
 		    		if (organicSpace.getLandUseAt(x, y)==1){
@@ -1013,10 +1020,10 @@ private void updateProfit(){
 			    	} else if (organicSpace.getLandUseAt(x, y)==3) {
 			    		this.getTenureCells().get(i).setLandUse(LandUse.COTTON);
 			    	} else {
-			    		this.getTenureCells().get(i).setLandUse(LandUse.OTHERCROPS);//cutton
+			    		this.getTenureCells().get(i).setLandUse(LandUse.OTHERCROPS);//Cotton
 			    	}
 		    	}
-	//	    	System.out.println("this agent "+i+" has "+this.getTenureCells().get(i).getLandUse());
+		   // 	System.out.println("this agent "+i+" has "+this.getTenureCells().get(i).getLandUse());
 		    		
 		    }
 	//	   if(count>0&&this.getID()>30) System.out.println(this.getID()+" "+count);
@@ -1051,48 +1058,133 @@ private void updateProfit(){
 	//	   System.out.println(corner.x+" "+(corner.x+xboundary));
 	//	   System.out.println(corner.y+" "+(corner.y+yboundary));
 		 //first, go through all agricultural cells in this sub-section   
-		 for (int i=corner.x; i<(corner.x+xboundary);i++)  {
-			 for (int j=corner.y;j<(corner.y+yboundary);j++){
+		 for (int i=corner.x; i<=(corner.x+xboundary);i++)  {
+			 for (int j=corner.y;j<=(corner.y+yboundary);j++){
 				 Point p=new Point(i,j);
+				 LandCell c = new LandCell(organicSpace,grid,p.x,p.y,
+	 					 organicSpace.getElevationAt(p.x, p.y),
+	 					 organicSpace.getOrganicAt(p.x, p.y));
+				 
+				 if(TeleABMBuilder.receivingSystem){
+					if(c.isTaken()==true || organicSpace.getLandHolder(i, j)>0)
+					//this is to check if land cell is taken.
+						{
+						
+						}
+					else
+					 { 
+					 if(organicSpace.getLandUseAt(i, j) ==2) 
+					 {
+						 c.setLandUse(LandUse.SOY);
+						 {
+							 TeleABMBuilder.total++;
+							 c.setLandHolder( true,this);
+							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+							 this.tenureCells.add(c);
+						 }
+					 }
+					 if(organicSpace.getLandUseAt(i, j)==3) {
+						 c.setLandUse(LandUse.RICE);
+					
+							 TeleABMBuilder.total++;
+							 c.setLandHolder(true, this);
+							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+							 this.tenureCells.add(c);
+						 
+					 }
+					 if(organicSpace.getLandUseAt(i, j)==6){
+						 c.setLandUse(LandUse.CORN);
+						
+							 TeleABMBuilder.total++;
+							 c.setLandHolder(true,this);
+							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+							 this.tenureCells.add(c);
+						
+					 }
+					 
+				 }
+				 }
+				 
+				  
+		//		 LandCell c = 
 			//	 System.out.println("point"+organicSpace.getLandUseAt(p.x, p.y));
-				 if (TeleABMBuilder.receivingSystem){
-				 if (organicSpace.getLandUseAt(i, j)>=2&&organicSpace.getLandUseAt(i, j)<=4)
+			/*	 if (TeleABMBuilder.receivingSystem){
+					 if(!c.isTaken()){
+						 				 
+				 if (organicSpace.getLandUseAt(i, j)==2 )
 					{
 						
 						agriculturalCells.add(p);
+						TeleABMBuilder.total++;
+			//			soyCells.add(p);
 				//		System.out.println("soy");
+					} else if(organicSpace.getLandUseAt(i, j)==3 ){
+						agriculturalCells.add(p);
+						TeleABMBuilder.total++;
+			//			riceCells.add(p);
 					}
-				 else if (organicSpace.getLandUseAt(i, j)==6){
+				 else if (organicSpace.getLandUseAt(i, j)==6 ){
 						
 						agriculturalCells.add(p);
+						TeleABMBuilder.total++;
+				//		cornCells.add(p);
 				//		System.out.println("corn");
 					} else {
 						//System.out.println("nothing");
 					}
 				 }
+				 }*/
 				 
 				 if (TeleABMBuilder.sendingSystem){
-					 if (organicSpace.getLandUseAt(i, j)>=1&&organicSpace.getLandUseAt(i, j)<=3)
+					 if(c.isTaken()==true || organicSpace.getLandHolder(i, j)>0){
+						 
+					 }
+					 else {
+					 if (organicSpace.getLandUseAt(i, j)>=1&&organicSpace.getLandUseAt(i, j)<=2)
 						{
 							
 							agriculturalCells.add(p);
+							TeleABMBuilder.total++;
+							
+							c.setLandUse(LandUse.SOY);
+							 c.setLandHolder(true,this);
+							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+							 this.tenureCells.add(c);
+							 
 					//		System.out.println("soy");
 						}
+					 else if(organicSpace.getLandUseAt(i, j)==3) {
+						 agriculturalCells.add(p);
+							TeleABMBuilder.total++;
+							
+							c.setLandUse(LandUse.COTTON);
+							 c.setLandHolder(true,this);
+							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+							 this.tenureCells.add(c);
+							 
+					 }
 					 else if (organicSpace.getLandUseAt(i, j)==9){
 							
 							agriculturalCells.add(p);
+							TeleABMBuilder.total++;
+							c.setLandUse(LandUse.CORN);
+							 c.setLandHolder(true,this);
+							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+							 this.tenureCells.add(c);
 					//		System.out.println("corn");
 						} else {
 							//System.out.println("nothing");
 						}
 				 }
 				}
+			 }
 		//	 System.out.println("yboundary finished once "+i);
 		 }
+		 System.out.println("total= "+TeleABMBuilder.total);
 		  
-	
+	  
 		    
-		     for (int i=0; i<agriculturalCells.size();i++){
+		    /* for (int i=0; i<agriculturalCells.size();i++){
 		    	 Point p = agriculturalCells.get(i);
 		    	 LandCell c = new LandCell(organicSpace,grid,p.x,p.y,
 	 					 organicSpace.getElevationAt(p.x, p.y),
@@ -1105,7 +1197,7 @@ private void updateProfit(){
 				  this.tenureCells.add(c);
 				  organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
 				  
-		     }
+		     }*/
 		     
 		     
 		     
@@ -1235,6 +1327,11 @@ private void updateProfit(){
 			public int getOtherCellSize(){
 				return otherCells.size();
 			}
+			public int getTenureCellSize(){
+				return tenureCells.size();
+			}
+			
+			
 }
 	
 	

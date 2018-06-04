@@ -459,7 +459,7 @@ private GridValueLayer createField(OrganicSpace context, String fieldName, boole
 			for (int j = 0; j<ydim;j++){
 				
 				while (TeleABMBuilder.receivingSystem) {
-				if (this.getLandUseAt(i, j)>=2&&this.getLandUseAt(i, j)<=4)
+				if (this.getLandUseAt(i, j)>=2&&this.getLandUseAt(i, j)<=3)
 				{
 					Point p=new Point(i,j);
 					allAgriculturalPoints.add(p);

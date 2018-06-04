@@ -44,7 +44,7 @@ public class LandCell {
 	 private double elevation;
 	 private double soc;
 	 private double lastyearSoc;
-	 private boolean taken;
+	 private boolean taken = false;
 	 
 //	 private double soyHealth;
 //	 private double cornHealth;
@@ -93,7 +93,7 @@ public class LandCell {
 
 	
 	public boolean isTaken() {
-		return taken;
+		return this.taken;
 	}
 	
 	public LandCell(OrganicSpace organicSpace, int x, int y){

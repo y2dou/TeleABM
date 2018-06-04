@@ -443,8 +443,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		                	max=0;
 		                }
 //to calculate the max probability	   
+		 if(max>0){
 		   System.out.println("most likely "+max);
-		   System.out.println("grow soy year: "+this.getGrownSoyYears());
+		   System.out.println("grow soy year: "+this.getGrownSoyYears());}
 
 			List<Integer> listToChange = new ArrayList<Integer>();
 			List<Integer> listNotChange = new ArrayList<Integer>();
@@ -455,13 +456,13 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			
 			//if it is rice, then keep it rice, 
 			//if it was corn, check if rice is way more profitable. convert to rice
-			if(2.0*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
+			if(2*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
 			{
-				//if rice is super profitable; change 20% corn to rice;
-				for (int i=0; i <cornCells.size()*0.2;i++){
+				//if rice is super profitable; change 10% corn to rice;
+				for (int i=0; i <cornCells.size()*0.1;i++){
 					listToChange.add(i);
 				}
-				for (int i= (int) Math.round(cornCells.size()*0.2);i<cornCells.size();i++){
+				for (int i= (int) Math.round(cornCells.size()*0.1);i<cornCells.size();i++){
 					listNotChange.add(i);
 				}
 			}
@@ -494,7 +495,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			//go through soy cell list, change to either corn or rice
 			for (int j =0; j<this.soyCells.size();j++) 
 			 {						
-					if(RandomHelper.nextDouble()>0.5){
+					if(RandomHelper.nextDouble()>0.9){
 				    	listToChange.add(j);						
 					} else {
 					    listNotChange.add(j);	
@@ -504,7 +505,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			
 			for(Integer i:listToChange)
 			{
-				if(2.0*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
+				if(2*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
 				{
 					planningRiceCells.add(soyCells.get(i));
 				    capital-=costConvertToRicePaddy;
@@ -537,7 +538,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			for(LandCell c:soyCells)
 			{
 				//convert all soy cells to corn and rice
-				if(lastYearCornPerHaProfit*2.0<lastYearRicePerHaProfit){
+				if(lastYearCornPerHaProfit*1.8<lastYearRicePerHaProfit){
 					planningRiceCells.add(c);
 					capital-=costConvertToRicePaddy;
 				}
@@ -688,10 +689,10 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	  
 //	System.out.println("total fertilizer use = "+totalFertilizerInput);	
 //	System.out.println("total fuel use = "+totalFuelInput);	
-	System.out.println(tick+" "+"id"+this.getID()+" soy size at decision: "+planningSoyCells.size());
-	System.out.println("corn size at decision: "+planningCornCells.size());
-	System.out.println("rice cells: "+planningRiceCells.size());
-	System.out.println("\\");
+//	System.out.println(tick+" "+"id"+this.getID()+" soy size at decision: "+planningSoyCells.size());
+//	System.out.println("corn size at decision: "+planningCornCells.size());
+//	System.out.println("rice cells: "+planningRiceCells.size());
+//	System.out.println("\\");
 	setTotalFertilizerInput(totalFertilizerInput);
 	setTotalFuelInput(totalFuelInput);
 	setTotalWaterInput(totalWaterInput);
@@ -699,6 +700,10 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 //	System.out.println("farmer id: "+ this.getID()+ " has size "+ this.tenureCells.size()
 //	                 +" soy size "+soyCells.size()+ " corn size " +cornCells.size()
 //	                 + " rice size "+riceCells.size());
+	}
+	
+	public void landUseDecisionBelta(){
+		
 	}
 	
 	

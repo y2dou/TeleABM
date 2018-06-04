@@ -1,5 +1,5 @@
 <repast.simphony.visualization.engine.CartesianDisplayDescriptor>
-  <name>Land Use</name>
+  <name>elevation</name>
   <type>2D</type>
   <styles>
     <entry>
@@ -10,7 +10,7 @@
   <editedStyles>
     <entry>
       <string>teleABM.SoybeanAgent</string>
-      <string>teleABM.SoybeanAgent.style_4.xml</string>
+      <string>teleABM.SoybeanAgent.style_1.xml</string>
     </entry>
   </editedStyles>
   <netStyles/>
@@ -23,7 +23,7 @@
     <pType>LAST</pType>
     <duration>-1.0</duration>
     <frequency>REPEAT</frequency>
-    <hashCode>-1642633394</hashCode>
+    <hashCode>-2073282400</hashCode>
   </schedParams>
   <layoutClassName>foo.bar.baz</layoutClassName>
   <layoutProjection>Grid</layoutProjection>
@@ -55,7 +55,7 @@
             <map>
               <entry>
                 <string>COLOR</string>
-                <int>-16777216</int>
+                <int>-3355444</int>
               </entry>
               <entry>
                 <string>UNIT_SIZE</string>
@@ -78,8 +78,9 @@
     <blue>255</blue>
     <alpha>255</alpha>
   </backgroundColor>
-  <valueLayerStyleName>teleABM.LandUseStyle</valueLayerStyleName>
+  <valueLayerStyleName>repast.simphony.visualization.editedStyle.EditedValueLayerStyle2D</valueLayerStyleName>
+  <valueLayerEditedStyleName>Elevation.style_3.xml</valueLayerEditedStyleName>
   <valueLayers>
-    <string>Land Use Field</string>
+    <string>Elevation</string>
   </valueLayers>
 </repast.simphony.visualization.engine.CartesianDisplayDescriptor>
