@@ -57,8 +57,8 @@ public class SoybeanAgent extends SimpleAgent{
     protected Point location;
     protected Context<?> context;
     Parameters p = RunEnvironment.getInstance().getParameters();
-	int numAgents = (Integer)p.getValue("initialNumAgents");
-    
+	int numReceivingAgents = (Integer)p.getValue("initialReceivingNumAgents");
+    int numSendingAgents = (Integer)p.getValue("initialSendingNumAgents");
 	   protected List<TraderAgent> traderAgents = new LinkedList<TraderAgent>();
 	   public TraderAgent soySoldToTraderAgent ;
 	   public TraderAgent cornSoldToTraderAgent;
@@ -107,8 +107,10 @@ public class SoybeanAgent extends SimpleAgent{
     	
 		Map<Integer, Point> agentLocations = new HashMap<Integer, Point>();
 		 Parameters para = RunEnvironment.getInstance().getParameters();
-		  int xdim = (Integer)para.getValue("worldWidth");
-		  int ydim = (Integer)para.getValue("worldHeight");
+		  int receivingXdim = (Integer)para.getValue("receivingWorldWidth");
+		  int receivingYdim = (Integer)para.getValue("receivingWorldHeight");
+		  int sendingXdim = (Integer)para.getValue("sendingWorldWidth");
+		  int sendingYdim = (Integer)para.getValue("sendingWorldHeight");
 		  int cellsize = (Integer) para.getValue("cellSize");
 		protected  int vision = (Integer) para.getValue("vision");
 		
@@ -1041,15 +1043,38 @@ private void updateProfit(){
 			    
 		
 		   double perAgentArea;
+		  double xdim;
+		  double ydim;
+		  int numAgents ;
+		   if(TeleABMBuilder.receivingSystem) {
+			   xdim = receivingXdim;
+			   ydim = receivingYdim;
+			   numAgents = numReceivingAgents;
+		   } else {
+			   xdim = sendingXdim;
+			   ydim = sendingYdim;
+			   numAgents = numSendingAgents;
+		   }
 		   
-		perAgentArea = (double) xdim*ydim/numAgents;
+		  perAgentArea = (double) xdim*ydim/numAgents;
 			    
 		   xboundary = Math.sqrt(perAgentArea*((double)xdim/(double)ydim));
 		   yboundary = xboundary*ydim/xdim;
 		   
 		 
-		Grid<Object> grid = (Grid) organicSpace.getProjection("Grid");
+		Grid<Object> grid;
+	
+
+		if(organicSpace.getId()=="organicSpaceReceiving") {
+			grid = (Grid) organicSpace.getProjection("Grid");
+	//		System.out.println("organic space receiving "+grid.getName());
+			
+		} else {
+			grid = (Grid) organicSpace.getProjection("gridSending");
+	//		System.out.println("organic space sending"+grid.getName());
+		}
 		
+	//	System.out.println(grid.getName());
 		    GridPoint point = grid.getLocation(this);
 		    grid.moveTo(this, corner.x, corner.y);
 		    
@@ -1064,7 +1089,7 @@ private void updateProfit(){
 				 LandCell c = new LandCell(organicSpace,grid,p.x,p.y,
 	 					 organicSpace.getElevationAt(p.x, p.y),
 	 					 organicSpace.getOrganicAt(p.x, p.y));
-				 
+			//	 System.out.println("organic space "+organicSpace.getId()+" land cell is "+c.getYlocation());
 				 if(TeleABMBuilder.receivingSystem){
 					if(c.isTaken()==true || organicSpace.getLandHolder(i, j)>0)
 					//this is to check if land cell is taken.
@@ -1074,7 +1099,9 @@ private void updateProfit(){
 					else
 					 { 
 					 if(organicSpace.getLandUseAt(i, j) ==2) 
-					 {
+					 {  
+					//	 System.out.println("land use field works"); 
+						 //this worked
 						 c.setLandUse(LandUse.SOY);
 						 {
 							 TeleABMBuilder.total++;
@@ -1180,7 +1207,7 @@ private void updateProfit(){
 			 }
 		//	 System.out.println("yboundary finished once "+i);
 		 }
-		 System.out.println("total= "+TeleABMBuilder.total);
+		// System.out.println("total= "+TeleABMBuilder.total);
 		  
 	  
 		    

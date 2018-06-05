@@ -22,8 +22,15 @@
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
-	<parameter name="initialNumAgents" displayName="Initial Num Agents" type="int" 
+	<parameter name="initialReceivingNumAgents" displayName="Initial Receiving Agents" type="int" 
 						defaultValue="1000" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+		
+		<parameter name="initialSendingNumAgents" displayName="Initial Sending Agents" type="int" 
+						defaultValue="1200" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -35,13 +42,13 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-		<parameter name="worldHeight" displayName="World Height" type="int" 
+		<parameter name="receivingWorldHeight" displayName="Receiving World Height" type="int" 
 						defaultValue="2152" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-			<parameter name="worldWidth" displayName="World Width" type="int" 
+			<parameter name="receivingWorldWidth" displayName="Receiving World Width" type="int" 
 						defaultValue="1244" 
 						
 						isReadOnly="false" 
@@ -49,7 +56,20 @@
 									
 		/>
 		
-		<parameter name="cellSize" displayName="Cell Size" type="int" 
+	
+		<parameter name="sendingWorldHeight" displayName="Sending World Height" type="int" 
+						defaultValue="3120" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+			<parameter name="sendingWorldWidth" displayName="Sendinging World Width" type="int" 
+						defaultValue="2659" 						
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+			<parameter name="cellSize" displayName="Cell Size" type="int" 
 						defaultValue="30" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"

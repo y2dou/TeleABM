@@ -121,13 +121,24 @@ public class TraderAgent {
 		
 		setCommodityPrices();
 	//	System.out.println("trader agent initiliaze price"+this.getCommodityPrice(LandUse.SOY));
+	//	if(TeleABMBuilder.receivingSystem)
 		findSoybeanAgent(organicSpace);
+	//	if(TeleABMBuilder.sendingSystem)
+		//	findSoybeanAgent(organicSpace);
 	}
 	
 	private void findSoybeanAgent(OrganicSpace organicSpace) {
 		// TODO Auto-generated method stub		
 	    int xLook, yLook;
-        Grid<Object> grid = (Grid) organicSpace.getProjection("Grid");
+	   
+	    Grid<Object> grid; 
+	    if(organicSpace.getId()=="organicSpaceReceiving") {
+	    	grid = (Grid) organicSpace.getProjection("Grid");
+	    } else {
+	    	grid = (Grid) organicSpace.getProjection("gridSending");
+	    }
+	  
+		
 		
 	    GridPoint point = grid.getLocation(this);
        

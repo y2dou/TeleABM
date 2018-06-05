@@ -1,15 +1,32 @@
 <context id="TeleABM" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context">
-  	<context id="OrganicSpace">
+  	<context id="organicSpaceReceiving">
 		<projection id="Grid" type="grid" />
-		<projection id="CurrentOrganic" type="value layer" />
-		<projection id="MaxOrganic" type="value layer" />
-			<projection id="Elevation" type="value layer" />
-		<projection id="Land Holder Field" type="value layer" />
-			<projection id="Land Use Field" type="value layer" />
+		<projection id="CurrentOrganicReceiving" type="value layer" />
+		<projection id="MaxOrganicReceiving" type="value layer" />
+			<projection id="ElevationReceiving" type="value layer" />
+		<projection id="Land Holder Field Receiving" type="value layer" />
+			<projection id="Land Use Field Receiving" type="value layer" />
 			
-			<projection id="Trader Agent Field" type="value layer" />
-			<projection id="temp zone" type="value layer"/>
-			<projection id ="precipitation zone" type ="value layer" />
+			<projection id="Trader Agent Field Receiving" type="value layer" />
+			<projection id="temp zone Receiving" type="value layer"/>
+			<projection id ="precipitation zone Receiving" type ="value layer" />
+			
+    </context>
+	
+	<context id="organicSpaceSending">
+	
+	     	<projection id="gridSending" type = "grid" />
+	     <projection id="CurrentOrganicSending" type="value layer" />
+		<projection id="MaxOrganicSending" type="value layer" />
+		<projection id="ElevationSending" type="value layer" />
+		<projection id="Land Holder Field Sending" type="value layer" />
+			<projection id="Land Use Field Sending" type="value layer" />
+			
+			<projection id="Trader Agent Field Sending" type="value layer" />
+			<projection id="temp zone Sending" type="value layer"/>
+			<projection id ="precipitation zone Sending" type ="value layer" />
+			
+	     	
+     </context>
 		
-</context>
 </context>

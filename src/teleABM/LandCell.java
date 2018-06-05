@@ -31,6 +31,7 @@ import teleABM.OrganicSpace;
 
 
 public class LandCell {
+	
 	Parameters p = RunEnvironment.getInstance().getParameters();
 	double organicGrowRate = (double) p.getValue("organicGrowRate");
 	int cellsize = (Integer) p.getValue("cellSize");
