@@ -180,11 +180,11 @@ import teleABM.SoybeanAgent;
 				}		
 				
 				ArrayList<Point> receivingCorners = setXYcornerOfReceivingSystem();
-				System.out.println(receivingCorners.size());				
+		//		System.out.println(receivingCorners.size());				
 														
 				
 				if (modeAddAgents ==0) //add agents covering whole landscape
-														
+				//this is default.										
 					for(int i =0; i<numReceivingAgents && i<receivingCorners.size(); i++){
 				 //      System.out.println("i = "+i);
 				//		receivingSoybeanAgents.get(i).initialize();		
@@ -197,10 +197,10 @@ import teleABM.SoybeanAgent;
 					//	                        receivingCorners.get(i).x+" "+receivingCorners.get(i).y);
 						
 						receivingSoybeanAgents.get(i).addLandUseFromField(organicSpaceReceiving);
-				//		System.out.println(receivingSoybeanAgents.get(i).getID()+
-				//				       " receiving agents tenure size: "+
-				//	             receivingSoybeanAgents.get(i).getTenureCells().size());
-				//		System.out.println("i = "+i+" add land use from field");
+			//			System.out.println(receivingSoybeanAgents.get(i).getID()+
+			//					       " receiving agents tenure size: "+
+			//		             receivingSoybeanAgents.get(i).getTenureCells().size());
+				//		System.out.println("i = "+i+receivingSoybeanAgents.get(i));
 						
 					}
 					else if (modeAddAgents==1) //add agents from the land use maps
@@ -228,7 +228,7 @@ import teleABM.SoybeanAgent;
 				  {
 					listToRemove.add(i);
 				   }
-				else receivingSoybeanAgents.get(i).initialize();
+				else receivingSoybeanAgents.get(i).initialize(organicSpaceReceiving);
 				 }
 				 
 				 for(Integer i:listToRemove){
@@ -237,7 +237,7 @@ import teleABM.SoybeanAgent;
 				 }
 				 receivingSoybeanAgents.removeAll(listToRemove);
 				 System.out.println(listToRemove);
-				 System.out.println(organicSpaceReceiving.numAgents);
+		//		 System.out.println(organicSpaceReceiving.numAgents);
               /* for( int i = 0; i<receivingSoybeanAgents.size(); i++)
 				if (receivingSoybeanAgents.get(i).getTenureCells().size()==0)
 				{
@@ -277,7 +277,7 @@ import teleABM.SoybeanAgent;
 				ArrayList<Point> sendingCorners = setXYcornerOfSendingSystem();
 				if (modeAddAgents ==0) //add agents covering whole landscape
 					for(int i =0; i<numSendingAgents; i++){
-						sendingSoybeanAgents.get(i).initialize();				
+						sendingSoybeanAgents.get(i).initialize(organicSpaceSending);				
 						
 						organicSpaceSending.add(sendingSoybeanAgents.get(i));			
 						sendingSoybeanAgents.get(i).addSoybeanAgentFromLandscape(organicSpaceSending,							                                  
@@ -292,7 +292,7 @@ import teleABM.SoybeanAgent;
 				//			organicSpace.add(soybeanAgents.get(i));
 				//			soybeanAgents.get(i).addSoybeanAgentFromField(organicSpace, corners.get(i));
 				//			
-							sendingSoybeanAgents.get(i).initialize();
+							sendingSoybeanAgents.get(i).initialize(organicSpaceSending);
 							organicSpaceSending.add(sendingSoybeanAgents.get(i));
 							System.out.println("organic space sending="+organicSpaceSending.numAgents);
 							sendingSoybeanAgents.get(i).addSoybeanAgentFromField(organicSpaceSending,
@@ -303,12 +303,31 @@ import teleABM.SoybeanAgent;
 						}
 					}
 				
-				for(int i=0; i<sendingSoybeanAgents.size();i++)
+				/*for(int i=0; i<sendingSoybeanAgents.size();i++)
 				 if (sendingSoybeanAgents.get(i).getTenureCells().size()==0)
 					{  
 					 organicSpaceSending.remove(sendingSoybeanAgents.get(i));
 					  sendingSoybeanAgents.remove(i);
-					}
+					}*/
+				
+				
+				organicSpaceSending = (OrganicSpace) context.findContext("organicSpaceSending");
+				List<Integer> listToRemove = new ArrayList<Integer>();
+				 for( int i = 0; i<sendingSoybeanAgents.size(); i++) {
+				if (sendingSoybeanAgents.get(i).getTenureCells().size()==0)
+				  {
+					listToRemove.add(i);
+				   }
+				else sendingSoybeanAgents.get(i).initialize(organicSpaceSending);
+				 }
+				 
+				 for(Integer i:listToRemove){
+				//	 organicSpaceReceiving = (OrganicSpace) context.findContext("organicSpaceReceiving");
+					 organicSpaceSending.remove(sendingSoybeanAgents.get(i));
+				 }
+				 sendingSoybeanAgents.removeAll(listToRemove);
+				 
+				 
 				//	System.out.println(organicSpaceSending.numAgents);
 			}
 	
@@ -351,35 +370,35 @@ import teleABM.SoybeanAgent;
 		public void setUpRandomDistributions() {
 			
 		  if (receivingSystem) {
-			RandomHelper.registerDistribution("farmCost", RandomHelper.createUniform(100.0,500.0));
+			RandomHelper.registerDistribution("farmCostReceiving", RandomHelper.createUniform(100.0,500.0));
 			
-			RandomHelper.registerDistribution("capital", RandomHelper.createNormal(10000, 500));
-			RandomHelper.registerDistribution("labour", RandomHelper.createUniform(2,10));
-			RandomHelper.registerDistribution("elevationRange", RandomHelper.createUniform(1, 50));
-			RandomHelper.registerDistribution("hectares", RandomHelper.createUniform(30,2000));
+			RandomHelper.registerDistribution("capitalReceiving", RandomHelper.createNormal(10000, 500));
+			RandomHelper.registerDistribution("labourReceiving", RandomHelper.createUniform(2,10));
+			RandomHelper.registerDistribution("elevationRangeReceiving", RandomHelper.createUniform(1, 50));
+			RandomHelper.registerDistribution("hectaresReceiving", RandomHelper.createUniform(30,2000));
 		  //http://repast.sourceforge.net/docs/api/repastjava/repast/simphony/random/RandomHelper.html 
 			//lots of different distribution
-			RandomHelper.registerDistribution("soyYield", RandomHelper.createUniform(2000,3000));
+			RandomHelper.registerDistribution("soyYieldReceiving", RandomHelper.createUniform(2000,3000));
 			//overwrite with empirical data
-			RandomHelper.registerDistribution("cornYield", RandomHelper.createUniform(4000,5000));
-			RandomHelper.registerDistribution("riceYield", RandomHelper.createUniform(5000,6000));
-			RandomHelper.registerDistribution("otherYield", RandomHelper.createUniform(2000,3000));
+			RandomHelper.registerDistribution("cornYieldReceiving", RandomHelper.createUniform(4000,5000));
+			RandomHelper.registerDistribution("riceYieldReceiving", RandomHelper.createUniform(5000,6000));
+			RandomHelper.registerDistribution("otherYieldReceiving", RandomHelper.createUniform(2000,3000));
 			
 		  }
-		  else{
+		  if(sendingSystem){
 			  
-				RandomHelper.registerDistribution("farmCost", RandomHelper.createUniform(100d,500d));
+				RandomHelper.registerDistribution("farmCostSending", RandomHelper.createUniform(100d,500d));
 				
-				RandomHelper.registerDistribution("capital", RandomHelper.createUniform(100000, 500000));
-				RandomHelper.registerDistribution("labour", RandomHelper.createUniform(4, 54));
-				RandomHelper.registerDistribution("elevationRange", RandomHelper.createUniform(1, 10));
-				RandomHelper.registerDistribution("hectares", RandomHelper.createUniform(800,1000));
+				RandomHelper.registerDistribution("capitalSending", RandomHelper.createUniform(100000, 500000));
+				RandomHelper.registerDistribution("labourSending", RandomHelper.createUniform(4, 54));
+				RandomHelper.registerDistribution("elevationRangeSending", RandomHelper.createUniform(1, 10));
+				RandomHelper.registerDistribution("hectaresSending", RandomHelper.createUniform(800,1000));
 				
-				RandomHelper.registerDistribution("soyYield", RandomHelper.createUniform(3000,4000));
+				RandomHelper.registerDistribution("soyYieldSending", RandomHelper.createUniform(3000,4000));
 				//overwrite with empirical data
-				RandomHelper.registerDistribution("cornYield", RandomHelper.createUniform(4000,5000));
-				RandomHelper.registerDistribution("riceYield", RandomHelper.createUniform(5000,6000));
-				RandomHelper.registerDistribution("otherYield", RandomHelper.createUniform(2000,3000));
+				RandomHelper.registerDistribution("cornYieldSending", RandomHelper.createUniform(4000,5000));
+				RandomHelper.registerDistribution("riceYieldSending", RandomHelper.createUniform(5000,6000));
+				RandomHelper.registerDistribution("otherYieldSending", RandomHelper.createUniform(2000,3000));
 			  
 		  }
 	}
@@ -459,6 +478,7 @@ import teleABM.SoybeanAgent;
 		
 		int xcount = xdim/(int) xboundary;
 		int ycount = ydim/(int) yboundary;
+		System.out.println("SENDING SYSTEM");
 		System.out.println("perAgentArea "+perAgentArea);
 		System.out.println("ydim "+ydim+" xdim "+ xdim+" ydim/xdim "+(double)ydim/xdim);
 		System.out.println("xcount " + xcount);
@@ -489,15 +509,6 @@ import teleABM.SoybeanAgent;
                  return corners;
 		}
 
-		   
-		
-		
-		  
-		public SoybeanAgent getAllSoybeanAgent(){
-			if(receivingSystem)
-		    	return (SoybeanAgent) receivingSoybeanAgents;
-			else 
-				return (SoybeanAgent) sendingSoybeanAgents;
-		}
+		 
 	}
 

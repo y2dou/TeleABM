@@ -26,6 +26,18 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	
 	public SendingSoybeanAgent(int id) {
 		super(id);
+	    initializeSending();
+	}
+	
+	public void initializeSending(){
+		this.setFertilizerUnitCost(1.2);
+		//n fertilizer price is 80 yuan/bag, which is 0.8yuan/kg
+		this.setFuelUnitCost(8.0);
+		// 6.21 yuan/litre
+		this.setCornPerHaFuelInput(200.0);
+		this.setSoyPerHaFuelInput(100.0);
+		this.setRicePerHaFuelInput(500.0);
+		this.setOtherPerHaFuelInput(600.0);
 	}
 	
 	public void decidingTradingPartner(){
@@ -100,13 +112,14 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	
 	
 	
-	public void landUseDecision(){
+	public void landUseDecision(OrganicSpace organicSpace){
 		int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		//	
-		 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
+	//	 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
+//		 System.out.println("sending organic space: "+organicSpace.getTypeID());
 		LandUse highestLandUse=LandUse.SOY;
 		
-int landUseNumber=0;
+        int landUseNumber=0;
 		
 	
 		
@@ -133,7 +146,30 @@ int landUseNumber=0;
 			landUseNumber=3;
 		}
 		
-		for (int i=0; i<this.tenureCells.size();i++){
+		
+		double x=RandomHelper.nextDoubleFromTo(0.0, 1.0);
+		if(x < 0.25){
+		   landUseNumber = 1;	
+		   highestLandUse=LandUse.SOY;
+		} else if (x<0.5){
+			landUseNumber = 2;
+			  highestLandUse=LandUse.SECONDSOY;
+		} else if(x<0.75){
+			landUseNumber = 3;
+			highestLandUse=LandUse.COTTON;
+		} else {
+			landUseNumber =9;
+			highestLandUse=LandUse.CORN;
+		}
+	//	landUseNumber=2;
+		for (int i =0; i< this.tenureCells.size(); i++){
+			LandCell c = this.tenureCells.get(i);
+			c.setLastLandUse(c.getLandUse());
+			c.setLandUse(highestLandUse);
+			organicSpace.setLandUse(landUseNumber, c.getXlocation(), c.getYlocation());
+		}
+		
+		/*for (int i=0; i<this.tenureCells.size();i++){
 			LandCell c = this.tenureCells.get(i);
 			double count=capital;
 			 if (count>0) {
@@ -147,7 +183,7 @@ int landUseNumber=0;
 				 c.setLandUse(LandUse.FOREST);
 				 organicSpace.setLandUse(5, c.getXlocation(), c.getYlocation());
 			 }
-		}
+		}*/
 	
 		
 	}

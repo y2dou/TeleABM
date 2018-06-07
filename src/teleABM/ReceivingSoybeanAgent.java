@@ -86,8 +86,8 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	
 	public void initializeReceiving(){
 		//special initialize for receiving systems;
-//dependent ratio, gender ratio are not normal distribution, 
-//so they have to be put in teleABMBuilder
+        //dependent ratio, gender ratio are not normal distribution, 
+        //so they have to be put in teleABMBuilder
 		
 		
 	    Random r = new Random();
@@ -150,69 +150,26 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	//	System.out.println(genderRadio);
 	//	System.out.println(dependentRadio);
 	//	System.out.println(age);
+		
+		
+		///environment cost
+		this.setFertilizerUnitCost(0.8);
+		//n fertilizer price is 80 yuan/bag, which is 0.8yuan/kg
+		this.setFuelUnitCost(6.21);
+		// 6.21 yuan/litre
+		
+		
+		this.setCornPerHaFuelInput(102.6);
+		this.setSoyPerHaFuelInput(80.43);
+		this.setRicePerHaFuelInput(163.6);
+		this.setOtherPerHaFuelInput(30.0);
+		
+		
 	}
 	
-	/*public double[] readCoef(){
-		
-		InputStream[] coefLists = new InputStream[4];
-		
-		
-		double[] coef_1= new double[20];
-		
-		File file = new File("auxdata/prices/soyPrice.txt");
-		try(FileInputStream fis = new FileInputStream(file)){
-			System.out.println("Total file size to read:"+fis.available());
-			if(fis.available()>0) {
-				for(int i=0;i<20;i++){
-					coef_1[i]=fis.e
-				}
-			}
-		}catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
-		
-				
-				
-				if (!priceLists.isEmpty()) {
-		    		Map<LandUse, InputStream> priceStreams = priceLists;
-		    	//	System.out.println(priceLists.size());
-		    	for (Map.Entry<LandUse, InputStream> e : priceStreams.entrySet()) {
-					ArrayList<Double> cPrices = new ArrayList<Double>(60);
-					
-					
-					try {
-						Reader r = new BufferedReader(new InputStreamReader(e.getValue()));
-						StreamTokenizer st = new StreamTokenizer(r);
-						
-						// initialize parser
-						st.parseNumbers();
-						st.eolIsSignificant(false);
-						st.whitespaceChars(',', ',');
-						
-						while (true) {
-							st.nextToken();
-							if (st.ttype == StreamTokenizer.TT_EOF)
-								break;
-							else if (st.ttype == StreamTokenizer.TT_NUMBER) {
-								cPrices.add(st.nval +RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-								//this is to add some randomness of each agent's price offer
-							}
-						}
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} finally {
-						try {
-							e.getValue().close();
-						} catch (IOException e1) {}
-					}
-					prices.put(e.getKey(), cPrices);
-							}
-		    	}
-		return coef_1;
-		
-	}*/
+
 	
-	public void landUseDecision() {
+	public void landUseDecision(OrganicSpace organicSpace) {
 		//this function is to make current year land use decisions
 		
 		int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
@@ -227,8 +184,15 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		planningRiceCells.clear();
 		planningOtherCells.clear();
 		
-		int landUseNumber;
-		 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
+//		int landUseNumber;
+	//	 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
+//		 System.out.println("receiving land use decision: "+organicSpace.getTypeID());
+		 soyPerHaFuelInput = this.getSoyPerHaFuelInput();
+		 cornPerHaFuelInput = this.getCornPerHaFuelInput();
+		 ricePerHaFuelInput = this.getRicePerHaFuelInput();
+		 otherPerHaFuelInput = this.getOtherPerHaFuelInput();
+		 fuelUnitCost = this.getFuelUnitCost();
+		 
 //		LandUse highestLandUse=LandUse.SOY;
 /*		System.out.println("current soy price: "+cornPrices.get(2));
 		System.out.println("last year soy price: "+cornPrices.get(1));
@@ -443,6 +407,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		                	max=0;
 		                }
 //to calculate the max probability	   
+//		   System.out.println("most likely "+max);
+//		   max=2;
+
 		 if(max>0){
 		   System.out.println("most likely "+max);
 		   System.out.println("grow soy year: "+this.getGrownSoyYears());}
@@ -559,6 +526,8 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
 		if(max==2){
 			//continue grow soy, but may change proportion
+			System.out.println("let's see here "+organicSpace.getTypeID());
+			System.out.println("soy size="+this.soyCells.size()+" corn size="+this.cornCells.size());
 			listToChange.clear();
 			listNotChange.clear();
 			double random = RandomHelper.nextDoubleFromTo(0.0, 1.0);
@@ -593,7 +562,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			for(LandCell c:riceCells){
 				planningRiceCells.add(c);
 			}
-			
+			System.out.println("planning="+planningSoyCells.size()+" //corn="+planningCornCells.size());
 		}
 		
 		if(max==3){
@@ -633,6 +602,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		//update land use and environment-nexus:
 		//fertilizer, fuel, and water use
 		for(int j=0;j<planningSoyCells.size();j++){
+	//		System.out.println("still grow soys "+organicSpace.getTypeID());
 			LandCell c = planningSoyCells.get(j);
 			c.setLastLandUse(c.getLandUse());
 			c.setLandUse(LandUse.SOY);
@@ -649,7 +619,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		}
 		
 		for(int j=0;j<planningCornCells.size();j++){
-	//		System.out.println("change to corn");
+//			System.out.println("change to corn");
 			LandCell c = planningCornCells.get(j);
 			c.setLastLandUse(c.getLandUse());
 			c.setLandUse(LandUse.CORN);
@@ -697,9 +667,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	setTotalFuelInput(totalFuelInput);
 	setTotalWaterInput(totalWaterInput);
 	
-//	System.out.println("farmer id: "+ this.getID()+ " has size "+ this.tenureCells.size()
-//	                 +" soy size "+soyCells.size()+ " corn size " +cornCells.size()
-//	                 + " rice size "+riceCells.size());
+	System.out.println("farmer id: "+ this.getID()+ " has size "+ this.tenureCells.size()
+	                 +" soy size "+soyCells.size()+ " corn size " +cornCells.size()
+	                 + " rice size "+riceCells.size());
 	}
 	
 	public void landUseDecisionBelta(){

@@ -75,17 +75,17 @@ public class LandCell {
 	 private double soil2=0;
 	 private double soil3=0;
 	 
-	 private double recommendedSoyPerHaFertilizerUse=10;
-	 //according to a chinese paper, the average is 148 kg/ha,
+	 private double recommendedSoyPerHaFertilizerUse;
+	//according to a chinese paper, the average is 148 kg/ha,
 	 //each cell is 30*30=900 sq m, that is 0.09hectare, 
 	 //hence the recommended soy unit fertilizer use =
-	 private double recommendedCornPerHaFertilizerUse=200.0;  //kg/ha
-	 private double recommendedRicePerHaFertilizerUse=150.0;   //kg/ha
+	 private double recommendedCornPerHaFertilizerUse;  //kg/ha
+	 private double recommendedRicePerHaFertilizerUse;   //kg/ha
 	 private double recommendedOtherPerHaFertilizerUse=100.0;  //kg/ha
 	 
-	 private double observedSoyPerHaFertilizerUse = 63.0;      //kg/ha
-	 private double observedCornPerHaFertilizerUse = 224.0;    //kg/ha
-	 private double observedRicePerHaFertilizerUse = 146.0;    //kg/ha
+	 private double observedSoyPerHaFertilizerUse;       //kg/ha
+	 private double observedCornPerHaFertilizerUse;    //kg/ha
+	 private double observedRicePerHaFertilizerUse;    //kg/ha
 	 private double observedOtherPerHaFertilizerUse = 120.0;   //kg/ha
 	 
 	 private double waterRequirement;
@@ -138,6 +138,8 @@ public class LandCell {
 	//	setWaterRequirement(this.getLandUse());
 	//	System.out.println(this.getSoc());
 	
+		
+	//	if(organicSpace.getTypeID()=="organicSpaceReceiving")
 		//soc used in this year's crop growing is last year's soc
 		
 		//this is from the paper
@@ -250,6 +252,10 @@ public class LandCell {
 	//	 System.out.println("current organic = "+  getLastyearSoc());
 		organicSpace.setOrganicAt(getLastyearSoc(), this.getXlocation(), this.getYlocation());
 		
+	
+	
+	
+	
 	}
 
 
@@ -386,42 +392,47 @@ public class LandCell {
 	// changed to following on April 26, 2018
 		
 		public void setFertilizerInput(LandUse landuse) {
-
-			if(this.landUse==LandUse.SOY){
+             //because observed and reconmended are all set based on receiving and sending system, 
+			//so no need to check if it's receiving or sending system here.
+		
+			if(landuse==LandUse.SOY){
 			//	fertilizerInput=recommendedSoyUnitFertilizerUse*(1+soyAge);
 				fertilizerInput = observedSoyPerHaFertilizerUse * ((cellsize*cellsize)/10000.0);
-
+				this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-2.5,2.5);
 				 //problem before is that crop age can be zero to start with, 
 				 //so when multiplied it's zero for fertilizer input
 				
 			}
-			if(this.landUse==LandUse.CORN){
-			
+	//		if(this.landUse==LandUse.CORN){
+			//note it can't be this.landUse, it has to be the sent land use type in constructor.
+		    if(landuse==LandUse.CORN){	
 				fertilizerInput = observedCornPerHaFertilizerUse*((cellsize*cellsize)/10000.0);
-			
+				this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-5.0,5.0);
 		//		 System.out.println("CORN fertilizer input = "+fertilizerInput);
 	
 			}
-			if(this.landUse==LandUse.RICE){
+			if(landuse==LandUse.RICE){
 			
 				fertilizerInput = observedRicePerHaFertilizerUse*((cellsize*cellsize)/10000.0);
+				this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-6.0,6.0);
 		
 			}
-			if(this.landUse==LandUse.OTHERCROPS){
+			if(landuse==LandUse.OTHERCROPS){
 			//	fertilizerInput=recommendedOtherUnitFertilizerUse*((cellsize*cellsize)/10000);
 				fertilizerInput = observedOtherPerHaFertilizerUse*((cellsize*cellsize)/10000.0);
+				this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-8.0, 8.0);
 		//		fertilizerInput=recommendedOtherUnitFertilizerUse;
-			}
-			
-			
+			}			
 			//simplied fertilizer usage, longer year, more fertilizer. 
 			//should overwrite to  
-			    this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-2.5,2.5);
-			
 		
 		}
 		
 		
+		public double getObservedCornPerHaFertilizerUse() {
+			return observedCornPerHaFertilizerUse;
+		}
+
 		public void setTempZone(double temp){
 			this.tempZone=temp;
 		
@@ -606,6 +617,40 @@ public class LandCell {
 	//		System.out.println("water "+waterR);
 			this.waterRequirement=waterR;
 		}
+		
 
+			public void setRecommendedSoyPerHaFertilizerUse(double recommendedSoyPerHaFertilizerUse) {
+				this.recommendedSoyPerHaFertilizerUse = recommendedSoyPerHaFertilizerUse;
+			}
+
+			public void setRecommendedCornPerHaFertilizerUse(double recommendedCornPerHaFertilizerUse) {
+				this.recommendedCornPerHaFertilizerUse = recommendedCornPerHaFertilizerUse;
+			}
+
+			public void setRecommendedRicePerHaFertilizerUse(double recommendedRicePerHaFertilizerUse) {
+				this.recommendedRicePerHaFertilizerUse = recommendedRicePerHaFertilizerUse;
+			}
+
+
+			public void setRecommendedOtherPerHaFertilizerUse(double recommendedOtherPerHaFertilizerUse) {
+				this.recommendedOtherPerHaFertilizerUse = recommendedOtherPerHaFertilizerUse;
+			}
+
+			public void setObservedSoyPerHaFertilizerUse(double observedSoyPerHaFertilizerUse) {
+				this.observedSoyPerHaFertilizerUse = observedSoyPerHaFertilizerUse;
+			}
+
+			public void setObservedCornPerHaFertilizerUse(double observedCornPerHaFertilizerUse) {
+				this.observedCornPerHaFertilizerUse = observedCornPerHaFertilizerUse;
+			}
+
+			public void setObservedRicePerHaFertilizerUse(double observedRicePerHaFertilizerUse) {
+				this.observedRicePerHaFertilizerUse = observedRicePerHaFertilizerUse;
+			}
+
+
+			public void setObservedOtherPerHaFertilizerUse(double observedOtherPerHaFertilizerUse) {
+				this.observedOtherPerHaFertilizerUse = observedOtherPerHaFertilizerUse;
+			}
 
 }

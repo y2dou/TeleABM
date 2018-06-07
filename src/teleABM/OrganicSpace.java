@@ -138,10 +138,14 @@ public class OrganicSpace extends DefaultContext<Object> {
 					new WrapAroundBorders(), xdim, ydim);
 			System.out.println("receiving: current organic");
 			}
-			else 
+		else if(this.getTypeID()=="organicSpaceSending")
+			{
 			currentOrganic = new GridValueLayer("CurrentOrganicSending",true,
 					new WrapAroundBorders(), xdim, ydim);
-		System.out.println("dimension="+currentOrganic.getDimensions());
+	         System.out.println("sending dimension="+currentOrganic.getDimensions()); }
+		else {currentOrganic = new GridValueLayer("CurrentOrganicSending",true,
+				new WrapAroundBorders(), xdim, ydim);}
+		
 		BufferedInputStream stream = null;
 	
 	//	createValueLayerFromRandom(this, currentOrganic);
@@ -167,7 +171,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		//	System.out.println("sending system land use read "+landUseField.get(500,500));
 			}
 		//	currentOrganic = loadFieldFromStream(this, stream, "CurrentOrganicReceiving", soilOrganicCarbon);
-			System.out.println("receiving: current organic");
+	//		System.out.println("receiving: current organic");
 	//		System.out.println(this.getValueLayer("Land Use Field"));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -213,6 +217,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 						new WrapAroundBorders(), xdim, ydim);
 			    this.addValueLayer(elevation);
 				    createValueLayerFromRandom(this, elevation); 
+				    System.out.println("sending: elevation");
 		}
 				
 	//	this.addValueLayer(elevation);
@@ -224,7 +229,8 @@ public class OrganicSpace extends DefaultContext<Object> {
 		for (int i = 0 ;i < xdim; i++){
 			for (int j = 0; j<ydim; j++){
 				if (elevation.get(i,j) >= 0){
-				new LandCell(this, grid, i, j, elevation.get(i,j), currentOrganic.get(i,j));
+			//	new LandCell(this, grid, i, j, elevation.get(i,j), currentOrganic.get(i,j));
+				
 		//		this.add(LandCell);
 			
 			} else {
@@ -235,13 +241,15 @@ public class OrganicSpace extends DefaultContext<Object> {
 		
 //create Land holder value layer to the system		
 		if(this.getTypeID()=="organicSpaceReceiving")
-		{landHolderField = new GridValueLayer("Land Holder Field Receiving", true,
+		{ landHolderField = new GridValueLayer("Land Holder Field Receiving", true,
 				new WrapAroundBorders(), xdim, ydim);
-		System.out.println("receiving: land holder field");
+		  System.out.println("receiving: land holder field");
 		}
-		else 
-		landHolderField = new GridValueLayer("Land Holder Field Sending", true,
-					new WrapAroundBorders(), xdim, ydim);
+		else if(this.getTypeID()=="organicSpaceSending")
+		{	landHolderField = new GridValueLayer("Land Holder Field Sending", true,
+					new WrapAroundBorders(), xdim, ydim); }
+		else landHolderField = new GridValueLayer("Land Holder Field Sending", true,
+				new WrapAroundBorders(), xdim, ydim);
 	//	System.out.println(landHolderField..xdim);
 	//	System.out.println("height"+this.ydim);
 		this.addValueLayer(landHolderField);
@@ -503,8 +511,10 @@ public class OrganicSpace extends DefaultContext<Object> {
 		traderAgentField.set(agentID, x,y);
 	}
 	
+	
+	
 	public Integer getTraderAgent(int x, int y){
-GridValueLayer traderAgentField;
+          GridValueLayer traderAgentField;
 		
 		if(this.getTypeID()=="organicSpaceReceiving")
 		
