@@ -56,10 +56,14 @@ public class LandCell {
 	 private double cornYield;
 	 private double riceYield;
 	 private double otherYield;
+	 private double cottonYield;
 	 private double cropYield; //this is to report back to soybean agent of yield easier
 	 
 	 private int soyAge;
-	 private int cornAge;
+	 
+	 
+
+	private int cornAge;
 	 private int riceAge;
 	 private int otherAge;
 	 private int forestAge;
@@ -82,11 +86,13 @@ public class LandCell {
 	 private double recommendedCornPerHaFertilizerUse;  //kg/ha
 	 private double recommendedRicePerHaFertilizerUse;   //kg/ha
 	 private double recommendedOtherPerHaFertilizerUse=100.0;  //kg/ha
+	 private double recommendedCottonPerHaFertilizerUse;
 	 
 	 private double observedSoyPerHaFertilizerUse;       //kg/ha
 	 private double observedCornPerHaFertilizerUse;    //kg/ha
 	 private double observedRicePerHaFertilizerUse;    //kg/ha
 	 private double observedOtherPerHaFertilizerUse = 120.0;   //kg/ha
+	 private double observedCottonPerHaFertilizerUse;
 	 
 	 private double waterRequirement;
 	 
@@ -121,7 +127,7 @@ public class LandCell {
 		 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this.landHolder);
 		//if it's only getContext(this), because land cells are not added to organicspace,
 		 //has to be this.landholder
-		
+if(organicSpace.getTypeID()=="organicSpaceReceiving") {
 //		 GridValueLayer currentOrganic = (GridValueLayer) organicSpace.getValueLayer("CurrentOrganic");
 		 organicSpace.setTempAt(20.0, this.getXlocation(), this.getYlocation());
 		 setTempZone(organicSpace.getTempAt(this.getXlocation(), this.getYlocation()));
@@ -229,32 +235,55 @@ public class LandCell {
 		otherYield = otherYield * (cellsize*cellsize/10000.0);
 		//May 5, simplified yield function;
 		
-	//	System.out.println("riceYield "+riceYield);
-	//	riceYield = 20;
-	/*	if (lastLandUse==LandUse.RICE) 
-			System.out.println("tick "+RunState.getInstance().
-				getScheduleRegistry()
-				.getModelSchedule().getTickCount()+" riceYield "+riceYield);*/
 		
-		if(this.getLandUse()==LandUse.CORN) {setCropYield(cornYield);
-		                                   //  System.out.println("corn yield = "+cornYield);
-		}
-		if(this.getLandUse()==LandUse.RICE) setCropYield(riceYield);
-		if(this.getLandUse()==LandUse.SOY) { setCropYield(soyYield);
-		                                 //    System.out.println("soy yield="+soyYield);
-		                                   //  System.out.println("get fertilizer input = "+this.getFertilizerInput());
-		                                   //  System.out.println(this.getFertilizerInput()/recommendedSoyUnitFertilizerUse);
-		                                    }
-		if(this.getLandUse()==LandUse.OTHERCROPS) setCropYield(otherYield);
+		if(this.getLandUse()==LandUse.CORN)  
+			setCornYield(cornYield);
+			//setCropYield(cornYield);
+	
+		if(this.getLandUse()==LandUse.RICE) 
+			setRiceYield(riceYield);
+			//setCropYield(riceYield);
+		if(this.getLandUse()==LandUse.SOY) 
+		    setSoyYield(soyYield);
+		// setCropYield(soyYield);
+		if(this.getLandUse()==LandUse.OTHERCROPS) 
+			setOtherYield(otherYield);
+			//setCropYield(otherYield);
+	
 		
 		carbonProcess();
 		//for this to work, crop yield has to be set there
 	//	 System.out.println("current organic = "+  getLastyearSoc());
-		organicSpace.setOrganicAt(getLastyearSoc(), this.getXlocation(), this.getYlocation());
+		organicSpace.setOrganicAt(getLastyearSoc(), this.getXlocation(), this.getYlocation());	
+		}
 		
-	
-	
-	
+				
+if(organicSpace.getTypeID()=="organicSpaceSending") 
+		{
+			
+			//sending system land cell yield
+			if(this.getLandUse()==LandUse.SINGLESOY) {
+				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*1.10);
+			}
+			
+			if(this.getLandUse()==LandUse.DOUBLESOY) {
+				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*0.9);
+				//setCornYield(200.0);
+				setCornYield((4120.1/10000.0)*(cellsize*cellsize));  
+				//average of maize as second crop yield from 2003-2016, 
+				//in excel: maize_second_crop.xlsx
+				//4120 is kg/hectare 
+			}
+			if (this.getLandUse()==LandUse.COTTON) 
+				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*1.05);
+			//average of cotton crop yield from 1998-2016, 
+			//in excel: cotton.xlsx
+			if(this.getLandUse()==LandUse.SOYCOTTON){
+				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*0.85);
+				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*0.85);
+			}
+			
+		}
 	
 	}
 
@@ -275,6 +304,7 @@ public class LandCell {
 		
 		if(lastLandUse==LandUse.OTHERCROPS) otherAge++;
 		  else otherAge=0;
+		
 		
 		
 	}
@@ -299,9 +329,43 @@ public class LandCell {
 		this.cropYield=yield;
 	}
 	
-	public double getCropYield(){
-		return cropYield;
+	public void setSoyYield(double yield){
+		this.soyYield = yield;
 	}
+	public void setCornYield(double yield){
+		this.cornYield = yield;
+	}
+	public void setRiceYield(double yield){
+		this.riceYield= yield;
+	}
+	public void setOtherYield(double yield){
+		this.otherYield = yield;
+	}
+	public void setCottonYield(double yield){
+		this.cottonYield=yield;
+	}
+	
+	
+//	public double getCropYield(){
+//		return cropYield;
+//	}
+	
+	public double getSoyYield(){
+		return soyYield;
+	}
+	public double getCornYield(){
+		return cornYield;
+	}
+	public double getRiceYield(){
+		return riceYield;
+	}
+	public double getCottonYield(){
+		return cottonYield;
+	}
+	public double getOtherYield(){
+		return otherYield;
+	}
+	
 	protected LandCell canTakePossession(GridValueLayer tenureField,
 			 int x, int y) {
 		try {		
@@ -345,27 +409,6 @@ public class LandCell {
 	public LandUse getLastLandUse() {
 		return lastLandUse;
 	}
-
-	
-
-	public void readLandUse(OrganicSpace organicSpace, int x, int y){
-   	 //problem here is it puts all kinds of land use to the agent
-    	if (organicSpace.getLandUseAt(x, y)==2){
-    		this.landUse=LandUse.SOY;
-    	} else if (organicSpace.getLandUseAt(x, y)==3) {
-    		this.landUse=LandUse.RICE;
-    	} else if (organicSpace.getLandUseAt(x, y)==6) {
-    		this.landUse=LandUse.CORN;
-    	} else if (organicSpace.getLandUseAt(x, y)==4) {
-    		this.landUse=LandUse.OTHERCROPS;
-    	} else if (organicSpace.getLandUseAt(x, y)==5){
-    		this.landUse=LandUse.FOREST; 
-    	} else if (organicSpace.getLandUseAt(x, y)==7){		    		
-    		this.landUse=LandUse.BUILDING; 
-    	} else {
-    		this.landUse=LandUse.WATER; 
-    	}
-	}
 	
 	 public int getXlocation() {
 			return xlocation;
@@ -392,7 +435,8 @@ public class LandCell {
 	// changed to following on April 26, 2018
 		
 		public void setFertilizerInput(LandUse landuse) {
-             //because observed and reconmended are all set based on receiving and sending system, 
+			
+             //because observed and recommended are all set based on receiving and sending system, 
 			//so no need to check if it's receiving or sending system here.
 		
 			if(landuse==LandUse.SOY){
@@ -409,30 +453,54 @@ public class LandCell {
 				fertilizerInput = observedCornPerHaFertilizerUse*((cellsize*cellsize)/10000.0);
 				this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-5.0,5.0);
 		//		 System.out.println("CORN fertilizer input = "+fertilizerInput);
-	
+	          
 			}
 			if(landuse==LandUse.RICE){
 			
 				fertilizerInput = observedRicePerHaFertilizerUse*((cellsize*cellsize)/10000.0);
 				this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-6.0,6.0);
-		
+		      
 			}
 			if(landuse==LandUse.OTHERCROPS){
 			//	fertilizerInput=recommendedOtherUnitFertilizerUse*((cellsize*cellsize)/10000);
 				fertilizerInput = observedOtherPerHaFertilizerUse*((cellsize*cellsize)/10000.0);
 				this.fertilizerInput = fertilizerInput+RandomHelper.nextDoubleFromTo(-8.0, 8.0);
 		//		fertilizerInput=recommendedOtherUnitFertilizerUse;
+				
 			}			
 			//simplied fertilizer usage, longer year, more fertilizer. 
 			//should overwrite to  
 		
+			if(landuse == LandUse.SINGLESOY){
+				fertilizerInput = observedSoyPerHaFertilizerUse;
+				this.fertilizerInput = fertilizerInput *((cellsize*cellsize)/10000.0)+ 
+						RandomHelper.nextDoubleFromTo(-10.0,10.0);
+				
+			}
+			if(landuse == LandUse.DOUBLESOY) {
+				fertilizerInput = observedSoyPerHaFertilizerUse + 
+						                  observedCornPerHaFertilizerUse*1.2;
+				this.fertilizerInput = fertilizerInput *((cellsize*cellsize)/10000.0) + 
+						                   RandomHelper.nextDoubleFromTo(-20.0,20.0);
+				
+			}
+			if(landuse == LandUse.COTTON) {
+				fertilizerInput = observedCottonPerHaFertilizerUse;
+				this.fertilizerInput = fertilizerInput*((cellsize*cellsize)/10000.0) + 
+		                                    RandomHelper.nextDoubleFromTo(-20.0,20.0);
+				           
+			}
+			if(landuse == LandUse.SOYCOTTON) {
+				fertilizerInput = observedSoyPerHaFertilizerUse*1.2 + 
+						                  observedCottonPerHaFertilizerUse*1.3;
+				this.fertilizerInput = fertilizerInput*((cellsize*cellsize)/10000.0)+ 
+		                                    RandomHelper.nextDoubleFromTo(-20.0,20.0);
+				
+			}
 		}
 		
 		
-		public double getObservedCornPerHaFertilizerUse() {
-			return observedCornPerHaFertilizerUse;
-		}
-
+	
 		public void setTempZone(double temp){
 			this.tempZone=temp;
 		
@@ -494,7 +562,7 @@ public class LandCell {
 			double strawbiomass = 0;
 			
 			if(this.getLandUse()==LandUse.SOY){
-				strawbiomass = 1.0818*this.getCropYield()+269.6;
+				strawbiomass = 1.0818*this.getSoyYield()+269.6;
 				
 				
 				sci= // this is straw, biomass*0.445
@@ -518,7 +586,7 @@ public class LandCell {
 			else if(this.getLandUse()==LandUse.CORN) {
 			
 	         	strawbiomass = 
-	         		        	0.8509*((this.getCropYield()/(cellsize*cellsize))*10000.0 )
+	         		        	0.8509*((this.getCornYield()/(cellsize*cellsize))*10000.0 )
 	         			        +2974.1
 	         			       ;   //kg/ha
 	         	sci =  //   0.453*strawbiomass                  //straw 
@@ -652,5 +720,12 @@ public class LandCell {
 			public void setObservedOtherPerHaFertilizerUse(double observedOtherPerHaFertilizerUse) {
 				this.observedOtherPerHaFertilizerUse = observedOtherPerHaFertilizerUse;
 			}
+			
+			public void setObservedCottonPerHaFertilizerUse(double observedCottonPerHaFertilizerUse) {
+				this.observedCottonPerHaFertilizerUse = observedCottonPerHaFertilizerUse;
+			}
 
+			public int getSoyAge() {
+				return soyAge;
+			}
 }

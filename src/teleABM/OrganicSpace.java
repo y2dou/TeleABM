@@ -499,6 +499,12 @@ public class OrganicSpace extends DefaultContext<Object> {
 		return (int) landholderField.get(x,y);
 	}
 	
+	public void addReceivingSoybeanAgent(ReceivingSoybeanAgent soybeanAgent){
+		this.receivingSoybeanAgents.add(soybeanAgent);
+	}
+	public void addSendingSoybeanAgent(SendingSoybeanAgent soybeanAgent){
+		this.sendingSoybeanAgents.add(soybeanAgent);
+	}
 	public void setTraderAgent(double agentID, int x, int y){
 		GridValueLayer traderAgentField;
 		
@@ -758,6 +764,12 @@ private GridValueLayer createField(OrganicSpace organicSpace, String fieldName, 
 			return (SoybeanAgent) sendingSoybeanAgents.get(0);
 	}*/
 	
+	public List<ReceivingSoybeanAgent> getReceivingSoybeanAgents(){
+		return this.receivingSoybeanAgents;
+	}
 	
+	public List<SendingSoybeanAgent> getSendingSoybeanAgents(){
+		return this.sendingSoybeanAgents;
+	}
 	
 }

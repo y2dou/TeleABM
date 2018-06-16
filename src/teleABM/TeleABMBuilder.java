@@ -3,6 +3,14 @@
  */
 package teleABM;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,7 +27,10 @@ import java.util.Map;
 	import repast.simphony.context.Context;
 	import repast.simphony.dataLoader.ContextBuilder;
 	import repast.simphony.engine.environment.RunEnvironment;
-	import repast.simphony.parameter.Parameters;
+import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.valueLayer.GridValueLayer;
@@ -37,11 +48,16 @@ import teleABM.SoybeanAgent;
 	
 	 */
 	public class TeleABMBuilder implements ContextBuilder<Object>{
-		public static int count=0;
+		
+	  public static int count=0;
 	  public static boolean sendingSystem = false;
       public static boolean receivingSystem = false;
       public static int modeAddAgents = 0;
-      public static int total = 0;
+      public static boolean internationalTradeMode = false;
+      
+      
+     InternationalTradeAgent internationalTradeAgent = new InternationalTradeAgent();
+     ReceivingGovernment governmentAgent = new ReceivingGovernment();
       
   	List<ReceivingSoybeanAgent> receivingSoybeanAgents =
 			new LinkedList<ReceivingSoybeanAgent>();
@@ -51,6 +67,8 @@ import teleABM.SoybeanAgent;
 	protected WeightedSelector<Range<Integer>> dependentRatioSelector;
 	protected WeightedSelector<Range<Integer>> genderRatioSelector;
         //this is to indicate which system the instatnce is representing, it's read through the parameter.
+	
+//	Map<LandUse, ArrayList<Double>> prices = new HashMap<LandUse, ArrayList<Double>>();
 	
 		public Context<Object> build(Context<Object> context) {
 			
@@ -65,7 +83,7 @@ import teleABM.SoybeanAgent;
 			int numSendingAgents = (Integer) p.getValue("initialSendingNumAgents");
 			
 			int numTradeAgents = (Integer) p.getValue("initialNumTradeAgents");
-			
+			context.add(internationalTradeAgent);
 			modeAddAgents = (Integer)p.getValue("mode of adding agents");
 	//		System.out.println(p.getValue("sending system representation"));
 		
@@ -77,6 +95,7 @@ import teleABM.SoybeanAgent;
 			
 			OrganicSpace organicSpaceReceiving;
 			OrganicSpace organicSpaceSending;
+			
 			//create both organicSpace no matter what. 
 			//but add them to context according to system setting
 			
@@ -98,6 +117,7 @@ import teleABM.SoybeanAgent;
 				 sendingSystem=false;
 					
 				 organicSpaceReceiving = new OrganicSpace(organicFile);
+		//		 context.add(internationalTradeAgent);
 						context.add(organicSpaceReceiving);
 						context.addSubContext(organicSpaceReceiving);
 						System.out.println("receiving context being build="+context.getId());
@@ -236,7 +256,9 @@ import teleABM.SoybeanAgent;
 					 organicSpaceReceiving.remove(receivingSoybeanAgents.get(i));
 				 }
 				 receivingSoybeanAgents.removeAll(listToRemove);
-				 System.out.println(listToRemove);
+				 
+		//		 organicSpaceReceiving.add(internationalTradeAgent);
+		//		 System.out.println(listToRemove);
 		//		 System.out.println(organicSpaceReceiving.numAgents);
               /* for( int i = 0; i<receivingSoybeanAgents.size(); i++)
 				if (receivingSoybeanAgents.get(i).getTenureCells().size()==0)
@@ -259,7 +281,8 @@ import teleABM.SoybeanAgent;
 				  h.setGenderRatio((double) genderRatio/1000);
 		//		  System.out.println("dependent ratio of this agent: "+h.getDependentRatio() +
         //                			"  "+ dependentRatio	  );
-				  
+				  organicSpaceReceiving.addReceivingSoybeanAgent(h);
+				  setReceivingPrice(h);
               }
                
          //      System.out.println("after removing "+receivingSoybeanAgents.);	
@@ -327,6 +350,10 @@ import teleABM.SoybeanAgent;
 				 }
 				 sendingSoybeanAgents.removeAll(listToRemove);
 				 
+				  for ( SendingSoybeanAgent h:sendingSoybeanAgents) {
+				  organicSpaceSending.addSendingSoybeanAgent(h);
+				  setSendingPrice(h);
+				  }
 				 
 				//	System.out.println(organicSpaceSending.numAgents);
 			}
@@ -335,20 +362,31 @@ import teleABM.SoybeanAgent;
 			
 			//add trade agents
 			if(receivingSystem){
-			for (int i = 0; i<numTradeAgents; i++){
-				TraderAgent traderAgent = new TraderAgent(i);	
 				organicSpaceReceiving = (OrganicSpace) context.findContext("organicSpaceReceiving");
-				organicSpaceReceiving.add(traderAgent);
+		 	for (int i = 0; i<numTradeAgents; i++){
+			 	TraderAgent traderAgent = new TraderAgent(i);	
+				
+			 	organicSpaceReceiving.add(traderAgent);
+				
 				traderAgent.initialize(organicSpaceReceiving);
 			}
+			   organicSpaceReceiving.add(internationalTradeAgent);
 			}
 			if(sendingSystem){
+				organicSpaceSending = (OrganicSpace) context.findContext("organicSpaceSending");
 				for (int i = 0; i<numTradeAgents; i++){
 					TraderAgent traderAgent = new TraderAgent(i);		
-					organicSpaceSending = (OrganicSpace) context.findContext("organicSpaceSending");
+				
 					organicSpaceSending.add(traderAgent);
+									
 					traderAgent.initialize(organicSpaceSending);
+					
+				
 				}
+				
+				
+				organicSpaceSending.add(internationalTradeAgent);
+				System.out.println("internationa agent added to sending system" );
 			}
 		//	context.add(soybeanAgents);
 		//	System.out.println(2);
@@ -362,7 +400,22 @@ import teleABM.SoybeanAgent;
 			
 			RunEnvironment.getInstance().endAt(endTime);
 
+		//	internationalTradeAgent.marketTrading();
 			
+			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+			ScheduleParameters  generate = ScheduleParameters.createRepeating(1, 1,1);
+		
+			schedule.schedule(generate , this ,"tradeAction");
+			
+			
+	//		tradeAction();
+			/*ISchedule schedule = RunEnvironment.init(schedule, scheduleRunner, parameters, isBatch);
+					.getCurrentSchedule();
+					RunEnviroment. getCurrentSchedule () ;
+			ScheduleParameters params = ScheduleParameters . createOneTime
+			(1) ;
+			schedule . schedule ( params , this , " step ") ;*/
+
 		
 			return context;
 		}
@@ -399,6 +452,7 @@ import teleABM.SoybeanAgent;
 				RandomHelper.registerDistribution("cornYieldSending", RandomHelper.createUniform(4000,5000));
 				RandomHelper.registerDistribution("riceYieldSending", RandomHelper.createUniform(5000,6000));
 				RandomHelper.registerDistribution("otherYieldSending", RandomHelper.createUniform(2000,3000));
+				
 			  
 		  }
 	}
@@ -428,6 +482,7 @@ import teleABM.SoybeanAgent;
 				
 				int xcount = xdim/(int) xboundary;
 				int ycount = ydim/(int) yboundary;
+				
 				System.out.println("perAgentArea "+perAgentArea);
 				System.out.println("ydim "+ydim+" xdim "+ xdim+" ydim/xdim "+(double)ydim/xdim);
 				System.out.println("xcount " + xcount);
@@ -510,5 +565,236 @@ import teleABM.SoybeanAgent;
 		}
 
 		 
+		
+	//	internationalTradeAgent.marketTrading();
+		//priority higher means it excute earlier.
+  @ScheduledMethod(start = 1, interval = 1, priority = 2)		
+  public void tradeAction(){
+		
+	  if(receivingSystem) {
+	   
+		for ( ReceivingSoybeanAgent h:receivingSoybeanAgents) 
+		        {	
+                 internationalTradeAgent.receivingMarketProduction(h);        
+	            }
+	  }
+	 
+	  if(sendingSystem){
+		for ( SendingSoybeanAgent h:sendingSoybeanAgents) 
+		      {
+			      internationalTradeAgent.sendingMarketProduction(h);
+		      }
+	  }
+
+	  if(receivingSystem && sendingSystem)
+	  {
+		  TeleABMBuilder.internationalTradeMode = true;
+		  internationalTradeAgent.priceSetting(receivingSoybeanAgents, sendingSoybeanAgents);
+	  }
+	
+	
+	}
+  
+  
+  public void setSendingPrice(SendingSoybeanAgent h){
+	     Parameters p = RunEnvironment.getInstance().getParameters();
+  	// System.out.println ("soyPrice =" + (Double) p.getValue("soyPrice"));
+		// load data: prices
+		Map<LandUse, InputStream> priceLists = new HashMap<LandUse, InputStream>();
+						
+		//check if soyprice is static or dynamic
+		try {
+			double staticPrice = (Double) p.getValue("soyPrice");
+			
+			
+			if (staticPrice >= 0) {
+	
+				 h.setSendingStaticCommodityPrices(LandUse.SINGLESOY,staticPrice);
+	
+			} else {
+				priceLists.put(LandUse.SINGLESOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
+			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
+		//check if corn price is static or dynamic
+		try {
+			double staticPrice = (Double) p.getValue("cornPrice");
+			if (staticPrice >= 0) {
+				 h.setSendingStaticCommodityPrices(LandUse.DOUBLESOY,staticPrice);
+				
+			} else {
+				priceLists.put(LandUse.DOUBLESOY, new FileInputStream("auxdata/prices/corn.prices.txt"));
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+	
+		//check if other price is static or dynamic
+		try {
+			double staticPrice = (Double) p.getValue("otherPrice");
+			if (staticPrice >= 0) {
+				h.setSendingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
+			} else {
+				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("auxdata/prices/other.prices.txt"));
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		//get cotton price
+		try {
+			double staticPrice = (Double) p.getValue("cottonPrice");
+			if (staticPrice >= 0){
+				 h.setSendingStaticCommodityPrices(LandUse.COTTON,staticPrice);
+			}
+		 else {
+			priceLists.put(LandUse.COTTON, new FileInputStream("auxdata/prices/cotton.prices.txt"));
+		 }
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
+  	if (!priceLists.isEmpty()) {
+  		Map<LandUse, InputStream> priceStreams = priceLists;
+ 
+  	for (Map.Entry<LandUse, InputStream> e : priceStreams.entrySet()) {
+			ArrayList<Double> cPrices = new ArrayList<Double>(60);
+			
+			
+			try {
+				Reader r = new BufferedReader(new InputStreamReader(e.getValue()));
+				StreamTokenizer st = new StreamTokenizer(r);
+				
+				// initialize parser
+				st.parseNumbers();
+				st.eolIsSignificant(false);
+				st.whitespaceChars(',', ',');
+				
+				while (true) {
+					st.nextToken();
+					if (st.ttype == StreamTokenizer.TT_EOF)
+						break;
+					else if (st.ttype == StreamTokenizer.TT_NUMBER) {
+						cPrices.add(st.nval +RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+						//this is to add some randomness of each agent's price offer
+					}
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} finally {
+				try {
+					e.getValue().close();
+				} catch (IOException e1) {}
+			h.setSendingDynamicCommodityPrices(e.getKey(),cPrices);
+					}
+  	        
+  	        }
+    
+        }
+   }
+
+  public void setReceivingPrice(ReceivingSoybeanAgent h){
+	     Parameters p = RunEnvironment.getInstance().getParameters();
+	// System.out.println ("soyPrice =" + (Double) p.getValue("soyPrice"));
+		// load data: prices
+		Map<LandUse, InputStream> priceLists = new HashMap<LandUse, InputStream>();
+						
+		//check if soyprice is static or dynamic
+		try {
+			double staticPrice = (Double) p.getValue("soyPrice");
+						
+			if (staticPrice >= 0) {
+	
+				 h.setReceivingStaticCommodityPrices(LandUse.SOY,staticPrice);
+	
+			} else {
+				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
+			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
+		//check if corn price is static or dynamic
+		try {
+			double staticPrice = (Double) p.getValue("cornPrice");
+			if (staticPrice >= 0) {
+				 h.setReceivingStaticCommodityPrices(LandUse.CORN,staticPrice);
+				
+			} else {
+				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/corn.prices.txt"));
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		//check if rice price is static or dynamic
+		try {
+			double staticPrice = (Double) p.getValue("ricePrice");
+			if (staticPrice >= 0) {
+				h.setReceivingStaticCommodityPrices(LandUse.RICE, staticPrice);
+			} else {
+				priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices.txt"));
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
+		//check if other price is static or dynamic
+		try {
+			double staticPrice = (Double) p.getValue("otherPrice");
+			if (staticPrice >= 0) {
+				h.setReceivingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
+			} else {
+				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("auxdata/prices/other.prices.txt"));
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
+		
+		
+	if (!priceLists.isEmpty()) {
+		Map<LandUse, InputStream> priceStreams = priceLists;
+
+	for (Map.Entry<LandUse, InputStream> e : priceStreams.entrySet()) {
+			ArrayList<Double> cPrices = new ArrayList<Double>(60);
+			
+			
+			try {
+				Reader r = new BufferedReader(new InputStreamReader(e.getValue()));
+				StreamTokenizer st = new StreamTokenizer(r);
+				
+				// initialize parser
+				st.parseNumbers();
+				st.eolIsSignificant(false);
+				st.whitespaceChars(',', ',');
+				
+				while (true) {
+					st.nextToken();
+					if (st.ttype == StreamTokenizer.TT_EOF)
+						break;
+					else if (st.ttype == StreamTokenizer.TT_NUMBER) {
+						cPrices.add(st.nval +RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+						//this is to add some randomness of each agent's price offer
+					}
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} finally {
+				try {
+					e.getValue().close();
+				} catch (IOException e1) {}
+			h.setReceivingDynamicCommodityPrices(e.getKey(),cPrices);
+					}
+	        
+	        }
+ 
+     }
+}
+  
+  
+  
 	}
 

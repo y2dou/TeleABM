@@ -49,9 +49,13 @@ public enum  LandUse {
 				public String toString(){
 					return "water";
 				}
-			}, SECONDSOY (0xFFCC00) {
+			}, SINGLESOY(0xFFCC00){
 				public String toString(){
-					return "secondsoy";
+					return "singlesoy";
+				}
+			}, DOUBLESOY (0xFFCC00) {
+				public String toString(){
+					return "doublesoy";
 				}
 			}, SOYCOTTON(0xFFCC05){
 				public String toString(){

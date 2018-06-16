@@ -107,6 +107,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
+		<parameter name="cottonPrice" displayName="Cotton Price" type="double" 
+						defaultValue="2.5" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
 		<parameter name="otherPrice" displayName="Other Price" type="double" 
 						defaultValue="0.8" 
 						isReadOnly="false" 
