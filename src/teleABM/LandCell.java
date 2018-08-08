@@ -33,13 +33,19 @@ import teleABM.OrganicSpace;
 public class LandCell {
 	
 	Parameters p = RunEnvironment.getInstance().getParameters();
-	double organicGrowRate = (double) p.getValue("organicGrowRate");
-	int cellsize = (Integer) p.getValue("cellSize");
+//	double organicGrowRate = (double) p.getValue("organicGrowRate");
+//	int cellsizeSending = (Integer) p.getValue("cellSizeSending");
+//	int cellsizeReceiving = (Integer) p.getValue("cellSizeReceiving");
+	//because sending and receiving have different cellsize;
+	int cellsize; 
 	 private SoybeanAgent landHolder;
 	 private  int xlocation;
 	 
 	 private LandUse landUse;
      private LandUse lastLandUse;
+     //lct-1
+     private LandUse lastlastLandUse; 
+     //lct-2
      
 	 private int ylocation;
 	 private double elevation;
@@ -96,6 +102,10 @@ public class LandCell {
 	 
 	 private double waterRequirement;
 	 
+	 private int sscount;
+	 private int dscount;
+	 private int ccount;
+	 private int sccount;
 	
 
 	
@@ -127,8 +137,9 @@ public class LandCell {
 		 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this.landHolder);
 		//if it's only getContext(this), because land cells are not added to organicspace,
 		 //has to be this.landholder
-if(organicSpace.getTypeID()=="organicSpaceReceiving") {
+         if(organicSpace.getTypeID()=="organicSpaceReceiving") {
 //		 GridValueLayer currentOrganic = (GridValueLayer) organicSpace.getValueLayer("CurrentOrganic");
+	//     cellsize = cellsizeReceiving;
 		 organicSpace.setTempAt(20.0, this.getXlocation(), this.getYlocation());
 		 setTempZone(organicSpace.getTempAt(this.getXlocation(), this.getYlocation()));
 		 organicSpace.setPrecipitationAt(50.0, this.getXlocation(), this.getYlocation()); //unit: cm/year
@@ -258,29 +269,29 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving") {
 		}
 		
 				
-if(organicSpace.getTypeID()=="organicSpaceSending") 
+      if(organicSpace.getTypeID()=="organicSpaceSending") 
 		{
-			
+	//         cellsize = cellsizeSending;
 			//sending system land cell yield
 			if(this.getLandUse()==LandUse.SINGLESOY) {
-				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*1.10);
+				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*1.10+RandomHelper.nextDoubleFromTo(-5.0,5.0));
 			}
 			
 			if(this.getLandUse()==LandUse.DOUBLESOY) {
-				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*0.9);
+				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*0.9+RandomHelper.nextDoubleFromTo(-5.0,5.0));
 				//setCornYield(200.0);
-				setCornYield((4120.1/10000.0)*(cellsize*cellsize));  
+				setCornYield((4120.1/10000.0)*(cellsize*cellsize)+RandomHelper.nextDoubleFromTo(-10.0,10.0));  
 				//average of maize as second crop yield from 2003-2016, 
 				//in excel: maize_second_crop.xlsx
 				//4120 is kg/hectare 
 			}
 			if (this.getLandUse()==LandUse.COTTON) 
-				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*1.05);
+				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*1.05+RandomHelper.nextDoubleFromTo(-8.0,8.0));
 			//average of cotton crop yield from 1998-2016, 
 			//in excel: cotton.xlsx
 			if(this.getLandUse()==LandUse.SOYCOTTON){
-				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*0.85);
-				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*0.85);
+				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*0.85+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*0.85+RandomHelper.nextDoubleFromTo(-8.0,8.0));
 			}
 			
 		}
@@ -402,12 +413,20 @@ if(organicSpace.getTypeID()=="organicSpaceSending")
 			organicSpace.setLandUse(5, this.getXlocation(), this.getYlocation());*/
 	}
 	
+	public void setLastLastLandUse(LandUse landUse) {
+		this.lastlastLandUse = landUse;
+	}
+	
 	public LandUse getLandUse () {
 		return this.landUse;
 	}
 	
 	public LandUse getLastLandUse() {
 		return lastLandUse;
+	}
+	
+	public LandUse getLastLastLandUse(){
+		return lastlastLandUse;
 	}
 	
 	 public int getXlocation() {
@@ -434,7 +453,7 @@ if(organicSpace.getTypeID()=="organicSpaceSending")
 //      public void setFertilizerInput() {
 	// changed to following on April 26, 2018
 		
-		public void setFertilizerInput(LandUse landuse) {
+	public void setFertilizerInput(LandUse landuse) {
 			
              //because observed and recommended are all set based on receiving and sending system, 
 			//so no need to check if it's receiving or sending system here.
@@ -724,8 +743,48 @@ if(organicSpace.getTypeID()=="organicSpaceSending")
 			public void setObservedCottonPerHaFertilizerUse(double observedCottonPerHaFertilizerUse) {
 				this.observedCottonPerHaFertilizerUse = observedCottonPerHaFertilizerUse;
 			}
+			
+			public void setCellSize (int size) {
+				this.cellsize = size;
+			}
+			
+			public int getCellSize() {
+				return this.cellsize;
+			}
 
 			public int getSoyAge() {
 				return soyAge;
+			}
+			
+			public void setSSCount(int x){
+				this.sscount=x;
+			}
+			
+			public void setDSCount(int x){
+				this.dscount=x;
+			}
+			
+			public void setCCount(int x){
+				this.ccount=x;
+			}
+			
+			public void setSCCount(int x){
+				this.sccount=x;
+			}
+			
+			public int getSSCount(){
+				return sscount;
+			}
+			
+			public int getDSCount(){
+				return dscount;
+			}
+			
+			public int getCCount(){
+				return ccount;
+			}
+			
+			public int getSCCount(){
+				return sccount;
 			}
 }

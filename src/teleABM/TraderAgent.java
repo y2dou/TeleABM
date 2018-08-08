@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import repast.simphony.random.RandomHelper;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.ContextUtils;
-
+import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.engine.environment.RunEnvironment;
 
 
@@ -36,14 +37,22 @@ import repast.simphony.engine.environment.RunEnvironment;
  * @author geododo
  *
  */
-public class TraderAgent {
+public abstract class TraderAgent {
 //extends SimpleAgent{
 
 	private int id;
     private static final AtomicInteger idGenerator = new AtomicInteger (0);
     protected Point location;
-   
-
+    
+    
+	 Parameters para = RunEnvironment.getInstance().getParameters();
+	  int receivingXdim = (Integer)para.getValue("receivingWorldWidth");
+	  int receivingYdim = (Integer)para.getValue("receivingWorldHeight");
+	  int sendingXdim = (Integer)para.getValue("sendingWorldWidth");
+	  int sendingYdim = (Integer)para.getValue("sendingWorldHeight");
+//	    Parameters p = RunEnvironment.getInstance().getParameters();
+	  int numReceivingAgents = (Integer)para.getValue("initialReceivingNumAgents");
+		int numTradeAgents = (Integer) para.getValue("initialNumTradeAgents");
 	protected Context<?> context;
     protected int vision;
    
@@ -53,17 +62,27 @@ public class TraderAgent {
 	protected LinkedList<LandUse> commodityType =
 			       new LinkedList<LandUse>();
 	
-    private double soyAmount=0;
-	private double cornAmount=0;
-    private double riceAmount=0;
-    private double otherAmount=0;
-    private Map<LandUse, ArrayList<Double>> prices = new HashMap<LandUse, ArrayList<Double>>();
+    protected double soyAmount=0;
+	protected double cornAmount=0;
+    protected double riceAmount=0;
+    protected double cottonAmount=0;
+    protected double otherAmount=0;
+    
+    protected Map<LandUse, ArrayList<Double>> prices = new HashMap<LandUse, ArrayList<Double>>();
     Map<LandUse, InputStream> priceStreams;
     MarketPrices marketPrices = new MarketPrices();
     
     
-	protected LinkedList<Integer> soybeanSellers = new LinkedList<Integer>();
+	
 	protected LinkedList<SoybeanAgent> purchasingfromSoybeanAgents = new LinkedList<SoybeanAgent>();
+//	protected LinkedList<SoybeanAgent> purchasingfromSoybeanAgentsTEST = new LinkedList<SoybeanAgent>();
+	protected double internationalTradeSoyPrice = 0;    
+	
+	protected List<Double> soyPrices = new LinkedList<Double>();
+	protected List<Double> cornPrices = new LinkedList<Double>();
+	protected List<Double> ricePrices = new LinkedList<Double>();
+	protected List<Double> cottonPrices = new LinkedList<Double>();
+	protected List<Double> otherPrices = new LinkedList<Double>();
 
 	public TraderAgent() {
 		this(idGenerator.getAndIncrement());
@@ -85,10 +104,34 @@ public class TraderAgent {
 	
 	public void initialize(OrganicSpace organicSpace) {
 		// TODO Auto-generated method stub
-		setVision(RandomHelper.nextIntFromTo(50,1000));
-		setCapital(RandomHelper.nextDoubleFromTo(1000000,1000000000));
+		if(organicSpace.getTypeID()=="organicSpaceReceiving")
+	{
+		if(receivingXdim>receivingYdim)
+			setVision(receivingXdim/2);
+		else 
+			setVision(receivingYdim/2);
+	//	setVision(RandomHelper.nextIntFromTo(500,100000));
+	//	setCapital(RandomHelper.nextDoubleFromTo(10000,10000000));
+		setCapital(1000000.0);
+	//	setCommodityPrices();
+		//commodity price is set at the teleABMBuilder
+		}
+		else 
+	{
+	//		setVision(RandomHelper.nextIntFromTo(5000,1000000));
+			if(sendingXdim>sendingYdim)
+				setVision(sendingXdim);
+			else 
+				setVision(sendingYdim);
+	  //      setVision(sendingXdim/2);
+	//		setVision(20000);
+	//		setCapital(RandomHelper.nextDoubleFromTo(1000000, 1000000000));
+			setCapital(100000000.0);
+	//		setCommodityPrices();
+			//commodity price is set at the teleABMBuilder
+		}
 	//	int rand = RandomHelper.nextIntFromTo(1, 9);
-		int rand = 9;
+	/*	int rand = 9;
 		//this is to test the price difference; 
 		if (rand==1) {
 			setCommodityType(LandUse.SOY);
@@ -114,79 +157,207 @@ public class TraderAgent {
 			setCommodityType(LandUse.SOY);
 			setCommodityType(LandUse.CORN);
 			setCommodityType(LandUse.RICE);
-		}
+		}*/
 		//overwrite
 	//	setCommodityType(LandUse.RICE);
 		
+	
 		
-		setCommodityPrices();
-	//	System.out.println("trader agent initiliaze price"+this.getCommodityPrice(LandUse.SOY));
+	
+//		System.out.println("trader agent initiliaze price");
 	//	if(TeleABMBuilder.receivingSystem)
 		findSoybeanAgent(organicSpace);
+//		System.out.println("ok size "+this.getID()+" "+this.purchasingfromSoybeanAgents.size());
 	//	if(TeleABMBuilder.sendingSystem)
 		//	findSoybeanAgent(organicSpace);
 	}
 	
 	private void findSoybeanAgent(OrganicSpace organicSpace) {
 		// TODO Auto-generated method stub		
+		LinkedList<Integer> tradedFarmers = new LinkedList<Integer>();
+		//
 	    int xLook, yLook;
 	   
 	    Grid<Object> grid; 
+	 
+	    List<ReceivingSoybeanAgent> receivingSoybeanAgents;
+	    List<SendingSoybeanAgent> sendingSoybeanAgents;
+	    double xdim;
+	    double ydim;
+	    int x;
+	    int y;
+	    
 	    if(organicSpace.getId()=="organicSpaceReceiving") {
 	    	grid = (Grid) organicSpace.getProjection("Grid");
+	//        xdim = receivingXdim;
+	//        ydim = receivingYdim;
+	        x= (int) (id*(receivingXdim/numTradeAgents)+RandomHelper.nextIntFromTo(-100,1000));
+	        y= (int) (id*(receivingYdim/numTradeAgents)+RandomHelper.nextIntFromTo(-100,1000));
+	        
+	    	
 	    } else {
 	    	grid = (Grid) organicSpace.getProjection("gridSending");
+//	        xdim = sendingXdim;
+//	        ydim = sendingYdim;
+//	    	System.out.println(id);
+	        x= (int) ((id)*(sendingXdim/numTradeAgents)+RandomHelper.nextIntFromTo(-100,100));
+	        y= (int) ((id)*(sendingYdim/numTradeAgents)+RandomHelper.nextIntFromTo(-100,100));
+	//    	System.out.println("grid hahahah");
 	    }
+	    
+	    //this is to make sure all soybean agents can be found by at least one trader agent
+	    
 	  
+	    
+	//    tradedFarmers.replaceAll(operator);;
 		
 		
-	    GridPoint point = grid.getLocation(this);
+//	    GridPoint point = grid.getLocation(this);
        
-	    int x = point.getX();
+//	    int x = point.getX();
 
-	    int y = point.getY();
-	    
-	//    System.out.println("traderAgent Location "+ x +" "+ y);
-
-	    
-	    boolean neighborExists = true;
+//	    int y = point.getY();
+	    	       
+	    organicSpace.setTraderAgent(id, x - vision/2, y-vision/2);
+	//        System.out.println("traderAgent Location "+ x +" "+ y);
+	 
+    //    boolean neighborExists = true;
 	    yLook = y;
 
 		 for (xLook = x - vision/2; xLook <= x + vision/2; xLook++) {
 			 for (yLook = y-vision/2;yLook<=y+vision/2;yLook++){
 		
-              organicSpace.setTraderAgent(id, xLook, yLook);
+         //     organicSpace.setTraderAgent(id, xLook, yLook);
               if(organicSpace.getLandHolder(xLook, yLook)>0) {
-            	  if(!soybeanSellers.contains(organicSpace.getLandHolder(xLook, yLook)))
+            	//  System.out.println(organicSpace.getLandHolder(xLook, yLook));
+            	  
+            	  if(!tradedFarmers.contains(organicSpace.getLandHolder(xLook, yLook)))
             	  {
-            	  soybeanSellers.add(organicSpace.getLandHolder(xLook, yLook));
+            		 int i = organicSpace.getLandHolder(xLook, yLook);
+            	//	  System.out.println(organicSpace.getLandHolder(xLook, yLook));
+            	      tradedFarmers.add(i);
+            	
             	  //soybeanSellers is a new list that contains the soybean farmer agents 
             	  //within the vision of a trader;
             	  //this is initialized at step 1;
+            	  //however, soybeanSellers not seem to be used?
             	  
-              }
+                }
             	 }
 		 }
 		 }
+//		 System.out.println("all farmers: "+tradedFarmers.size());
 		 
-		// int count =0;
+	/*     soybeanAgents = organicSpace.getSoybeanAgents();
+	     System.out.println("soybean agents: "+soybeanAgents.size());
+		 
+	     Iterator it = tradedFarmers.iterator();
+	     
+	     while(it.hasNext()) {
+	    	 SoybeanAgent o = soybeanAgents.get((int) it.next());
+	    	 if(!this.purchasingfromSoybeanAgents.contains(o)) {
+   			  //this if is to control that soybean agents not been added more than once
+				  
+   		//	  SoybeanAgent o = this.purchasingfromSoybeanAgentsTEST.get(tradedFarmers.iterator().next());
+   			  o.addTraderAgent(this);
+       		  this.purchasingfromSoybeanAgents.add((SoybeanAgent) o);
+       	//	  System.out.println("add once "+((SoybeanAgent) o).getID() );
+   		    }
+	    			 
+	     }
+	     
+	     System.out.println("purchasing from soybean agents "+purchasingfromSoybeanAgents.size());	*/
+	     
+	     
+		 if(organicSpace.getId()=="organicSpaceReceiving") 
+		 {			 			 
+			  	receivingSoybeanAgents = organicSpace.getReceivingSoybeanAgents();
+	
+			  	Iterator it = tradedFarmers.iterator();
+			  	
+		   while(it.hasNext()){
+			   
+			   
+			 ReceivingSoybeanAgent o = receivingSoybeanAgents.get((int)it.next());
+		//	 tradedFarmers.iterator().remove();
+		//	 System.out.println(count++);
+		//	 System.out.println(o.getTenureCells().size());
+			 
+			  if(!this.purchasingfromSoybeanAgents.contains(o)) {
+    			  //this if is to control that soybean agents not been added more than once
+				  
+    		//	  SoybeanAgent o = this.purchasingfromSoybeanAgentsTEST.get(tradedFarmers.iterator().next());
+    			  o.addTraderAgent(this);
+        		  this.purchasingfromSoybeanAgents.add((SoybeanAgent) o);
+        	//	  System.out.println("add once "+((SoybeanAgent) o).getID() );
+    		    }
+		      }
+		 }
+		 else {
+		        sendingSoybeanAgents = organicSpace.getSendingSoybeanAgents();
+		        
+			  	Iterator it = tradedFarmers.iterator();
+//			  	System.out.println(it.next());
+			  	//the problem when having both receiving and sending soybean agents are the soybean agent id
+			     while(it.hasNext()){
+			 //   	 System.out.println("is it wrong");
+					SendingSoybeanAgent o = sendingSoybeanAgents.get((int)it.next());
+			//				-numReceivingAgents);
+				
+					  if(!this.purchasingfromSoybeanAgents.contains(o)) {
+		    			  //this if is to control that soybean agents not been added more than once
+						  
+		    		//	  SoybeanAgent o = this.purchasingfromSoybeanAgentsTEST.get(tradedFarmers.iterator().next());
+		    			  o.addTraderAgent(this);
+		        		  this.purchasingfromSoybeanAgents.add((SoybeanAgent) o);
+		        //		  System.out.println("not added more than once "+((SoybeanAgent) o).getID());
+		    		    }
+				      }
+		 }
+		 
+		 
+		 
+		 
+//		 System.out.println("purchase size "+purchasingfromSoybeanAgentsTEST);
+		 
+		 
+		/* int count =0;
 		 for (xLook = x - vision/2; xLook <= x + vision/2; xLook++) {
 			 for (yLook = y-vision/2;yLook<=y+vision/2;yLook++){
 				
 			Iterable neighbors = grid.getObjectsAt(xLook, yLook);
+			
+	//		Iterable<SoybeanAgent> agents = organicSpace.getLandHolder(xLook, yLook);
 			 if (!neighbors.iterator().hasNext())
 			        neighborExists = false;
-
+                
 			      else for (Object o : neighbors) {
+			    	
 			        if (o instanceof SoybeanAgent)
 			        	{ 
 			        	  if (((SoybeanAgent) o).getTenureCells().size()>0)
 			        	  { 
-			//        		  count++;
-			        		  ((SoybeanAgent) o).addTraderAgent(this);
-			        		  this.purchasingfromSoybeanAgents.add((SoybeanAgent) o);
+			        		  count++;
+			        		  if(!this.purchasingfromSoybeanAgents.contains((SoybeanAgent) o)) {
+			        			  //this if is to control that soybean agents not been added more than once
+			        			  
+			        			  ((SoybeanAgent) o).addTraderAgent(this);
+				        		  this.purchasingfromSoybeanAgents.add((SoybeanAgent) o);
+				        		  System.out.println("not added more than once "+((SoybeanAgent) o).getID());
+			        		//		      +" "+count);
+			        		  }
+			        		
+			      //  		  System.out.println(" more than once "+((SoybeanAgent) o).getID()
+		        //				      +" "+count);	  
+			        	
+			        		
+			        		  //this list is not the final trading partner list,
+			        		  //this list is to record who is in their vision.
+			        		  //to decide which soybean farmer this agent buys from
+			        		  //it is at SoybeanAgent.decidingTradingPartner
+			        		  
 		//	  System.out.println("trader: "+this.getID()+" "+((SoybeanAgent) o).getID());
-			 //      		+" tenure size"+  ((SoybeanAgent) o).getTenureCells().size());
+			   //    		+" tenure size"+  ((SoybeanAgent) o).getTenureCells().size());
 			        	  }
 			        	}
 			        //  break;
@@ -194,8 +365,8 @@ public class TraderAgent {
 				 neighborExists=false;
 			 }
 			 }
-	//	System.out.println(count);		 	
-		
+//		System.out.println("purchasing from soybean agents "+purchasingfromSoybeanAgents);		 	
+*/		
 	}
 
 
@@ -246,6 +417,8 @@ public class TraderAgent {
 //	if(transaction>0) System.out.println("capital "+capital+ " transaction "+transaction);
 	 
    }
+
+	
 
     public void setCommodityPrices(){
     	 Parameters p = RunEnvironment.getInstance().getParameters();
@@ -305,6 +478,8 @@ public class TraderAgent {
 			e1.printStackTrace();
 		}
 		
+		
+		
     	if (!priceLists.isEmpty()) {
     		Map<LandUse, InputStream> priceStreams = priceLists;
     	//	System.out.println(priceLists.size());
@@ -351,7 +526,20 @@ public class TraderAgent {
     	int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
     	
     //	System.out.println("tick at trader "+tick);
-    	if(commodityType.contains(landuse)) {
+    	
+    //	if(landuse==LandUse.DOUBLESOY)
+    //		landuse = LandUse.CORN;
+    //	if(landuse==LandUse.SOYCOTTON)
+    	
+    	if(TeleABMBuilder.internationalTradeMode)
+		{
+		 if(landuse==LandUse.SOY||landuse==LandUse.SINGLESOY){
+	//		 tempPrice=marketPrices.getPrice(landuse)+
+	//    			 RandomHelper.nextDoubleFromTo(-0.01, 0.05);
+	//	     System.out.println(tick+": land use "+landuse+" price "+tempPrice);
+			 tempPrice = getInternationalTradeSoyPrice();
+		 }
+		} else  if(commodityType.contains(landuse)) {
  //   		System.out.println("commodity type "+commodityType.contains(landuse));
     	 if(prices.containsKey(landuse))  
     			 {
@@ -367,13 +555,24 @@ public class TraderAgent {
     	 }
     	 }
     
-    	if (capital<0) 
-    		 tempPrice=0;
+    	if (capital < 0) 
+    		 tempPrice=RandomHelper.nextDoubleFromTo(0, 0.5);
+    	//this means trader agent went bankrupt
     	
+    //	System.out.println("trader agent: "+tempPrice);
     	return tempPrice;
     	
     	
     }
+    
+    
+	public double getInternationalTradeSoyPrice() {
+		return internationalTradeSoyPrice;
+	}
+    
+
+    
+
     
     
     
@@ -388,9 +587,6 @@ public class TraderAgent {
 	}
 
 
-	public void setLocation(Point location) {
-		this.location = location;
-	}
 	
     public double getSoyAmount() {
 		return soyAmount;
@@ -400,7 +596,14 @@ public class TraderAgent {
 	public void addSoyAmount(double soyAmount) {
 		this.soyAmount+= soyAmount;
 	}
+	
+	public void addCottonAmount(double cottonAmount) {
+		this.cottonAmount+=cottonAmount;
+	}
 
+	public double getCottonAmount(){
+	    return cottonAmount;
+	}
 
 	public double getCornAmount() {
 		return cornAmount;
@@ -429,6 +632,38 @@ public class TraderAgent {
 
 	public void addOtherAmount(double otherAmount) {
 		this.otherAmount+= otherAmount;
+	}
+	
+    public void setInternationalTradeSoyPrice(double cprice){
+    	internationalTradeSoyPrice = cprice;
+    }
+	
+	
+
+	public void setSendingStaticCommodityPrices(LandUse landuse, double tempPrice){
+    	marketPrices.setPrice(landuse, tempPrice);
+	
+	}
+	public void setSendingDynamicCommodityPrices(LandUse landuse, ArrayList cropprices){
+		prices.put(landuse, cropprices);
+		
+		 soyPrices.add(0, 0.501+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+	       cornPrices.add(0, 0.302+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+	       cottonPrices.add(0, 1.93+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+	}
+	
+	public void setReceivingStaticCommodityPrices(LandUse landuse, double tempPrice){
+    	marketPrices.setPrice(landuse, tempPrice);
+	
+	}
+	public void setReceivingDynamicCommodityPrices(LandUse landuse, ArrayList cropprices){
+		   prices.put(landuse, cropprices);
+//		System.out.println("set receive dynamic "+prices.get(landuse));
+		   //following is to add the first step price, 
+		   //this is only used at initialization stage.
+		   soyPrices.add(0, 1.31+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+	       cornPrices.add(0, 0.6+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+	       ricePrices.add(0, 1.3+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
 	}
 
 

@@ -50,21 +50,24 @@ import teleABM.SimpleAgent;
  * @author DOU Yue
  *
  */
-public abstract class SoybeanAgent extends SimpleAgent{
+public abstract class SoybeanAgent {
+//extends SimpleAgent{
 	
     private Integer id;
-    private static final AtomicInteger idGenerator = new AtomicInteger (1);
+    private static final AtomicInteger idGenerator = new AtomicInteger (0);
     protected Point location;
     protected Context<?> context;
     Parameters p = RunEnvironment.getInstance().getParameters();
 	int numReceivingAgents = (Integer)p.getValue("initialReceivingNumAgents");
     int numSendingAgents = (Integer)p.getValue("initialSendingNumAgents");
     
-	   protected List<TraderAgent> traderAgents = new LinkedList<TraderAgent>();
+	   public List<TraderAgent> traderAgents = new LinkedList<TraderAgent>();
+	   //this is the list of soybean agents
 	   public TraderAgent soySoldToTraderAgent ;
 	   public TraderAgent cornSoldToTraderAgent;
 	   public TraderAgent riceSoldToTraderAgent;
 	   public TraderAgent otherSoldToTraderAgent;
+	   public TraderAgent cottonSoldToTraderAgent;
 	   
 	   protected double capital;
 	//   protected int vision;
@@ -116,15 +119,27 @@ public abstract class SoybeanAgent extends SimpleAgent{
 		  int receivingYdim = (Integer)para.getValue("receivingWorldHeight");
 		  int sendingXdim = (Integer)para.getValue("sendingWorldWidth");
 		  int sendingYdim = (Integer)para.getValue("sendingWorldHeight");
-		  int cellsize = (Integer) para.getValue("cellSize");
+		  
+		  int cellsizeSending = (Integer) p.getValue("cellSizeSending");
+		  int cellsizeReceiving = (Integer) p.getValue("cellSizeReceiving");
+			//because sending and receiving have different cellzie;
+		  int cellsize; 
+	//	  int cellsize = (Integer) para.getValue("cellSize");
+		  
 		protected  int vision = (Integer) para.getValue("vision");
 		
 		protected List<LandCell> tenureCells = new LinkedList<LandCell>();
+		protected List<LandCell> agriculturalCells = new LinkedList<LandCell>();
 		protected  FastTable<LandCell> soyCells = new FastTable<LandCell>();
 		protected  FastTable<LandCell> cornCells = new FastTable<LandCell>();
 		protected FastTable<LandCell> riceCells = new FastTable<LandCell>();
 		protected  FastTable<LandCell> otherCells = new FastTable<LandCell>();
+		
+		protected FastTable<LandCell> soyMaizeCells = new FastTable<LandCell>();
+		protected FastTable<LandCell> soyCottonCells = new FastTable<LandCell>();
 		protected FastTable<LandCell> cottonCells = new FastTable<LandCell>();
+		
+		
 	//	protected MyLandCell tenure;
 		 
 		  //to place agents at best location
@@ -133,18 +148,22 @@ public abstract class SoybeanAgent extends SimpleAgent{
 		protected double cornPerHaYield;
 		protected double ricePerHaYield;
 		protected double cottonPerHaYield;
+		
 		protected double otherPerHaYield;
 		
 		protected double soyPerHaFertilizerInput;
 		protected double cornPerHaFertilizerInput;
 		protected double ricePerHaFertilizerInput;
 		protected double cottonPerHaFertilizerInput;
+		protected double soyMaizePerHaFertilizerInput;
+		protected double soyCottonPerHaFertilizerInput;
 		protected double otherPerHaFertilizerInput;
 		
 		protected double soyPerHaFuelInput;		
 		protected double cornPerHaFuelInput;
 		protected double ricePerHaFuelInput;
 		protected double cottonPerHaFuelInput;
+		
 		protected double otherPerHaFuelInput;
 		//above fuel unit cost are all from direct fossil fuel energy cost (in tab energy in Equations.xlsx) 
 		//
@@ -217,10 +236,13 @@ public abstract class SoybeanAgent extends SimpleAgent{
 			    setProTeleCoupling(true);
 			    setOrganicFarm(true);
 			    
-			    setCommodityType(LandUse.SINGLESOY);
-				setCommodityType(LandUse.DOUBLESOY);
-				setCommodityType(LandUse.COTTON);
-			    
+		//	    setCommodityType(LandUse.SINGLESOY);
+		//		setCommodityType(LandUse.DOUBLESOY);
+		//		setCommodityType(LandUse.COTTON);
+				
+			    setCommodityType(LandUse.SOY);
+			    setCommodityType(LandUse.CORN);
+			    setCommodityType(LandUse.COTTON);
 		//		setSendingCommodityPrices();
 			}
 
@@ -262,9 +284,9 @@ public abstract class SoybeanAgent extends SimpleAgent{
 		}
 		public void setSendingDynamicCommodityPrices(LandUse landuse, ArrayList cropprices){
 			prices.put(landuse, cropprices);
-			 soyPrices.add(0, 1.31+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-		       cornPrices.add(0, 0.6+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-		       ricePrices.add(0, 1.3+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+			 soyPrices.add(0, 0.501+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+		       cornPrices.add(0, 0.302+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+		       cottonPrices.add(0, 1.93+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
 		}
 		
 		public void setReceivingStaticCommodityPrices(LandUse landuse, double tempPrice){
@@ -343,22 +365,27 @@ public abstract class SoybeanAgent extends SimpleAgent{
 	 //   Grid grid = (Grid) organicSpace.getProjection("Grid");
 	   
 	   if(organicSpace.getTypeID()=="organicSpaceSending") {
+		       this.decidingTradingPartner();
 			   this.updateProduction(organicSpace);
 			   this.updateCost(organicSpace);
 			   this.updateProfit();
-		       this.landUseDecision(organicSpace);
+		    //   this.landUseDecision(organicSpace);
+			//   this.landUseDecisionBeta(organicSpace);
+			   this.landUseDecisionLogisticRegression(organicSpace);
+		       this.updateLandUse(organicSpace);
 		}
 		  
 		
 		if(organicSpace.getTypeID()=="organicSpaceReceiving") 
 		{
 	//		 System.out.println("come on");
-		
+			  this.decidingTradingPartner();
 	           this.updateProduction(organicSpace);
 	           this.updateCost(organicSpace);
 	           this.updateProfit();
 	        //   this.landUseDecision(organicSpace);
 	           this.landUseDecisionBeta(organicSpace);
+	          
 		}
 		
 	
@@ -366,7 +393,8 @@ public abstract class SoybeanAgent extends SimpleAgent{
 	}
 	
 
-	
+public abstract void landUseDecisionLogisticRegression (OrganicSpace organicSpace);	
+
 public abstract void landUseDecisionBeta(OrganicSpace organicSpace) ;
 
 
@@ -389,10 +417,10 @@ public abstract void updateLandUse(OrganicSpace organicSpace);
 	private void updateLabor() {
 		// TODO Auto-generated method stub
 		//to represent the household demography dynamics
-		double random = RandomHelper.nextDouble();
-		Random r = new Random();
+		double random = RandomHelper.nextDoubleFromTo(0.0, 0.1);
+	//	Random r = new Random();
 		//double randomValue = -0.03 + 2 * r.nextDouble();
-		double randomValue = r.nextDouble();
+	//	double randomValue = r.ne;
 		double labourCost;
 		labourCost=
 				this.soyCells.size()*0.002+
@@ -400,7 +428,7 @@ public abstract void updateLandUse(OrganicSpace organicSpace);
 				this.riceCells.size()*0.003+
 				this.otherCells.size()*0.002;
 	
-		this.setLabour(this.getLabour()-labourCost+randomValue);
+		this.setLabour(this.getLabour()-labourCost+random);
 		
 		//here can implement the machinery, if they can hire more and bigger machines, 
 		//then the labor use or requirement is lower. 
@@ -424,7 +452,6 @@ public abstract void updateCost(OrganicSpace organicSpace);
 public abstract void updateProfit();
 	
 	
-
 	//initialization
 	protected void addSoybeanAgentAtRandom(OrganicSpace organicSpace) {
 		//add farmers spatially and to the best location in the organic field
@@ -555,6 +582,12 @@ public abstract void updateProfit();
 		    	this.tenureCells.add(landCell);
 		    	organicSpace.setLandHolder(this.getID(), goodx[chosenSpotIndex], goody[chosenSpotIndex]);
 		    	
+		    	
+		    	   if(organicSpace.getTypeID() == "organicSpaceReceiving")
+			        	cellsize = cellsizeReceiving;
+			        if(organicSpace.getTypeID() == "organicSpaceSending")
+			        	cellsize = cellsizeSending;
+			        
 		  //  	RandomHelper.registerDistribution("hectares", RandomHelper.createUniform(1.2, 50));
 	            
 		    	int tenureSize = (int) Math.round(RandomHelper.getDistribution("hectares").nextDouble()*
@@ -598,7 +631,7 @@ public abstract void updateProfit();
 		    	int y = this.getTenureCells().get(i).getYlocation();
 		//    	System.out.println("tenure Size "+this.getTenureCells().size()+" "+
 		//    	x+" "+y);
-		    	double random = RandomHelper.nextDouble();
+		    	double random = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 			    if (random <0.5) {
 			    	this.getTenureCells().get(i).setLandUse(LandUse.SOY);
 			//    	System.out.println("SOY1");
@@ -637,6 +670,11 @@ public abstract void updateProfit();
 		    List<Point> agriculturalCells = new LinkedList<Point>();
 		    
 		 //   RandomHelper.registerDistribution("hectares", RandomHelper.createUniform(30,200));
+	        if(organicSpace.getTypeID() == "organicSpaceReceiving")
+	        	cellsize = cellsizeReceiving;
+	        if(organicSpace.getTypeID() == "organicSpaceSending")
+	        	cellsize = cellsizeSending;
+	        
 	        
 	    	double tenureSize =  Math.round(RandomHelper.getDistribution("hectares").nextDouble()*
 	    			10000d/ (cellsize * cellsize));
@@ -650,6 +688,8 @@ public abstract void updateProfit();
 					 
 				//	 if (TeleABMBuilder.receivingSystem&&!TeleABMBuilder.sendingSystem){
 					 if(organicSpace.getTypeID()=="organicSpaceReceiving") {
+						
+						 
 					 if (organicSpace.getLandUseAt(i, j)>=2 && organicSpace.getLandUseAt(i, j)<=4)
 						{		
 							agriculturalCells.add(p);
@@ -818,7 +858,7 @@ public abstract void updateProfit();
 		    GridPoint point = grid.getLocation(this);
 		    grid.moveTo(this, corner.x, corner.y);
 		    
-		    List<Point> agriculturalCells = new LinkedList<Point>();
+		   
 		    
 	//	   System.out.println(corner.x+" "+(corner.x+xboundary));
 	//	   System.out.println(corner.y+" "+(corner.y+yboundary));
@@ -826,14 +866,24 @@ public abstract void updateProfit();
 		    
 		 //first, go through all agricultural cells in this sub-section   
 if(organicSpace.getTypeID()=="organicSpaceReceiving"){
+	
 		 for (int i=corner.x; i<=(corner.x+xboundary);i++)  {
 			 for (int j=corner.y;j<=(corner.y+yboundary);j++){
 				 Point p=new Point(i,j);
 				 LandCell c = new LandCell(organicSpace,grid,p.x,p.y,
 	 					 organicSpace.getElevationAt(p.x, p.y),
 	 					 organicSpace.getOrganicAt(p.x, p.y));
+				 
+				 c.setCellSize(cellsizeReceiving);
 			//	 System.out.println("organic space "+organicSpace.getId()+" land cell is "+c.getYlocation());
-				
+				 c.setRecommendedSoyPerHaFertilizerUse(10.0);
+				 c.setObservedSoyPerHaFertilizerUse(63.0);
+				 c.setRecommendedRicePerHaFertilizerUse(150.0);
+				 c.setObservedRicePerHaFertilizerUse(146.0);
+				 c.setRecommendedCornPerHaFertilizerUse(200.0);
+				 c.setObservedCornPerHaFertilizerUse(224.0);
+				 //have to add recommended and observed for all crops when iterate through all cells.
+				 
 					if(c.isTaken()==true || organicSpace.getLandHolder(i, j)>0)
 					//this is to check if land cell is taken.
 						{
@@ -849,18 +899,16 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 						 {
 							 
 							 c.setLandHolder( true,this);
+							 //here the id is soybean id, it's different from receiving/sending 
+							 //soybean id
+							 
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
 							 this.tenureCells.add(c);
 							 //fertilizer use
-							 c.setRecommendedSoyPerHaFertilizerUse(10.0);
-							 c.setObservedSoyPerHaFertilizerUse(63.0);
+						
 							 
 							 c.setFertilizerInput(LandUse.SOY);
 							 //have to add recommended and observed for all crops when iterate through all cells.
-							 c.setRecommendedCornPerHaFertilizerUse(200.0);
-							 c.setObservedCornPerHaFertilizerUse(224.0);
-							 c.setRecommendedRicePerHaFertilizerUse(150.0);
-							 c.setObservedRicePerHaFertilizerUse(146.0);
 							 
 						 }
 					 }
@@ -869,34 +917,21 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 					
 							 c.setLandHolder(true, this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
-							 this.tenureCells.add(c);
-							 c.setRecommendedRicePerHaFertilizerUse(150.0); //kg/ha
-							 c.setObservedRicePerHaFertilizerUse(146.0 );
+							 this.tenureCells.add(c);						
 							 
-							 c.setFertilizerInput(LandUse.RICE);
-							 //have to add recommended and observed for all crops when iterate through all cells.
-							 c.setRecommendedSoyPerHaFertilizerUse(10.0);
-							 c.setObservedSoyPerHaFertilizerUse(63.0);
-							 c.setRecommendedCornPerHaFertilizerUse(200.0);
-							 c.setObservedCornPerHaFertilizerUse(224.0);
+							 c.setFertilizerInput(LandUse.RICE);						
 						 
 					 }
 					 if(organicSpace.getLandUseAt(i, j)==6){
-						 c.setLandUse(LandUse.CORN);
-						
-					
+						 c.setLandUse(LandUse.CORN);											
 							 c.setLandHolder(true,this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
 							 this.tenureCells.add(c);
-							 c.setRecommendedCornPerHaFertilizerUse(200.0);
-							 c.setObservedCornPerHaFertilizerUse(224.0);
+
 							 
 							 c.setFertilizerInput(LandUse.CORN);
 							 //have to add recommended and observed for all crops when iterate through all cells.
-							 c.setRecommendedSoyPerHaFertilizerUse(10.0);
-							 c.setObservedSoyPerHaFertilizerUse(63.0);
-							 c.setRecommendedRicePerHaFertilizerUse(150.0);
-							 c.setObservedRicePerHaFertilizerUse(146.0);
+							 
 						
 					 }
 					 
@@ -916,6 +951,61 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 				 					 organicSpace.getElevationAt(p.x, p.y),
 				 					 organicSpace.getOrganicAt(p.x, p.y));
 							 
+							 c.setCellSize(cellsizeSending);
+							 //suitability
+							 c.setSSCount(organicSpace.getSSCountAt(i, j));
+							 //single soy
+							 c.setDSCount(organicSpace.getDSCountAt(i, j));
+							 //double soy
+							 c.setCCount(organicSpace.getCCountAt(i, j));
+							 //cotton
+							 c.setSCCount(organicSpace.getSCCountAt(i, j));
+							 //soy cotton
+							 
+							 
+							 c.setRecommendedSoyPerHaFertilizerUse(300);
+							 c.setObservedSoyPerHaFertilizerUse(243.5);
+							 
+							 c.setRecommendedCornPerHaFertilizerUse(500);
+							 c.setObservedCornPerHaFertilizerUse(395.5);
+							 
+							 c.setObservedCottonPerHaFertilizerUse(242.2);		
+							 
+							 //last year land cover
+							 if(organicSpace.getLastYearLandUseAt(i, j)==1)
+								 c.setLastLandUse(LandUse.DOUBLESOY);
+							 if(organicSpace.getLastYearLandUseAt(i, j)==2)
+								 c.setLastLandUse(LandUse.SINGLESOY);
+							 if(organicSpace.getLastYearLandUseAt(i, j)==3)
+								 c.setLastLandUse(LandUse.COTTON);
+							 if(organicSpace.getLastYearLandUseAt(i, j)==4)
+								 c.setLastLandUse(LandUse.GRASSLAND); //this is pasture
+							 if(organicSpace.getLastYearLandUseAt(i, j)==5)
+								 c.setLastLandUse(LandUse.FOREST);
+							 if(organicSpace.getLastYearLandUseAt(i, j)==6)
+								 c.setLastLandUse(LandUse.WATER);
+							 if(organicSpace.getLastYearLandUseAt(i, j)==7)
+								 c.setLastLandUse(LandUse.BUILDING);
+							 if(organicSpace.getLastYearLandUseAt(i, j)==9)
+								 c.setLastLandUse(LandUse.SOYCOTTON);
+							 
+							 //two years ago land cover
+							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==1)
+								 c.setLastLastLandUse(LandUse.DOUBLESOY);
+							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==2)
+								 c.setLastLastLandUse(LandUse.SINGLESOY);
+							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==3)
+								 c.setLastLastLandUse(LandUse.COTTON);
+							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==4)
+								 c.setLastLastLandUse(LandUse.GRASSLAND); //this is pasture
+							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==5)
+								 c.setLastLastLandUse(LandUse.FOREST);
+							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==6)
+								 c.setLastLastLandUse(LandUse.WATER);
+							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==7)
+								 c.setLastLastLandUse(LandUse.BUILDING);
+							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==9)
+								 c.setLastLandUse(LandUse.SOYCOTTON);
 							 
 					 if(c.isTaken()==true || organicSpace.getLandHolder(i, j)>0){
 						 
@@ -923,22 +1013,16 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 					 else {
 					 if (organicSpace.getLandUseAt(i, j)==1)
 					 {
-						 agriculturalCells.add(p);
+						 agriculturalCells.add(c);
 				
 							c.setLandUse(LandUse.DOUBLESOY);
 							 c.setLandHolder(true,this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
-							 this.tenureCells.add(c);
-							 
-							 c.setRecommendedSoyPerHaFertilizerUse(300);
-							 c.setObservedSoyPerHaFertilizerUse(600);
-							 
-							 c.setRecommendedCornPerHaFertilizerUse(500);
-							 c.setObservedCornPerHaFertilizerUse(700);
-							 
-							 c.setObservedCottonPerHaFertilizerUse(2290.1);		
-							 
+							 this.tenureCells.add(c);							 
 							 c.setFertilizerInput(LandUse.DOUBLESOY);
+							 
+							
+							 
 							 
 					//		System.out.println("soy");
 					 }
@@ -946,58 +1030,71 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 						 
 					 else if(organicSpace.getLandUseAt(i, j)==2)
 						{
-						 agriculturalCells.add(p);
+						 agriculturalCells.add(c);
 							
 							c.setLandUse(LandUse.SINGLESOY);
 							 c.setLandHolder(true,this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
 							 this.tenureCells.add(c);
-							 c.setRecommendedSoyPerHaFertilizerUse(300);
+						//	 c.setRecommendedSoyPerHaFertilizerUse(300);
 							 //from GOEDERT-1983-Journal of soil science
 							 //fig.6
 							 //400 kg P/ha
 							 //it's when soybean yield reaches plateau.
-							 c.setObservedSoyPerHaFertilizerUse(600);
+						//	 c.setObservedSoyPerHaFertilizerUse(600);
 							 
 							 c.setFertilizerInput(LandUse.SINGLESOY);
 							 //has to add recommended and observed too
-							 c.setRecommendedCornPerHaFertilizerUse(500);
-							 c.setObservedCornPerHaFertilizerUse(700);
+						//	 c.setRecommendedCornPerHaFertilizerUse(500);
+						//	 c.setObservedCornPerHaFertilizerUse(700);
 					//		System.out.println("soy");
-							 c.setObservedCottonPerHaFertilizerUse(2290.1);
+						//	 c.setObservedCottonPerHaFertilizerUse(2290.1);
 							
 						}
 					 else if(organicSpace.getLandUseAt(i, j)==3) {
-					     agriculturalCells.add(p);
+					        agriculturalCells.add(c);
 							
 							c.setLandUse(LandUse.COTTON);
 							 c.setLandHolder(true,this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
 							 this.tenureCells.add(c);
 							 
-							 c.setRecommendedSoyPerHaFertilizerUse(300);
-							 c.setObservedSoyPerHaFertilizerUse(600);
+						//	 c.setRecommendedSoyPerHaFertilizerUse(300);
+						//	 c.setObservedSoyPerHaFertilizerUse(600);
 							 //has to add recommended and observed too
-							 c.setRecommendedCornPerHaFertilizerUse(500);
-							 c.setObservedCornPerHaFertilizerUse(700);
-							 c.setObservedCottonPerHaFertilizerUse(2290.1);
+						//	 c.setRecommendedCornPerHaFertilizerUse(500);
+						//	 c.setObservedCornPerHaFertilizerUse(700);
+						//	 c.setObservedCottonPerHaFertilizerUse(2290.1);
 							 
 							 c.setFertilizerInput(LandUse.COTTON);
 							 
 					 }
-					 else if (organicSpace.getLandUseAt(i, j)==9){
+					 else if(organicSpace.getLandUseAt(i, j)==4){
+				//		 agriculturalCells.add(p);
+						 c.setLandUse(LandUse.GRASSLAND);
+						 c.setLandHolder(true,this);
+						 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+						 this.tenureCells.add(c);
+					 } else if(organicSpace.getLandUseAt(i, j)==5){
+				//		 agriculturalCells.add(p);
+						 c.setLandUse(LandUse.FOREST);
+						 c.setLandHolder(true,this);
+						 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+						 this.tenureCells.add(c);
+					 }
+					 else	 if (organicSpace.getLandUseAt(i, j)==9){
 							
-							agriculturalCells.add(p);
+							agriculturalCells.add(c);
 		
 							c.setLandUse(LandUse.SOYCOTTON);
 							 c.setLandHolder(true,this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
 							 this.tenureCells.add(c);
-							 c.setRecommendedCornPerHaFertilizerUse(500);
-							 c.setObservedCornPerHaFertilizerUse(700);					         
-					         c.setRecommendedSoyPerHaFertilizerUse(300);
-							 c.setObservedSoyPerHaFertilizerUse(600);
-							 c.setObservedCottonPerHaFertilizerUse(2290.1);							 
+						//	 c.setRecommendedCornPerHaFertilizerUse(500);
+						//	 c.setObservedCornPerHaFertilizerUse(700);					         
+					    //     c.setRecommendedSoyPerHaFertilizerUse(300);
+						//	 c.setObservedSoyPerHaFertilizerUse(600);
+						//	 c.setObservedCottonPerHaFertilizerUse(2290.1);							 
 							  c.setFertilizerInput(LandUse.SOYCOTTON);
 						} else {
 							
@@ -1090,6 +1187,10 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 		   public List<LandCell> getTenureCells() {
 				return tenureCells;
 			}
+		   
+		   public List<LandCell> getAgriculturalCells(){
+			   return agriculturalCells;
+		   }
 			
 			public double getLabour() {
 				return labour;
@@ -1225,6 +1326,14 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 			public void setSoyPerHaFuelInput(double soyPerHaFuelInput) {
 				this.soyPerHaFuelInput = soyPerHaFuelInput;
 			}
+			
+			public void setCottonPerHaFuelInput(double cottonPerHaFuelInput){
+				this.cottonPerHaFuelInput = cottonPerHaFuelInput;
+			}
+			
+			public double getCottonPerHaFuelInput(){
+				return cottonPerHaFuelInput;
+			}
 
 
 			public double getCornPerHaFuelInput() {
@@ -1256,6 +1365,8 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 				this.otherPerHaFuelInput = otherPerHaFuelInput;
 			}
 			
+		
+			
 			public void setCottonProduction(double cottonProduction) {
 				this.cottonProduction = cottonProduction;
 			}
@@ -1267,6 +1378,29 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 			public double getInternationalTradeSoyPrice() {
 				return internationalTradeSoyPrice;
 			}
+			
+			public double getSoyMaizePerHaFertilizerInput() {
+				return soyMaizePerHaFertilizerInput;
+			}
+
+
+			public void setSoyMaizePerHaFertilizerInput(double soyMaizePerHaFertilizerInput) {
+				this.soyMaizePerHaFertilizerInput = soyMaizePerHaFertilizerInput;
+			}
+
+
+			public double getSoyCottonPerHaFertilizerInput() {
+				return soyCottonPerHaFertilizerInput;
+			}
+
+
+			public void setSoyCottonPerHaFertilizerInput(double soyCottonPerHaFertilizerInput) {
+				this.soyCottonPerHaFertilizerInput = soyCottonPerHaFertilizerInput;
+			}
+
+           public int getID(){
+        	   return this.id;
+           }
 
 }
 	

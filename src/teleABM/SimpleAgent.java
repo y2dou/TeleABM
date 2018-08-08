@@ -10,13 +10,14 @@ import repast.simphony.util.ContextUtils;
 
 @AgentAnnot(displayName = "Agent")
 public abstract class SimpleAgent {
-	
-private static final AtomicInteger idGenerator = new AtomicInteger();
+
+	private static final AtomicInteger idGenerator = new AtomicInteger(0);
 	
 	private int id;
 	
 	public SimpleAgent() {
 		this.id = idGenerator.getAndIncrement();
+	//	this(idGenerator.getAndIncrement());
 	}
 	
 	public Integer getID() { return id; }
@@ -42,6 +43,7 @@ private static final AtomicInteger idGenerator = new AtomicInteger();
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + getID();
+	//   result = prime*result+id;
 		return result;
 	}
 

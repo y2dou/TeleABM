@@ -26,6 +26,12 @@
 			<projection id="temp zone Sending" type="value layer"/>
 			<projection id ="precipitation zone Sending" type ="value layer" />
 			
+			<projection id="land cover t2" type = "value layer"/>
+			<projection id="land cover t1" type = "value layer"/>
+			<projection id="single soy count" type = "value layer"/>
+			<projection id="double soy count" type = "value layer"/>
+			<projection id="cotton count" type = "value layer"/>
+			<projection id="soy cotton count" type = "value layer"/> 
 	     	
      </context>
 		

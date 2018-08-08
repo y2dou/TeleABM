@@ -63,6 +63,9 @@ import teleABM.SoybeanAgent;
 			new LinkedList<ReceivingSoybeanAgent>();
   	List<SendingSoybeanAgent> sendingSoybeanAgents =
 			new LinkedList<SendingSoybeanAgent>();
+  	
+  	List<ReceivingTraderAgent> receivingTraderAgents = new LinkedList<ReceivingTraderAgent>();
+	List<SendingTraderAgent> sendingTraderAgents = new LinkedList<SendingTraderAgent>();
     
 	protected WeightedSelector<Range<Integer>> dependentRatioSelector;
 	protected WeightedSelector<Range<Integer>> genderRatioSelector;
@@ -75,7 +78,8 @@ import teleABM.SoybeanAgent;
 		  // The sugarFile contains the initial/max sugar values for every point
 			// on the 2D sugarspace.
 			String organicFile = "misc/organicmatter.asc";
-			String organicFileForSending = "misc/2005sinop.asc";
+		//	String organicFileForSending = "misc/2005sinop.asc";
+			String organicFileForSending = "misc/sinop/sinop_2005.asc";
 			
 			Parameters p = RunEnvironment.getInstance().getParameters();
 			
@@ -84,6 +88,8 @@ import teleABM.SoybeanAgent;
 			
 			int numTradeAgents = (Integer) p.getValue("initialNumTradeAgents");
 			context.add(internationalTradeAgent);
+			context.add(governmentAgent);
+			
 			modeAddAgents = (Integer)p.getValue("mode of adding agents");
 	//		System.out.println(p.getValue("sending system representation"));
 		
@@ -282,7 +288,7 @@ import teleABM.SoybeanAgent;
 		//		  System.out.println("dependent ratio of this agent: "+h.getDependentRatio() +
         //                			"  "+ dependentRatio	  );
 				  organicSpaceReceiving.addReceivingSoybeanAgent(h);
-				  setReceivingPrice(h);
+		//		  setReceivingPrice(h);
               }
                
          //      System.out.println("after removing "+receivingSoybeanAgents.);	
@@ -295,13 +301,13 @@ import teleABM.SoybeanAgent;
 					SendingSoybeanAgent h =
 					  new SendingSoybeanAgent(i);
 			        sendingSoybeanAgents.add(h);
+			  //      System.out.println(i+" =? "+h.getID());
 				}				
 				organicSpaceSending = (OrganicSpace) context.findContext("organicSpaceSending");
 				ArrayList<Point> sendingCorners = setXYcornerOfSendingSystem();
 				if (modeAddAgents ==0) //add agents covering whole landscape
 					for(int i =0; i<numSendingAgents; i++){
-						sendingSoybeanAgents.get(i).initialize(organicSpaceSending);				
-						
+						sendingSoybeanAgents.get(i).initialize(organicSpaceSending);										
 						organicSpaceSending.add(sendingSoybeanAgents.get(i));			
 						sendingSoybeanAgents.get(i).addSoybeanAgentFromLandscape(organicSpaceSending,							                                  
 								sendingCorners.get(i));
@@ -337,7 +343,8 @@ import teleABM.SoybeanAgent;
 				organicSpaceSending = (OrganicSpace) context.findContext("organicSpaceSending");
 				List<Integer> listToRemove = new ArrayList<Integer>();
 				 for( int i = 0; i<sendingSoybeanAgents.size(); i++) {
-				if (sendingSoybeanAgents.get(i).getTenureCells().size()==0)
+				//if (sendingSoybeanAgents.get(i).getTenureCells().size()==0)
+					if(sendingSoybeanAgents.get(i).getAgriculturalCells().size()==0)
 				  {
 					listToRemove.add(i);
 				   }
@@ -352,36 +359,44 @@ import teleABM.SoybeanAgent;
 				 
 				  for ( SendingSoybeanAgent h:sendingSoybeanAgents) {
 				  organicSpaceSending.addSendingSoybeanAgent(h);
-				  setSendingPrice(h);
+		//		  setSendingPrice(h);
 				  }
 				 
 				//	System.out.println(organicSpaceSending.numAgents);
 			}
 	
-			System.out.println("add agents finished");
+			System.out.println("add soybean agents finished");
 			
 			//add trade agents
 			if(receivingSystem){
 				organicSpaceReceiving = (OrganicSpace) context.findContext("organicSpaceReceiving");
 		 	for (int i = 0; i<numTradeAgents; i++){
-			 	TraderAgent traderAgent = new TraderAgent(i);	
+			 	ReceivingTraderAgent receivingTraderAgent = new ReceivingTraderAgent(i);	
 				
-			 	organicSpaceReceiving.add(traderAgent);
+			 	organicSpaceReceiving.add(receivingTraderAgent);				
+			 	receivingTraderAgent.initialize(organicSpaceReceiving);
+				setReceivingPrice(receivingTraderAgent);
 				
-				traderAgent.initialize(organicSpaceReceiving);
+				receivingTraderAgents.add(receivingTraderAgent);
 			}
 			   organicSpaceReceiving.add(internationalTradeAgent);
+			   organicSpaceReceiving.add(governmentAgent);
 			}
 			if(sendingSystem){
 				organicSpaceSending = (OrganicSpace) context.findContext("organicSpaceSending");
 				for (int i = 0; i<numTradeAgents; i++){
-					TraderAgent traderAgent = new TraderAgent(i);		
-				
-					organicSpaceSending.add(traderAgent);
+			//	for (int i=0; i< 2; i++)	{
+					SendingTraderAgent sendingTraderAgent = new SendingTraderAgent(i);		
+		//		    System.out.println(i+" sta? "+sendingTraderAgent.getID());
+				    
+					organicSpaceSending.add(sendingTraderAgent);
+							
+					sendingTraderAgent.initialize(organicSpaceSending);		
+			//		System.out.println("add trader agent  "+i);
+					setSendingPrice(sendingTraderAgent);
+			//		System.out.println("add trader agent to sending "+i);
+					sendingTraderAgents.add(sendingTraderAgent);
 									
-					traderAgent.initialize(organicSpaceSending);
-					
-				
 				}
 				
 				
@@ -568,35 +583,71 @@ import teleABM.SoybeanAgent;
 		
 	//	internationalTradeAgent.marketTrading();
 		//priority higher means it excute earlier.
-  @ScheduledMethod(start = 1, interval = 1, priority = 2)		
-  public void tradeAction(){
 		
+  @ScheduledMethod(start = 0, interval = 1, priority = 2)		
+  public void tradeAction(){
+	  boolean tariff;
+	  double receivingSoyProduction = 0;
+	  double sendingSoyProduction = 0;
+	  double soySubsidy;
+	  
 	  if(receivingSystem) {
-	   
-		for ( ReceivingSoybeanAgent h:receivingSoybeanAgents) 
+	   internationalTradeAgent.setReceivingTotalSoyProduction(0);
+		for ( ReceivingTraderAgent rta:receivingTraderAgents) 
 		        {	
-                 internationalTradeAgent.receivingMarketProduction(h);        
+                 internationalTradeAgent.receivingMarketProduction(rta);   
+                 receivingSoyProduction+=rta.getSoyAmount();
+            //     if(rta.getSoyAmount()>0)
+            //     System.out.println("rta: "+rta.getSoyAmount());
 	            }
+		
 	  }
-	 
+//	  internationalTradeAgent.setReceivingTotalSoyProduction(receivingSoyProduction);
+//	  System.out.println( "rta: "+internationalTradeAgent.getReceivingTotalSoyProduction());
+	  
 	  if(sendingSystem){
-		for ( SendingSoybeanAgent h:sendingSoybeanAgents) 
+		  internationalTradeAgent.setSendingTotalSoyProduction(0);
+		  	for ( SendingTraderAgent sta:sendingTraderAgents) 
 		      {
-			      internationalTradeAgent.sendingMarketProduction(h);
+			      internationalTradeAgent.sendingMarketProduction(sta);
+			      sendingSoyProduction+=sta.getSoyAmount();
+			   //   if(sta.getSoyAmount()>0)
+	//	                 System.out.println("sta: "+sta.getSoyAmount());
 		      }
 	  }
-
+	 
+	  System.out.println("sta: "+internationalTradeAgent.getSendingTotalSoyProduction());
+	//  System.out.println( "rta: "+internationalTradeAgent.getReceivingTotalSoyProduction());
+	  
 	  if(receivingSystem && sendingSystem)
 	  {
 		  TeleABMBuilder.internationalTradeMode = true;
-		  internationalTradeAgent.priceSetting(receivingSoybeanAgents, sendingSoybeanAgents);
+	      tariff = governmentAgent.decideTariff();
+		  internationalTradeAgent.priceSetting(receivingTraderAgents, sendingTraderAgents,tariff);
+		
 	  }
-	
-	
+	  
+//	  internationalTradeAgent.setSendingTotalSoyProduction(sendingSoyProduction);
+//	  internationalTradeAgent.setReceivingTotalSoyProduction(receivingSoyProduction);
+	  receivingSoyProduction = internationalTradeAgent.getReceivingTotalSoyProduction();
+	 System.out.println("test receiving soy production "+receivingSoyProduction);
+		 
+		  if (receivingSoyProduction<4.0E7)
+		      soySubsidy = 400;
+		  else 
+			  soySubsidy = 100;
+		  
+		  for ( ReceivingSoybeanAgent h:receivingSoybeanAgents) 
+		    { 
+			  h.setSoySubsidy(soySubsidy);
+    	    }
+		  System.out.println(receivingSoyProduction+" has soy subsidy "+ soySubsidy);	
+		
 	}
   
   
-  public void setSendingPrice(SendingSoybeanAgent h){
+//  public void setSendingPrice(SendingSoybeanAgent h){
+  public void setSendingPrice(SendingTraderAgent h){
 	     Parameters p = RunEnvironment.getInstance().getParameters();
   	// System.out.println ("soyPrice =" + (Double) p.getValue("soyPrice"));
 		// load data: prices
@@ -609,10 +660,12 @@ import teleABM.SoybeanAgent;
 			
 			if (staticPrice >= 0) {
 	
-				 h.setSendingStaticCommodityPrices(LandUse.SINGLESOY,staticPrice);
+		//		 h.setSendingStaticCommodityPrices(LandUse.SINGLESOY,staticPrice);
+				 h.setSendingStaticCommodityPrices(LandUse.SOY, staticPrice);
 	
 			} else {
-				priceLists.put(LandUse.SINGLESOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
+		//		priceLists.put(LandUse.SINGLESOY, new FileInputStream("auxdata/prices/soySinopPrice.txt"));
+				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soySinopPrice.txt"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
 			}
 		} catch (FileNotFoundException e1) {
@@ -623,10 +676,13 @@ import teleABM.SoybeanAgent;
 		try {
 			double staticPrice = (Double) p.getValue("cornPrice");
 			if (staticPrice >= 0) {
-				 h.setSendingStaticCommodityPrices(LandUse.DOUBLESOY,staticPrice);
+			//	 h.setSendingStaticCommodityPrices(LandUse.DOUBLESOY,staticPrice);
+				 h.setSendingStaticCommodityPrices(LandUse.CORN,staticPrice);
 				
 			} else {
-				priceLists.put(LandUse.DOUBLESOY, new FileInputStream("auxdata/prices/corn.prices.txt"));
+			//	priceLists.put(LandUse.DOUBLESOY, new FileInputStream("auxdata/prices/cornSinopPrice.txt"));
+				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornSinopPrice.txt"));
+				
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -636,6 +692,7 @@ import teleABM.SoybeanAgent;
 		try {
 			double staticPrice = (Double) p.getValue("otherPrice");
 			if (staticPrice >= 0) {
+		//		h.setSendingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
 				h.setSendingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
 			} else {
 				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("auxdata/prices/other.prices.txt"));
@@ -650,7 +707,7 @@ import teleABM.SoybeanAgent;
 				 h.setSendingStaticCommodityPrices(LandUse.COTTON,staticPrice);
 			}
 		 else {
-			priceLists.put(LandUse.COTTON, new FileInputStream("auxdata/prices/cotton.prices.txt"));
+			priceLists.put(LandUse.COTTON, new FileInputStream("auxdata/prices/cottonSinopPrice.txt"));
 		 }
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -695,7 +752,8 @@ import teleABM.SoybeanAgent;
         }
    }
 
-  public void setReceivingPrice(ReceivingSoybeanAgent h){
+//  public void setReceivingPrice(ReceivingSoybeanAgent h){
+	  public void setReceivingPrice(ReceivingTraderAgent h){	  
 	     Parameters p = RunEnvironment.getInstance().getParameters();
 	// System.out.println ("soyPrice =" + (Double) p.getValue("soyPrice"));
 		// load data: prices
@@ -792,6 +850,8 @@ import teleABM.SoybeanAgent;
 	        }
  
      }
+	
+	 
 }
   
   

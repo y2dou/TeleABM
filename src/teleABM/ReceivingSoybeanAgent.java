@@ -59,7 +59,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	protected double whetherknow_transgeneYes;
 	protected double whether_know_import_gmoYes;
 	 
-	protected double costConvertToRicePaddy=2000.0/(cellsize*cellsize);
+	protected double costConvertToRicePaddy=2000.0/(cellsizeReceiving*cellsizeReceiving);
 	
 	protected double totalFertilizerInput=0;
 	
@@ -73,6 +73,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	protected  FastTable<LandCell> planningOtherCells = new FastTable<LandCell>();
 	//these are to record all planning cells
 
+	private double soySubsidy ;
+	private double cornSubsidy ;
+	private double riceSubsidy ;
 	
 	
 	public ReceivingSoybeanAgent() {
@@ -164,6 +167,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		this.setSoyPerHaFuelInput(80.43);
 		this.setRicePerHaFuelInput(163.6);
 		this.setOtherPerHaFuelInput(30.0);				
+		
 	}
 	
 	@Override
@@ -256,7 +260,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
     			//	System.out.println("cell no. "+i+" use fertilizer "+soyCells.get(i).getFertilizerInput());
     			}
     			soyPerHaFertilizerInput=totalfertilizeruse/soyCells.size();    					
-    			soyPerHaFertilizerInput = soyPerHaFertilizerInput/(cellsize*cellsize)*10000.0;    			
+    			soyPerHaFertilizerInput = soyPerHaFertilizerInput/(cellsizeReceiving*cellsizeReceiving)*10000.0;    			
     			setSoyPerHaFertilizerInput(soyPerHaFertilizerInput);
     			totalfertilizeruse = 0;
     			}
@@ -267,7 +271,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
     					totalfertilizeruse+=cornCells.get(i).getFertilizerInput();
     					}
     				cornPerHaFertilizerInput=totalfertilizeruse/cornCells.size();
-    				cornPerHaFertilizerInput = cornPerHaFertilizerInput/(cellsize*cellsize)*10000.0;
+    				cornPerHaFertilizerInput = cornPerHaFertilizerInput/(cellsizeReceiving*cellsizeReceiving)*10000.0;
     				setCornPerHaFertilizerInput(cornPerHaFertilizerInput);
     				totalfertilizeruse=0;
     				}
@@ -278,7 +282,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
     					totalfertilizeruse+=riceCells.get(i).getFertilizerInput();
     				}
     				ricePerHaFertilizerInput=totalfertilizeruse/riceCells.size();
-    				ricePerHaFertilizerInput = ricePerHaFertilizerInput/(cellsize*cellsize)*10000.0;
+    				ricePerHaFertilizerInput = ricePerHaFertilizerInput/(cellsizeReceiving*cellsizeReceiving)*10000.0;
     				setRicePerHaFertilizerInput(ricePerHaFertilizerInput);
     				totalfertilizeruse = 0;
     				}   			
@@ -288,7 +292,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
     				    totalfertilizeruse+=otherCells.get(i).getFertilizerInput();
     				}
     				otherPerHaFertilizerInput=totalfertilizeruse/otherCells.size();
-    				otherPerHaFertilizerInput = otherPerHaFertilizerInput/(cellsize*cellsize)*10000.0;
+    				otherPerHaFertilizerInput = otherPerHaFertilizerInput/(cellsizeReceiving*cellsizeReceiving)*10000.0;
     				setOtherPerHaFertilizerInput(otherPerHaFertilizerInput);
     				}
     			
@@ -519,6 +523,8 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		//[0] never grow soybean
 		int max=2;
 		double maxProb=probability[0];
+		
+		
 //to calculate the max probability
 		   if(probability[1]>maxProb){
 			   maxProb=probability[1];
@@ -535,7 +541,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		                }
 //to calculate the max probability	   
 //		   System.out.println("most likely "+max);
-		   max=2;
+	//	   max=2;
 
 		 if(max>0){
 	//	   System.out.println("most likely "+max);
@@ -590,7 +596,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			//go through soy cell list, change to either corn or rice
 			for (int j =0; j<this.soyCells.size();j++) 
 			 {						
-					if(RandomHelper.nextDouble()>0.9){
+					if(RandomHelper.nextDoubleFromTo(0, 1)>0.9){
 				    	listToChange.add(j);						
 					} else {
 					    listNotChange.add(j);	
@@ -808,7 +814,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	        }
 	//    System.out.println("highest count="+count);
 	//    count=0;
-		if(count==0)  //highest profit is soybean growing
+		if(count==0)  //highest profit is soybean 
 		{
 			for (int i=0; i <cornCells.size()*0.5;i++){
 				listToChange.add(i);
@@ -921,9 +927,6 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		//	tick has to be called everytime it is used;
 		double cPrice=0;
-		 double soySubsidy = 2500;
-		 double cornSubsidy = 3000;
-		 double riceSubsidy = 625;
 		 
 		
 //		lastYearSoyPerHaProfit=0;
@@ -936,8 +939,11 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 //		System.out.println("update profit at soybean abstract: "
 //		                +tick+": "+ this.getCommodityPrice(LandUse.SOY));
 		
-		cPrice=this.getCommodityPrice(LandUse.SOY);
+		//cPrice=this.getCommodityPrice(LandUse.SOY);
+//		cPrice=  this.traderAgents.get().getCommodityPrice(LandUse.SOY);
+//		System.out.println("WHAT S WRONG "+soySoldToTraderAgent);
 		
+		cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SOY);
 	//	System.out.println("to check if price is signed  "+cPrice);
 		
 		soyPrices.add(cPrice);
@@ -946,12 +952,14 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		   
 		}
 		
-		cPrice=this.getCommodityPrice(LandUse.CORN);
+	//	cPrice=this.getCommodityPrice(LandUse.CORN);
+		cPrice = cornSoldToTraderAgent.getCommodityPrice(LandUse.CORN);
 		cornPrices.add(cPrice);
 		if (cornPrices.size()>priceMemoryLimit) {
 			cornPrices.remove(0); //remove least recent price
 		}
-		cPrice=this.getCommodityPrice(LandUse.RICE);
+		
+		cPrice = riceSoldToTraderAgent.getCommodityPrice(LandUse.RICE);
 		ricePrices.add(cPrice);
 		if (ricePrices.size()>priceMemoryLimit) {
 			ricePrices.remove(0); //remove least recent price
@@ -965,18 +973,20 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 //				soyYield+=yield;
 			//	cPrice=this.soySoldToTraderAgent.getCommodityPrice(LandUse.SOY);
 				
-				cPrice=this.getCommodityPrice(LandUse.SOY);
+			cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SOY);
 
 				
 		//		System.out.println("update profit: "+tick+ " "+
 			//	         cPrice+" yield "+yield);
 				profit+=soyProduction*cPrice;		
-		//		this.soySoldToTraderAgent.addSoyAmount(yield);
-		//		this.soySoldToTraderAgent.purchaseCommodity(yield*cPrice);
 				
+				this.soySoldToTraderAgent.addSoyAmount(soyProduction);
+				this.soySoldToTraderAgent.purchaseCommodity(soyProduction*cPrice);
+				
+	//			System.out.println("sold soy for "+soyProduction*cPrice+" yuan");
 			
 			soyPerHaYield = soyProduction/soyCells.size();
-			soyPerHaYield = soyPerHaYield /(cellsize*cellsize)*10000.0;
+			soyPerHaYield = soyPerHaYield /(cellsizeReceiving*cellsizeReceiving)*10000.0;
 			//has to convert this to from cell yield to per ha yield
 		//	System.out.println(soyYield+" cell "+soyCells.size());
 			lastYearSoyPerHaProfit = soyPerHaYield*cPrice-getSoyPerHaFuelInput()*fuelUnitCost
@@ -993,14 +1003,15 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	 //           +this.getCommodityPrice(LandUse.CORN));
 		if (cornProduction>0) {
 				
-				cPrice=this.getCommodityPrice(LandUse.CORN);
+			cPrice = cornSoldToTraderAgent.getCommodityPrice(LandUse.CORN);
 
 				profit+=cornProduction*cPrice;
-		//		this.cornSoldToTraderAgent.addCornAmount(yield);
-		//		this.cornSoldToTraderAgent.purchaseCommodity(yield*cPrice);
+			
+				this.cornSoldToTraderAgent.addCornAmount(cornProduction);
+				this.cornSoldToTraderAgent.purchaseCommodity(cornProduction*cPrice);
 				
 			cornPerHaYield=cornProduction/cornCells.size();
-			cornPerHaYield = (cornPerHaYield/(cellsize*cellsize))*10000.0;
+			cornPerHaYield = (cornPerHaYield/(cellsizeReceiving*cellsizeReceiving))*10000.0;
 			lastYearCornPerHaProfit = cornPerHaYield*cPrice-cornPerHaFuelInput*fuelUnitCost
 	                -cornPerHaFertilizerInput*fertilizerUnitCost 
 	                -785.0 //seed cost
@@ -1013,13 +1024,14 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		}
 		if (riceProduction>0) {
 			
-				cPrice=this.getCommodityPrice(LandUse.RICE);
+				cPrice=riceSoldToTraderAgent.getCommodityPrice(LandUse.RICE);
 				profit+=riceProduction*cPrice;
-		//		this.riceSoldToTraderAgent.addRiceAmount(yield);
-		//		this.riceSoldToTraderAgent.purchaseCommodity(yield*cPrice);
+				
+				this.riceSoldToTraderAgent.addRiceAmount(riceProduction);
+				this.riceSoldToTraderAgent.purchaseCommodity(riceProduction*cPrice);
 				
 			ricePerHaYield=riceProduction/riceCells.size();
-			ricePerHaYield=(ricePerHaYield/(cellsize*cellsize))*10000.0;
+			ricePerHaYield=(ricePerHaYield/(cellsizeReceiving*cellsizeReceiving))*10000.0;
 			lastYearRicePerHaProfit = ricePerHaYield*cPrice-ricePerHaFuelInput*fuelUnitCost
 	                -ricePerHaFertilizerInput*fertilizerUnitCost 
 	                -600.0  //seed cost
@@ -1028,14 +1040,15 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		}
 		if (grownOther) {
 			
-				cPrice=this.getCommodityPrice(LandUse.OTHERCROPS);
+		    	cPrice=otherSoldToTraderAgent.getCommodityPrice(LandUse.OTHERCROPS);
 				otherPrices.add(cPrice);
 				if (otherPrices.size()>priceMemoryLimit) {
 					otherPrices.remove(0); //remove least recent price
 				
 				profit+=otherProduction*cPrice;
-		//		this.otherSoldToTraderAgent.addOtherAmount(yield);
-		//		this.otherSoldToTraderAgent.purchaseCommodity(yield*cPrice);
+				
+				this.otherSoldToTraderAgent.addOtherAmount(otherProduction);
+				this.otherSoldToTraderAgent.purchaseCommodity(otherProduction*cPrice);
 				}
 			otherPerHaYield=otherProduction/otherCells.size();
 			lastYearOtherPerHaProfit = otherPerHaYield*cPrice-otherPerHaFuelInput*fuelUnitCost
@@ -1061,13 +1074,20 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
 		int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 	//	System.out.println(tick+ " trader size: "+this.traderAgents.size());
-		soyPrice=getCommodityPrice(LandUse.SOY);
+	//	soyPrice=getCommodityPrice(LandUse.SOY);
+	//	if(tick>0)
+	//	soyPrice=lastYearSoyPrice;
 	//	System.out.println("tick: "+tick+" "+soyPrice);
 		
-		if (grownSoy) {
+	//	if (grownSoy) {
 			//check who has the highest price
+		if(this.traderAgents.size()>0) 
+		
+		{
 			for (int i=0; i<this.traderAgents.size();i++) {
-			//	soyPrice=traderAgents.get(i).getCommodityPrice(LandUse.SOY);
+				soyPrice=traderAgents.get(i).getCommodityPrice(LandUse.SOY);
+		//		System.out.println("soy price "+soyPrice);
+		//		System.out.println("highest price "+highestPrice);
 				
 				if (soyPrice>highestPrice) {
 					highestPrice=soyPrice;
@@ -1076,15 +1096,18 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			}			
 			soySoldToTraderAgent = this.traderAgents.get(soySoldToTraderAgentID);
 			lastYearSoyPrice = highestPrice;
-	//		System.out.println(tick+": last year price"+lastYearSoyPrice+
-	//				" next year: "+ soyPrice);
-		}
 		
-		if (grownCorn) {
+	//		System.out.println("soy agent "+this.getID()+" trade with "+
+	//	                     soySoldToTraderAgent.getID() +" at tick "+tick);
+			
+	//		System.out.println("big or small trader"+soySoldToTraderAgent.capital);
+	//	}
+		
+	//	if (grownCorn) {
 			highestPrice=0;
 			for (int i=0;i<this.traderAgents.size();i++){
 				cornPrice=traderAgents.get(i).getCommodityPrice(LandUse.CORN);
-				cornPrice=getCommodityPrice(LandUse.CORN);
+		//		cornPrice=getCommodityPrice(LandUse.CORN);
 				if (cornPrice>highestPrice) {
 					highestPrice=cornPrice;
 					cornSoldToTraderAgentID = i;
@@ -1092,13 +1115,13 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			}			
 			cornSoldToTraderAgent = this.traderAgents.get(cornSoldToTraderAgentID);
 			lastYearCornPrice = highestPrice;
-		}
+	//	}
 		
-		if (grownRice) {
+	//	if (grownRice) {
 			highestPrice=0;
 			for (int i=0;i<this.traderAgents.size();i++){
 				ricePrice=traderAgents.get(i).getCommodityPrice(LandUse.RICE);
-				ricePrice=getCommodityPrice(LandUse.RICE);
+	//			ricePrice=getCommodityPrice(LandUse.RICE);
 	//			System.out.println("commodity type: "+traderAgents.get(i).getCommodityType());
 	//			System.out.println("commodity price: "+traderAgents.get(i).getCommodityPrice(LandUse.RICE));
 				if (ricePrice>highestPrice) {
@@ -1109,12 +1132,12 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			lastYearRicePrice = highestPrice;
 			riceSoldToTraderAgent = this.traderAgents.get(riceSoldToTraderAgentID);
 		//	System.out.println("sold to rice agent: "+riceSoldToTraderAgentID+" "+highestPrice);
-		}
-		if (grownOther) {
+		//}
+	//	if (grownOther) {
 			highestPrice=0;
 			for (int i=0;i<this.traderAgents.size();i++){
 				otherPrice=traderAgents.get(i).getCommodityPrice(LandUse.OTHERCROPS);
-				otherPrice=getCommodityPrice(LandUse.OTHERCROPS);
+	//			otherPrice=getCommodityPrice(LandUse.OTHERCROPS);
 				if (otherPrice>highestPrice) {
 					highestPrice=ricePrice;
 					otherSoldToTraderAgentID = i;
@@ -1122,7 +1145,15 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			}			
 			lastYearOtherPrice = highestPrice;
 			otherSoldToTraderAgent = this.traderAgents.get(otherSoldToTraderAgentID);
+			
 		}
+	//	}
+		
+		else {
+	  System.out.println("NO TRADE AGENTS");
+	  
+	  
+	    	}
 		
 			
 	}
@@ -1178,7 +1209,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 					c.setLandUse(LandUse.SOY);
 					organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
 					c.setFertilizerInput(LandUse.SOY);
-					c.setFuelInput((soyPerHaFuelInput/10000.0)*(cellsize*cellsize));
+					c.setFuelInput((soyPerHaFuelInput/10000.0)*(cellsizeReceiving*cellsizeReceiving));
 					c.setWaterRequirement(LandUse.SOY);
 					
 					capital-= c.getFertilizerInput()*fertilizerUnitCost +
@@ -1195,7 +1226,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 					c.setLandUse(LandUse.CORN);
 					organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
 					c.setFertilizerInput(LandUse.CORN);
-					c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsize*cellsize));
+					c.setFuelInput((cornPerHaFuelInput/10000.0)*(cellsizeReceiving*cellsizeReceiving));
 					c.setWaterRequirement(LandUse.CORN);
 					capital-= c.getFertilizerInput()*fertilizerUnitCost +
 						      c.getFuelInput()*fuelUnitCost;
@@ -1212,7 +1243,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 					organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
 					
 					c.setFertilizerInput(LandUse.RICE);
-					c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsize*cellsize));
+					c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsizeReceiving*cellsizeReceiving));
 					c.setWaterRequirement(LandUse.RICE);
 					capital-= c.getFertilizerInput()*fertilizerUnitCost +
 							  c.getFuelInput()*fuelUnitCost;
@@ -1240,6 +1271,36 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	//		System.out.println("farmer id: "+ this.getID()+ " has size "+ this.tenureCells.size()
 	//		                 +" soy size "+soyCells.size()+ " corn size " +cornCells.size()
 	//		                 + " rice size "+riceCells.size());
+	}
+
+	public double getSoySubsidy() {
+		return soySubsidy;
+	}
+
+	public void setSoySubsidy(double soySubsidy) {
+		this.soySubsidy = soySubsidy;
+	}
+
+	public double getCornSubsidy() {
+		return cornSubsidy;
+	}
+
+	public void setCornSubsidy(double cornSubsidy) {
+		this.cornSubsidy = cornSubsidy;
+	}
+
+	public double getRiceSubsidy() {
+		return riceSubsidy;
+	}
+
+	public void setRiceSubsidy(double riceSubsidy) {
+		this.riceSubsidy = riceSubsidy;
+	}
+
+	@Override
+	public void landUseDecisionLogisticRegression(OrganicSpace organicSpace) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

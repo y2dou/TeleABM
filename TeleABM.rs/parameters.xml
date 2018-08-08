@@ -10,27 +10,27 @@
 									
 		/>
 	<parameter name="sending system representation" displayName="Sending System Representation" type="boolean" 
-						defaultValue="false" 
+						defaultValue="TRUE" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
 		
 		<parameter name="receiving system representation" displayName="Receiving System Representation" type="boolean" 
-						defaultValue="true" 
+						defaultValue="false" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
 	<parameter name="initialReceivingNumAgents" displayName="Initial Receiving Agents" type="int" 
-						defaultValue="1000" 
+						defaultValue="5000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 		
 		<parameter name="initialSendingNumAgents" displayName="Initial Sending Agents" type="int" 
-						defaultValue="1200" 
+						defaultValue="300" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -43,13 +43,13 @@
 									
 		/>
 		<parameter name="receivingWorldHeight" displayName="Receiving World Height" type="int" 
-						defaultValue="2152" 
+						defaultValue="4575" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 			<parameter name="receivingWorldWidth" displayName="Receiving World Width" type="int" 
-						defaultValue="1244" 
+						defaultValue="4169" 
 						
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
@@ -58,45 +58,45 @@
 		
 	
 		<parameter name="sendingWorldHeight" displayName="Sending World Height" type="int" 
-						defaultValue="3120" 
+						defaultValue="412" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 			<parameter name="sendingWorldWidth" displayName="Sendinging World Width" type="int" 
-						defaultValue="2659" 						
+						defaultValue="351" 						
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-			<parameter name="cellSize" displayName="Cell Size" type="int" 
+			<parameter name="cellSizeReceiving" displayName="Receiving Cell Size" type="int" 
 						defaultValue="30" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+		
+		    <parameter name="cellSizeSending" displayName="Sending Cell Size" type="int" 
+						defaultValue="240" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
 		<parameter name="vision" displayName="Farmer Vision" type="int" 
-						defaultValue="500" 
+						defaultValue="1000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 		
-		<parameter name="organicGrowRate" displayName="Organic Grow Rate" type="double" 
-						defaultValue="1" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
-		
 		<parameter name="soyPrice" displayName="Soy Price" type="double" 
-						defaultValue="-1.2" 
+						defaultValue="-0.701" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 		<parameter name="cornPrice" displayName="Corn Price" type="double" 
-						defaultValue="-2.0" 
+						defaultValue="-0.359" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -108,7 +108,7 @@
 									
 		/>
 		<parameter name="cottonPrice" displayName="Cotton Price" type="double" 
-						defaultValue="2.5" 
+						defaultValue="-2.98" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
@@ -119,4 +119,5 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
+		
 </parameters>
