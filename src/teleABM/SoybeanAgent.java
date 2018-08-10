@@ -20,6 +20,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Iterator;
 
 import org.apache.bsf.util.LangCell;
 
@@ -31,13 +32,18 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.query.space.grid.GridCellNgh;
+import repast.simphony.query.space.grid.VNQuery;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.SpatialException;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridDimensions;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.ContextUtils;
-import repast.simphony.util.collections.OpenLongToDoubleHashMap.Iterator;
+import repast.simphony.util.SimUtilities;
+import repast.simphony.query.space.grid.GridCell;
+//import repast.simphony.util.collections.OpenLongToDoubleHashMap.Iterator;
+//import repast.simphony.valueLayer.GridCell;
 import repast.simphony.valueLayer.GridValueLayer;
 
 import teleABM.Point;
@@ -870,9 +876,21 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 		 for (int i=corner.x; i<=(corner.x+xboundary);i++)  {
 			 for (int j=corner.y;j<=(corner.y+yboundary);j++){
 				 Point p=new Point(i,j);
+				
 				 LandCell c = new LandCell(organicSpace,grid,p.x,p.y,
 	 					 organicSpace.getElevationAt(p.x, p.y),
 	 					 organicSpace.getOrganicAt(p.x, p.y));
+				 
+		/*		 GridPoint pp = grid.getLocation(p);
+				 GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(grid, pp, LandCell.class, 3,3);
+				 
+				 List<repast.simphony.query.space.grid.GridCell<LandCell>> ngh = nghCreator.getNeighborhood(true);
+				 
+				 for (int k=0;k<ngh.size();k++) {
+					 System.out.println(ngh.iterator().next().getClass());
+				 }*/
+				 
+			//	 VNQuery<LandCell> query = new VNQuery<LandCell>(grid, c, 3);
 				 
 				 c.setCellSize(cellsizeReceiving);
 			//	 System.out.println("organic space "+organicSpace.getId()+" land cell is "+c.getYlocation());
@@ -952,6 +970,21 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 				 					 organicSpace.getOrganicAt(p.x, p.y));
 							 
 							 c.setCellSize(cellsizeSending);
+							 
+							
+							 
+					//		 GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(grid, pp, LandCell.class, 1 ,1);
+							 
+				//			 VNQuery<GridPoint> queryPP = new VNQuery<GridPoint>(grid, pp,3, 3);
+							 
+							 
+							
+					//		 List<repast.simphony.query.space.grid.GridCell<LandCell>> ngh = nghCreator.getNeighborhood(true);
+							 
+					//		 for (int k=0;k<ngh.size();k++) {
+					//			 System.out.println(ngh.iterator().next().getClass());
+					//		 }
+							 
 							 //suitability
 							 c.setSSCount(organicSpace.getSSCountAt(i, j));
 							 //single soy
@@ -962,12 +995,16 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 							 c.setSCCount(organicSpace.getSCCountAt(i, j));
 							 //soy cotton
 							 
+							 c.setSuitability(c.getSSCount()+c.getDSCount()+c.getCCount()+c.getSCCount());
 							 
 							 c.setRecommendedSoyPerHaFertilizerUse(300);
-							 c.setObservedSoyPerHaFertilizerUse(243.5);
-							 
+						//	 c.setObservedSoyPerHaFertilizerUse(243.5);
+							 c.setObservedSoyPerHaFertilizerUse(138);
+							//http://www.fao.org/docrep/007/y5376e/y5376e08.htm#bm08.2 
 							 c.setRecommendedCornPerHaFertilizerUse(500);
-							 c.setObservedCornPerHaFertilizerUse(395.5);
+						//	 c.setObservedCornPerHaFertilizerUse(395.5);
+							 c.setObservedCornPerHaFertilizerUse(119); 
+							 //ref://http://www.fao.org/docrep/007/y5376e/y5376e08.htm#bm08.2 
 							 
 							 c.setObservedCottonPerHaFertilizerUse(242.2);		
 							 
@@ -1006,6 +1043,21 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 								 c.setLastLastLandUse(LandUse.BUILDING);
 							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==9)
 								 c.setLastLandUse(LandUse.SOYCOTTON);
+							 
+							 
+					
+						/*	 while(query.query().iterator().hasNext()){
+								 LandCell x = query.query().iterator().next();
+								 System.out.println("big? "+x.cellsize);
+								 query.query().iterator().remove();
+							 }*/
+						//	 Iterator nghIterator = query.query(LandCell.class).iterator();
+						
+						//	 for(LandCell x: query.query().iterator()){
+						//		 System.out.println(query.query().iterator());
+						//		 System.out.println(" ");
+						//	 }
+						//	 System.out.println("created ngh "+query.query(iter));
 							 
 					 if(c.isTaken()==true || organicSpace.getLandHolder(i, j)>0){
 						 
@@ -1100,10 +1152,49 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 							
 						}
 				 }
+					
+					 
+					
 				}
 			 }
+					 
+				for(int k =0; k<this.tenureCells.size();k++){
+					//	 Grid<LandCell> gridCells = (Grid) organicSpace.getProjection("gridSending");
+					
+						 Grid gridTest = (Grid) organicSpace.getProjection("gridSending");
+				//		 System.out.println(this.tenureCells.size());
+					    GridPoint pt = gridTest.getLocation(this);
+					
+					 //    System.out.println(pt.getX()+" "+pt.getY());
+					     
+					     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(gridTest, pt, LandCell.class,1,1);
+					     
+					     List<GridCell<LandCell>> gridCells = nghCreator.getNeighborhood(true); 
+					//     SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
+					 
+					     this.tenureCells.get(k).setNgh(gridCells);
+					  
+					     
+					/*     System.out.println("ngh "+gridCells.size()+" "+gridCells.get(0).getPoint());
+					     
+					     
+					     for(GridCell<LandCell> cell:gridCells) {
+							    	
+					    	System.out.println(organicSpace.getLandUseAt(cell.getPoint().getX(), cell.getPoint().getY()));
+					    		//	 .iterator().next().getSSCount());
+					     }
+					   */
+					  
+					   
+	                      
+						 VNQuery<LandCell> query = new VNQuery<LandCell>(gridTest,this.tenureCells.get(k), 3,3);
+						
+						
+						 
+				}
+					}
 		
-		 }
+		
 			
 			 	
 	}

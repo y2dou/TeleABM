@@ -5,13 +5,18 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.query.space.grid.GridCell;
+import repast.simphony.query.space.grid.GridCellNgh;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.SpatialException;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.util.ContextUtils;
+import repast.simphony.util.SimUtilities;
 import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
 import teleABM.SoybeanAgent;
+
+import java.util.List;
 
 import cern.jet.random.AbstractDistribution;
 import repast.simphony.context.DefaultContext;
@@ -107,7 +112,8 @@ public class LandCell {
 	 private int ccount;
 	 private int sccount;
 	
-
+	 List<GridCell<LandCell>> nghCell;
+	 private int suitability;
 	
 	public boolean isTaken() {
 		return this.taken;
@@ -497,8 +503,10 @@ public class LandCell {
 				
 			}
 			if(landuse == LandUse.DOUBLESOY) {
+			//	fertilizerInput = observedSoyPerHaFertilizerUse + 
+			//			                  observedCornPerHaFertilizerUse*1.2;
 				fertilizerInput = observedSoyPerHaFertilizerUse + 
-						                  observedCornPerHaFertilizerUse*1.2;
+		                  observedCornPerHaFertilizerUse*1.05;
 				this.fertilizerInput = fertilizerInput *((cellsize*cellsize)/10000.0) + 
 						                   RandomHelper.nextDoubleFromTo(-20.0,20.0);
 				
@@ -694,7 +702,7 @@ public class LandCell {
 					waterR = 583.34+RandomHelper.nextDoubleFromTo(-14.6, 14.6);
 				else if(this.getPrecipitation()*10.0>400)
 					waterR = 505.1+RandomHelper.nextDoubleFromTo(-5.0, 5.0);
-				else waterR = 457.53+RandomHelper.nextDoubleFromTo(-4.4, 4.4);
+				else waterR = 475.53+RandomHelper.nextDoubleFromTo(-4.4, 4.4);
 			//above unit is mm
 			   waterR = waterR*10.0; //now unit is m^3/ha
 		
@@ -787,4 +795,27 @@ public class LandCell {
 			public int getSCCount(){
 				return sccount;
 			}
+			
+
+public void  setNgh(List<GridCell<LandCell>> gridCell){
+//	return null;
+	// OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this.landHolder);
+	 
+	// System.out.println(organicSpace.);
+	nghCell =gridCell;
+     
+  //   return (GridCell<LandCell>) gridCells;
+     
+}
+
+public void setSuitability(int suit){
+	this.suitability = suit;
+}
+
+public int getSuitability(){
+	return suitability;
+}
+
+
+
 }

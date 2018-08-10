@@ -96,6 +96,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 						.createGrid("Grid", this, new GridBuilderParameters<Object>(
 								new WrapAroundBorders(), 
 								new RandomGridAdder<Object>(), false, xdim, ydim));
+			 
 		 this.setTypeID("organicSpaceReceiving");
 		 this.setId("organicSpaceReceiving");
 		 System.out.println("test if receiving context being created="+this.getTypeID());
@@ -117,6 +118,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 							.createGrid("gridSending", this, new GridBuilderParameters<Object>(
 									new WrapAroundBorders(), 
 									new RandomGridAdder<Object>(), false, xdim, ydim));
+			//	System.out.println("grid dimension: "+grid.getDimensions());
 			    this.setTypeID("organicSpaceSending");
 				this.setId("organicSpaceSending");
 				 System.out.println("test if sending context being created="+this.getTypeID());
