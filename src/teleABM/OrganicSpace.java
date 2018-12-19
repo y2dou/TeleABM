@@ -83,6 +83,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		GridValueLayer dsCount;
 		GridValueLayer cCount;
 		GridValueLayer scCount;
+		GridValueLayer rCount;
 		
 		
 		
@@ -302,8 +303,10 @@ public class OrganicSpace extends DefaultContext<Object> {
 	     				new WrapAroundBorders(), xdim, ydim);
 				this.addValueLayer(landUseField);
 	        //	stream = new BufferedInputStream(new FileInputStream("misc/baoshan_06_crops.asc"));
-	        	stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan2006.asc"));
-	        	landUseField = loadFieldFromStream(this, stream, "Land Use Field Receiving", landUseTypes);
+	        //	stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan2006.asc"));
+				stream = new BufferedInputStream(new FileInputStream("misc/gannan/gn_05_clip.txt"));
+	       // 	stream = new BufferedInputStream( new FileInputStream("misc/heilongjiang_crops/heilong_2005.asc"));
+				landUseField = loadFieldFromStream(this, stream, "Land Use Field Receiving", landUseTypes);
 	        	System.out.println("receiving: land use field");
 			}
 			else {
@@ -387,6 +390,34 @@ public class OrganicSpace extends DefaultContext<Object> {
 		this.addValueLayer(dsCount);
 		}
 		
+		stream = null;
+		
+		if(this.getTypeID() == "organicSpaceReceiving")
+		{
+			try {
+				
+				dsCount = new GridValueLayer("soy corn count", true, 
+						         new WrapAroundBorders(), xdim, ydim);
+				this.addValueLayer(dsCount);
+				stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
+				dsCount = loadFieldFromStream(this, stream, "soy corn count", dscount);
+			}
+			 catch (IOException e) {
+				e.printStackTrace();
+			//	elevation = createValueLayerFromRandom(this, elevation);
+				dsCount = new GridValueLayer("soy corn count", true, 
+				         new WrapAroundBorders(), xdim, ydim);
+				createValueLayerFromRandom(this, dsCount);
+			} finally {
+				try {
+					if (stream != null) 
+						stream.close();
+				} catch (IOException e) {}
+			}
+			
+			this.addValueLayer(dsCount);
+			}
+		
 //add cotton count
 		
 		stream = null;
@@ -446,7 +477,34 @@ public class OrganicSpace extends DefaultContext<Object> {
 						
 					this.addValueLayer(scCount);
 						}
-				
+//add rice count layer
+				stream = null;
+				Range<Double> rcount = new Range<Double>(0d, 0d);
+				if (this.getTypeID()=="organicSpaceReceiving")
+				{
+						try {
+						
+							rCount = new GridValueLayer("rice count", true, 
+									         new WrapAroundBorders(), xdim, ydim);
+							this.addValueLayer(rCount);
+							stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_rcount.txt"));
+							rCount = loadFieldFromStream(this, stream, "rice count", rcount);
+						}
+						 catch (IOException e) {
+							e.printStackTrace();
+						//	elevation = createValueLayerFromRandom(this, elevation);
+							rCount = new GridValueLayer("rice count", true, 
+							         new WrapAroundBorders(), xdim, ydim);
+							createValueLayerFromRandom(this, rCount);
+						} finally {
+							try {
+								if (stream != null) 
+									stream.close();
+							} catch (IOException e) {}
+						}
+						
+					this.addValueLayer(rCount);
+						}
 				
 //add last year land cover
 				
@@ -696,6 +754,19 @@ public class OrganicSpace extends DefaultContext<Object> {
 		return (int) scCount.get(x,y);
 	}
 	
+	public int getRCountAt(int x, int y){
+		GridValueLayer rCount;
+		rCount = (GridValueLayer) getValueLayer("rice count");
+		
+		return (int) rCount.get(x,y);
+	}
+	
+	public int getSoyCornCountAt(int x, int y){
+		GridValueLayer dsCount;
+		dsCount = (GridValueLayer) getValueLayer("soy corn count");
+		
+		return (int) dsCount.get(x,y);
+	}
 	public int getTwoYearsAgoLandUseAt(int x, int y){
 		//right now it's only land cover t2 for sending system
 		GridValueLayer landCoverTwoYearsAgo;

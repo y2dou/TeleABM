@@ -10,14 +10,14 @@
 									
 		/>
 	<parameter name="sending system representation" displayName="Sending System Representation" type="boolean" 
-						defaultValue="TRUE" 
+						defaultValue="false" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
 		/>
 		
 		<parameter name="receiving system representation" displayName="Receiving System Representation" type="boolean" 
-						defaultValue="false" 
+						defaultValue="true" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
 									
@@ -30,7 +30,7 @@
 		/>
 		
 		<parameter name="initialSendingNumAgents" displayName="Initial Sending Agents" type="int" 
-						defaultValue="300" 
+						defaultValue="3000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -43,13 +43,13 @@
 									
 		/>
 		<parameter name="receivingWorldHeight" displayName="Receiving World Height" type="int" 
-						defaultValue="4575" 
+						defaultValue="479" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 			<parameter name="receivingWorldWidth" displayName="Receiving World Width" type="int" 
-						defaultValue="4169" 
+						defaultValue="424" 
 						
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
@@ -70,7 +70,7 @@
 									
 		/>
 			<parameter name="cellSizeReceiving" displayName="Receiving Cell Size" type="int" 
-						defaultValue="30" 
+						defaultValue="250" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -96,7 +96,7 @@
 									
 		/>
 		<parameter name="cornPrice" displayName="Corn Price" type="double" 
-						defaultValue="-0.359" 
+						defaultValue="-0.375" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									

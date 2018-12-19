@@ -96,6 +96,7 @@ public abstract class SoybeanAgent {
 	protected double cornProduction;
 	protected double otherProduction;
 	protected double cottonProduction;
+	protected double soyTotalProduction;
 	
 
 	protected boolean grownRice = false;
@@ -389,8 +390,11 @@ public abstract class SoybeanAgent {
 	           this.updateProduction(organicSpace);
 	           this.updateCost(organicSpace);
 	           this.updateProfit();
-	        //   this.landUseDecision(organicSpace);
-	           this.landUseDecisionBeta(organicSpace);
+	           this.landUseDecisionLogisticRegression(organicSpace);
+	           this.landUseDecision(organicSpace);
+	       //    this.landUseDecisionBeta(organicSpace);
+	      //     this.landUseDecisionLogisticRegression(organicSpace);
+	           this.updateLandUse(organicSpace);
 	          
 		}
 		
@@ -769,17 +773,23 @@ public abstract void updateProfit();
 		    	 //problem here is it puts all kinds of land use to the agent
 		    	
 		    	if (organicSpace.getTypeID()=="organicSpaceReceiving"){
-		    	if (organicSpace.getLandUseAt(x, y)==2){
+		    //	if (organicSpace.getLandUseAt(x, y)==2){
+		    	if (organicSpace.getLandUseAt(x, y)==40) {
+		    		//sun jing
 		    		this.getTenureCells().get(i).setLandUse(LandUse.SOY);
 		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.SOY);
 	
-		    	} else if (organicSpace.getLandUseAt(x, y)==3) {
+		  //  	} else if (organicSpace.getLandUseAt(x, y)==3) {
+		    	} else if (organicSpace.getLandUseAt(x, y)==41) {		
 		    		this.getTenureCells().get(i).setLandUse(LandUse.RICE);
 		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.RICE);
-		    	} else if (organicSpace.getLandUseAt(x, y)==6) {
+		   // 	} else if (organicSpace.getLandUseAt(x, y)==6) {
+		    	} else if (organicSpace.getLandUseAt(x, y)==42) {
 		    		this.getTenureCells().get(i).setLandUse(LandUse.CORN);
 		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.CORN);
-		    	} 
+		    	} else if (organicSpace.getLandUseAt(x, y) == 4) {
+		    		this.getTenureCells().get(i).setLandUse(LandUse.OTHERCROPS);
+		    	}
 		    
 		    	
 		    	
@@ -876,11 +886,16 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 		 for (int i=corner.x; i<=(corner.x+xboundary);i++)  {
 			 for (int j=corner.y;j<=(corner.y+yboundary);j++){
 				 Point p=new Point(i,j);
-				
+				 GridPoint pt = grid.getLocation(this);		
+				 //    System.out.println(pt.getX()+" "+pt.getY());	     
+				     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(grid, pt, LandCell.class,2,2);     
+				     List<GridCell<LandCell>> gridCells = nghCreator.getNeighborhood(true); 
+				     
 				 LandCell c = new LandCell(organicSpace,grid,p.x,p.y,
 	 					 organicSpace.getElevationAt(p.x, p.y),
 	 					 organicSpace.getOrganicAt(p.x, p.y));
-				 
+									     
+				 c.setNgh(gridCells);
 		/*		 GridPoint pp = grid.getLocation(p);
 				 GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(grid, pp, LandCell.class, 3,3);
 				 
@@ -893,13 +908,26 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 			//	 VNQuery<LandCell> query = new VNQuery<LandCell>(grid, c, 3);
 				 
 				 c.setCellSize(cellsizeReceiving);
-			//	 System.out.println("organic space "+organicSpace.getId()+" land cell is "+c.getYlocation());
+				 
+				 //c.setDSCount(organicSpace.getSoyCornCountAt(i, j));
+				// c.setRCount(organicSpace.getRCountAt(i, j));
+				 //above two for now I change them as random, dec 18, for simplicity
+			
+				
+				 int randomA = ThreadLocalRandom.current().nextInt(1, 6);
+				 int randomB = ThreadLocalRandom.current().nextInt(1,3);
+				 c.setDSCount(randomA);
+				 c.setRCount(randomB);
+				 
+				 c.setSuitability(c.getDSCount());
+			//	 System.out.println("organic space "+organicSpace.getId()+" land cell is "+c.getRCount());
 				 c.setRecommendedSoyPerHaFertilizerUse(10.0);
 				 c.setObservedSoyPerHaFertilizerUse(63.0);
 				 c.setRecommendedRicePerHaFertilizerUse(150.0);
 				 c.setObservedRicePerHaFertilizerUse(146.0);
 				 c.setRecommendedCornPerHaFertilizerUse(200.0);
 				 c.setObservedCornPerHaFertilizerUse(224.0);
+				 c.setObservedOtherPerHaFertilizerUse(300.0);
 				 //have to add recommended and observed for all crops when iterate through all cells.
 				 
 					if(c.isTaken()==true || organicSpace.getLandHolder(i, j)>0)
@@ -909,7 +937,9 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 						}
 					else
 				{ 
-					 if(organicSpace.getLandUseAt(i, j) ==2) 
+					// if(organicSpace.getLandUseAt(i, j) ==2) 
+						if(organicSpace.getLandUseAt(i, j) ==40)
+							
 					 {  
 					//	 System.out.println("land use field works"); 
 						 //this worked
@@ -918,40 +948,59 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 							 
 							 c.setLandHolder( true,this);
 							 //here the id is soybean id, it's different from receiving/sending 
-							 //soybean id
-							 
+							 //soybean id							 
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
 							 this.tenureCells.add(c);
-							 //fertilizer use
-						
-							 
+							 //fertilizer use							 
 							 c.setFertilizerInput(LandUse.SOY);
 							 //have to add recommended and observed for all crops when iterate through all cells.
 							 
 						 }
 					 }
-					 if(organicSpace.getLandUseAt(i, j)==3) {
+				//	 if(organicSpace.getLandUseAt(i, j)==3) {
+						if(organicSpace.getLandUseAt(i, j)==41) {
+							//sun jing
 						 c.setLandUse(LandUse.RICE);
 					
 							 c.setLandHolder(true, this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
-							 this.tenureCells.add(c);						
-							 
+							 this.tenureCells.add(c);													 
 							 c.setFertilizerInput(LandUse.RICE);						
 						 
 					 }
-					 if(organicSpace.getLandUseAt(i, j)==6){
+				//	 if(organicSpace.getLandUseAt(i, j)==6){
+						 if(organicSpace.getLandUseAt(i, j)==42){
 						 c.setLandUse(LandUse.CORN);											
 							 c.setLandHolder(true,this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
-							 this.tenureCells.add(c);
-
-							 
+							 this.tenureCells.add(c);							 
 							 c.setFertilizerInput(LandUse.CORN);
 							 //have to add recommended and observed for all crops when iterate through all cells.
 							 
 						
 					 }
+					 
+					 if(organicSpace.getLandUseAt(i, j)==4){
+						 c.setLandUse(LandUse.OTHERCROPS);											
+							 c.setLandHolder(true,this);
+							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+							 this.tenureCells.add(c);							 
+							 c.setFertilizerInput(LandUse.OTHERCROPS);
+							 //have to add recommended and observed for all crops when iterate through all cells.
+							 
+						
+					 }
+					 
+					 if(organicSpace.getLandUseAt(i, j)==5) {
+						 c.setLandUse(LandUse.FOREST);
+					 }
+					 if (organicSpace.getLandUseAt(i, j)==7) {
+						 c.setLandUse(LandUse.BUILDING);
+					 }
+					 if(organicSpace.getLandUseAt(i, j)==1) {
+						 c.setLandUse(LandUse.WATER);
+					 }
+						 
 					 
 				 }
 				 } //first for loop
@@ -1167,7 +1216,7 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 					
 					 //    System.out.println(pt.getX()+" "+pt.getY());
 					     
-					     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(gridTest, pt, LandCell.class,1,1);
+					     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(gridTest, pt, LandCell.class,2,2);
 					     
 					     List<GridCell<LandCell>> gridCells = nghCreator.getNeighborhood(true); 
 					//     SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
@@ -1260,7 +1309,7 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 		}
 
 		public double getSoyProduction() {
-			return soyProduction;
+			return soyTotalProduction;
 		}
 
 		public double getCornProduction() {
@@ -1297,7 +1346,7 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 
 
 			public void setSoyProduction(double soyProduction) {
-				this.soyProduction = soyProduction;
+				this.soyTotalProduction = soyProduction;
 			}
 
 

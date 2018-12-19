@@ -457,7 +457,7 @@ import teleABM.SoybeanAgent;
 			  
 				RandomHelper.registerDistribution("farmCostSending", RandomHelper.createUniform(100d,500d));
 				
-				RandomHelper.registerDistribution("capitalSending", RandomHelper.createUniform(100000, 500000));
+				RandomHelper.registerDistribution("capitalSending", RandomHelper.createUniform(10000000, 50000000));
 				RandomHelper.registerDistribution("labourSending", RandomHelper.createUniform(4, 54));
 				RandomHelper.registerDistribution("elevationRangeSending", RandomHelper.createUniform(1, 10));
 				RandomHelper.registerDistribution("hectaresSending", RandomHelper.createUniform(800,1000));
@@ -598,12 +598,12 @@ import teleABM.SoybeanAgent;
                  internationalTradeAgent.receivingMarketProduction(rta);   
                  receivingSoyProduction+=rta.getSoyAmount();
             //     if(rta.getSoyAmount()>0)
-            //     System.out.println("rta: "+rta.getSoyAmount());
+          //      System.out.println("rta: "+rta.getSoyAmount());
 	            }
 		
 	  }
-//	  internationalTradeAgent.setReceivingTotalSoyProduction(receivingSoyProduction);
-//	  System.out.println( "rta: "+internationalTradeAgent.getReceivingTotalSoyProduction());
+	  internationalTradeAgent.setReceivingTotalSoyProduction(receivingSoyProduction);
+	  System.out.println( "rta total: "+internationalTradeAgent.getReceivingTotalSoyProduction());
 	  
 	  if(sendingSystem){
 		  internationalTradeAgent.setSendingTotalSoyProduction(0);
@@ -623,16 +623,19 @@ import teleABM.SoybeanAgent;
 	  {
 		  TeleABMBuilder.internationalTradeMode = true;
 	      tariff = governmentAgent.decideTariff();
+	      tariff=false;
+	      //
 		  internationalTradeAgent.priceSetting(receivingTraderAgents, sendingTraderAgents,tariff);
 		
 	  }
 	  
 //	  internationalTradeAgent.setSendingTotalSoyProduction(sendingSoyProduction);
 //	  internationalTradeAgent.setReceivingTotalSoyProduction(receivingSoyProduction);
-	  receivingSoyProduction = internationalTradeAgent.getReceivingTotalSoyProduction();
-	 System.out.println("test receiving soy production "+receivingSoyProduction);
+//	  receivingSoyProduction = internationalTradeAgent.getReceivingTotalSoyProduction();
+	
+	  System.out.println("test receiving soy production "+receivingSoyProduction);
 		 
-		  if (receivingSoyProduction<4.0E7)
+		  if (receivingSoyProduction<2.0E8)
 		      soySubsidy = 400;
 		  else 
 			  soySubsidy = 100;
@@ -666,6 +669,7 @@ import teleABM.SoybeanAgent;
 			} else {
 		//		priceLists.put(LandUse.SINGLESOY, new FileInputStream("auxdata/prices/soySinopPrice.txt"));
 				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soySinopPrice.txt"));
+			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyScenarioSinopPrice"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
 			}
 		} catch (FileNotFoundException e1) {
@@ -768,7 +772,7 @@ import teleABM.SoybeanAgent;
 				 h.setReceivingStaticCommodityPrices(LandUse.SOY,staticPrice);
 	
 			} else {
-				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
+				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPrice.txt"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
 			}
 		} catch (FileNotFoundException e1) {
@@ -782,7 +786,7 @@ import teleABM.SoybeanAgent;
 				 h.setReceivingStaticCommodityPrices(LandUse.CORN,staticPrice);
 				
 			} else {
-				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/corn.prices.txt"));
+				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPrices.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();

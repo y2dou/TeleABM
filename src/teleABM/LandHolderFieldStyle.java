@@ -79,7 +79,10 @@ public class LandHolderFieldStyle implements ValueLayerStyleOGL{
 		// TODO Auto-generated method stub
 		
 		 Parameters para = RunEnvironment.getInstance().getParameters();
-			return ((Integer) para.getValue("cellSizeSending"));
+		 if(TeleABMBuilder.receivingSystem)
+			return ((Integer) para.getValue("cellSizeReceiving"));
+		 else
+			 return ((Integer) para.getValue("cellSizeSending"));
 		//return 30.0f;
 //		return 250.0f;
 	}

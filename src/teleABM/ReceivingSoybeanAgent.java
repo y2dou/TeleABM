@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javolution.util.FastTable;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.query.space.grid.GridCell;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.ContextUtils;
+import repast.simphony.util.SimUtilities;
 
 /**
  * @author geododo
@@ -33,7 +36,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	
 	private int familyPopulation;
 	//average is 3.65
-	private boolean hhdHeadMale;
+	private double hhdHeadMale;
 	private int age;
 	//household head age, use average 45 (minus 10 to meet the 2005 time) for now
 	private double dependentRatio;
@@ -41,7 +44,8 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	private double genderRatio;
 	
 
-	private boolean hhdHeadHealth;
+	//private boolean hhdHeadHealth;
+	private double hhdHeadunHealth;
 	//411 is healthy, 28 is unhealty
 	private int occupation;
 	//full time farmer, 2=part time farmer, 3=non time farmer
@@ -77,6 +81,10 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	private double cornSubsidy ;
 	private double riceSubsidy ;
 	
+	double cornProportion = 0;
+	double riceProportion = 0;
+	double soyProportion = 0;
+	
 	
 	public ReceivingSoybeanAgent() {
 		super();
@@ -94,21 +102,21 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
         //so they have to be put in teleABMBuilder
 		
 		
-	    Random r = new Random();
+	   double r = RandomHelper.nextDoubleFromTo(0.0, 1.0);
 	    
 // to initialize household head		
-		if (r.nextDouble()<=0.073) {
+		if (r<=0.073) {
 			//99/(99+1256)
-			hhdHeadMale=false;		  
-		} else hhdHeadMale=true;
+			hhdHeadMale=0.0;		  
+		} else hhdHeadMale=1.0;
 //to initialize family population		
 		//normal distribution, 1.15 is SD, 3.46 is mean value
-	    familyPopulation = (int) Math.round(r.nextGaussian()*1.15+3.46);
+	    familyPopulation = (int) Math.round(r*1.15+3.46);
 		//average is 3.46, almost look like normal distribution
 	    
 	    //to initialize hhdHead Age, normal distribution 
 	 //   r = new Random(); //no need to create a random object every time
-	    age = (int) Math.round(r.nextGaussian()*10.8+38.5);   
+	    age = (int) Math.round(r*10.8+38.5);   
 		//household head age, use average 38.5 (minus 10 to meet the 2005 time) for now
 		//almost normal distribution
 	     
@@ -118,35 +126,38 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	    
 	    
 	//    r = new Random();
-		if (r.nextDouble()<0.716) hhdHeadHealth = true;
-		else hhdHeadHealth = false;
+		if (r<0.716) hhdHeadunHealth = 0.0;
+		else hhdHeadunHealth = 1.0;
 		//970 is healthy, 384 is unhealthy
 		
 	//	 r = new Random();
-		 double tempProb = r.nextDouble();
-			if (tempProb<0.04) occupation = 3;
-			else {if (tempProb<0.18) occupation =2;
+	
+			if (r<0.04) occupation = 3;
+			else {if (r<0.18) occupation =2;
 			else occupation = 1;}
 		//1116 full time farmer, 56 non farmer, 184 part-time farmer =1356 total	
 			
 	//	 r = new Random();
-		unhealthProportion = r.nextGaussian()*0.188+0.11;
+		//unhealthProportion = r.nextGaussian()*0.188+0.11;
+		unhealthProportion = 0.1106;
 		
-		
-		if (r.nextDouble()<0.540) 	knowInternationalTrade=1.0;
+		if (r < 0.540) 	knowInternationalTrade=1.0;
 		else knowInternationalTrade=0.0;
 		
-		if (r.nextDouble()<0.281)  whetherknow_soybean_ixYes=1.0;
+		if (r<0.281)  whetherknow_soybean_ixYes=1.0;
 		else whetherknow_soybean_ixYes=0.0;
 		
-		if (r.nextDouble()<0.022) whether_pericoupledperi = 1.0;
+		if (r<0.022) whether_pericoupledperi = 1.0;
 		else whether_pericoupledperi=0.0;
 		
-		if (r.nextDouble()<0.709) whetherknow_transgeneYes = 1.0;
+		if (r<0.709) whetherknow_transgeneYes = 1.0;
 		else whetherknow_transgeneYes=0.0;
 		
-		if (r.nextDouble()<0.312) whether_know_import_gmoYes = 1.0;
+		if (r<0.312) whether_know_import_gmoYes = 1.0;
 		else whether_know_import_gmoYes=0.0;
+		
+		
+		
 		
 		///environment cost
 		//this.setFertilizerUnitCost(0.8);
@@ -222,6 +233,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		    	
 		    } else if(c.getLandUse()==LandUse.OTHERCROPS){
 		   	    this.otherCells.add(c);
+		   //	    System.out.println("other cells");
 		    	otherProduction+=c.getOtherYield();
 		    	
 		    }
@@ -384,30 +396,23 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	    double ricePriceDelta;
 	//    System.out.println(soyPrices.get(0));
 	    //this is to make sure the first three years run well.
-	    if(soyPrices.size()==1){
-	    	soyPriceDelta = soyPrices.get(0).doubleValue();
-	    	cornPriceDelta = cornPrices.get(0).doubleValue();
-	    	ricePriceDelta = ricePrices.get(0).doubleValue();
-	    } else if(soyPrices.size()==2){
-	    	soyPriceDelta = soyPrices.get(1).doubleValue() - 
-	    			soyPrices.get(0).doubleValue();
-	    	cornPriceDelta = cornPrices.get(1).doubleValue() - 
-	    			cornPrices.get(0).doubleValue();
-	    	ricePriceDelta = ricePrices.get(1).doubleValue()-
-	    			ricePrices.get(0).doubleValue();
-	    } else{
-	    	soyPriceDelta = soyPrices.get(2).doubleValue()-
-			           soyPrices.get(1).doubleValue();
-	    	cornPriceDelta = cornPrices.get(2).doubleValue() - 
-	    			         cornPrices.get(1).doubleValue();
-	    	ricePriceDelta = ricePrices.get(2).doubleValue() -
-	    			         ricePrices.get(1).doubleValue();
-	    }
+
+	    
+	    soyPriceDelta = getPriceDelta(LandUse.SOY);
+	    cornPriceDelta = getPriceDelta(LandUse.CORN);
+	    ricePriceDelta = getPriceDelta(LandUse.RICE);
 	    
 	//    System.out.println("soyprice different "+soyPriceDelta);
 	    
 	//    System.out.println("corn price different "+cornPriceDelta);
-	    
+	      
+	    Collections.sort(this.tenureCells, new SortByRcount());
+	//    Collections.sort(this.tenureCells, new SortbyRoll()); 
+	  SimUtilities.shuffle(this.tenureCells, RandomHelper.getUniform());
+	//  this.tenureCells.sort();
+	//	  SimUtilities.shuffle(this.planningSoyCells, RandomHelper.getUniform());
+		//   this.planningSoyCells.sort();
+		   
 		exp[1] = // 1.05*age +
 				         // 8.80*familyPopulation +
 				         coef_1[0] +  //constant
@@ -554,36 +559,52 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	//	this.grownSoyYears=0;
 		if(max==0 && this.grownSoyYears==0 )   //this is the type that never grow soybeans
 		{ 
-			
+			// never grow soybean
 			//if it is rice, then keep it rice, 
 			//if it was corn, check if rice is way more profitable. convert to rice
-			if(2*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
+			if((lastYearCornPerHaProfit + costConvertToRicePaddy) < lastYearRicePerHaProfit)
 			{
 				//if rice is super profitable; change 10% corn to rice;
-				for (int i=0; i <cornCells.size()*0.1;i++){
-					listToChange.add(i);
+		//		for(LandCell c: cornCells) {
+				for(int j = 0; j<cornCells.size();j++) {
+					System.out.println("why there is null pointer "+cornCells.size()+
+							" "+
+							cornCells.get(j).getXlocation() +" "
+							+ cornCells.get(j).getLandUse());
+					if(RandomHelper.nextDoubleFromTo(0.0, 1) < 0.5 ){
+					
+						if(cornCells.get(j).getNextToRice()||cornCells.get(j).getRCount()>0)
+							
+							//there was a null pointer here when number of agents increased to 2,000, 
+							//but I don't know why
+						  {
+							System.out.println(cornCells.get(j).getNextToRice()+" how many "+cornCells.get(j).getRCount());
+							planningRiceCells.add(cornCells.get(j));
+							cornCells.remove(cornCells.get(j));
+							capital-=costConvertToRicePaddy;
+						  }
+						else planningCornCells.add(cornCells.get(j));
+						
+					}
+					else {
+						planningCornCells.add(cornCells.get(j));
+					}
 				}
-				for (int i= (int) Math.round(cornCells.size()*0.1);i<cornCells.size();i++){
-					listNotChange.add(i);
+				
+				for(LandCell c: riceCells) {
+					planningRiceCells.add(c);
+				}
+			} 
+			else	
+			{
+				for(LandCell c: riceCells) {
+					planningRiceCells.add(c);
+				}
+				
+				for(LandCell c: cornCells) {
+					planningCornCells.add(c);
 				}
 			}
-			
-			for(Integer i:listToChange) {
-				planningRiceCells.add(cornCells.get(i));
-				capital-=costConvertToRicePaddy;
-			
-			}
-			
-			for( Integer i: listNotChange){
-				planningCornCells.add(cornCells.get(i));
-			}
-			
-			
-		    for(LandCell c:riceCells){
-		    	planningRiceCells.add(c);
-		    }
-			
-			
 		//end of if(	max==0 && this.grownSoyYears==0 )
 
 		}
@@ -593,10 +614,15 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			//need to overwrite based on the regression;
 			listToChange.clear();
 			listNotChange.clear();
+			
+			 SimUtilities.shuffle(this.soyCells, RandomHelper.getUniform());
+			 
 			//go through soy cell list, change to either corn or rice
 			for (int j =0; j<this.soyCells.size();j++) 
 			 {						
-					if(RandomHelper.nextDoubleFromTo(0, 1)>0.9){
+					if(RandomHelper.nextDoubleFromTo(0, 1)>0.5 && 
+							j < soyProportion*this.tenureCells.size() )
+					{
 				    	listToChange.add(j);						
 					} else {
 					    listNotChange.add(j);	
@@ -606,10 +632,15 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			
 			for(Integer i:listToChange)
 			{
-				if(2*lastYearCornPerHaProfit<lastYearRicePerHaProfit)
-				{
-					planningRiceCells.add(soyCells.get(i));
-				    capital-=costConvertToRicePaddy;
+				if((lastYearCornPerHaProfit + costConvertToRicePaddy)<lastYearRicePerHaProfit 
+						)
+				{ if( soyCells.get(i).getNextToRice() ||soyCells.get(i).getRCount()>0)
+					{
+					 planningRiceCells.add(soyCells.get(i));
+				     capital-=costConvertToRicePaddy;
+				     }
+				  else planningCornCells.add(soyCells.get(i));
+				
 				}
 				else
 					planningCornCells.add(soyCells.get(i));	
@@ -639,9 +670,16 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			for(LandCell c:soyCells)
 			{
 				//convert all soy cells to corn and rice
-				if(lastYearCornPerHaProfit*1.8<lastYearRicePerHaProfit){
-					planningRiceCells.add(c);
-					capital-=costConvertToRicePaddy;
+			  
+				if((lastYearCornPerHaProfit+costConvertToRicePaddy) < lastYearRicePerHaProfit)
+				{
+					if(c.getNextToRice() ||c.getRCount()>0) 
+					{
+						planningRiceCells.add(c);
+						capital-=costConvertToRicePaddy;
+					}else 
+						planningCornCells.add(c);
+					
 				}
 				else 
 					planningCornCells.add(c);	
@@ -664,7 +702,8 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	//		System.out.println("soy size="+this.soyCells.size()+" corn size="+this.cornCells.size());
 			listToChange.clear();
 			listNotChange.clear();
-			double random = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+			
+			double random = RandomHelper.nextDoubleFromTo(0.0, 0.5);
 			for (int j=0; j<this.soyCells.size()*random;j++) 
 			 {	
 				listToChange.add(j);						
@@ -704,7 +743,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			listToChange.clear();
 			listNotChange.clear();
 			
-			double random = RandomHelper.nextDoubleFromTo(0.0, 1.0);
+			double random = RandomHelper.nextDoubleFromTo(0.0, 0.5);
 			for (int j=0; j<this.cornCells.size()*random;j++) 
 			 {	
 				listToChange.add(j);						
@@ -733,10 +772,11 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
 		}
 		
+		
 		//update land use and environment-nexus:
 		//fertilizer, fuel, and water use
 		
-		this.updateLandUse(organicSpace);
+	//	this.updateLandUse(organicSpace);
 	
 	}
 	
@@ -750,48 +790,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		planningRiceCells.clear();
 		planningOtherCells.clear();
 		
-//		int landUseNumber;
-	//	 OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
-//		 System.out.println("receiving land use decision: "+organicSpace.getTypeID());
-	/*	 soyPerHaFuelInput = this.getSoyPerHaFuelInput();
-		 cornPerHaFuelInput = this.getCornPerHaFuelInput();
-		 ricePerHaFuelInput = this.getRicePerHaFuelInput();
-		 otherPerHaFuelInput = this.getOtherPerHaFuelInput();
-		 fuelUnitCost = this.getFuelUnitCost();
-		 
-		 double[] cost= new double[4];
-		 //cost[0]=soybean
-		 //cost[1]=corn
-		 //cost[2]=rice
-		 //cost[3]=others;
-		 cost[0] = soyPerHaFuelInput * fuelUnitCost +   //plowing cost
-				 400.0 +  //400 is for seed
-				 soyPerHaFertilizerInput * fertilizerUnitCost  //fertilizer + pesticide cost
-				 ;
-		 
-		 cost[1] = cornPerHaFuelInput * fuelUnitCost +
-				 785.0 +
-				 cornPerHaFertilizerInput * fertilizerUnitCost
-				 ;
-		 cost [2] = ricePerHaFuelInput * fuelUnitCost +
-				 600.0 +
-				 ricePerHaFertilizerInput * fertilizerUnitCost
-				 ;
-		 cost [3] = otherPerHaFuelInput * fuelUnitCost +
-				  200.0 +
-				  otherPerHaFertilizerInput *fertilizerUnitCost
-				  ;
-		 
-		 double[]  rawIncome = new double [4];
-		 double cPrice;
-		 double soySubsidy = 2000;
-		 double cornSubsidy = 1000;
-		 double riceSubsidy = 625;
-		 cPrice=this.getCommodityPrice(LandUse.SOY);		    
-		 rawIncome[0] = soyPerHaYield * cPrice + soySubsidy;
-		 rawIncome[1] = cornPerHaYield * cPrice + cornSubsidy;
-		 rawIncome[2] = ricePerHaYield * cPrice + riceSubsidy;
-		 rawIncome[3] = otherPerHaYield ;*/
+
 		
 		List<Integer> listToChange = new ArrayList<Integer>();
 		List<Integer> listNotChange = new ArrayList<Integer>();
@@ -1202,12 +1201,35 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	public void updateLandUse(OrganicSpace organicSpace) {
 		// TODO Auto-generated method stub
 		
+	//	 Collections.sort(this.tenureCells, new SortbyRoll());
+		
+		// boolean nextToRice = false;
+		  
+		 for(LandCell c: this.tenureCells) {
+		     
+	        	for(GridCell<LandCell> cell: c.nghCell) 
+	        	{
+			    
+	        		int landuseNumber = organicSpace.getLandUseAt(cell.getPoint().getX(), cell.getPoint().getY());
+		        
+			         if(landuseNumber == 3||landuseNumber ==1)//it's next to water or rice
+			           { 
+				            c.setNextToRice();
+				        
+			            	break;
+			        	}
+			        		
+		
+		          }
+		 }
+			
 		for(int j=0;j<planningSoyCells.size();j++){
 			//		System.out.println("still grow soys "+organicSpace.getTypeID());
 					LandCell c = planningSoyCells.get(j);
 					c.setLastLandUse(c.getLandUse());
 					c.setLandUse(LandUse.SOY);
 					organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
+			//		organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
 					c.setFertilizerInput(LandUse.SOY);
 					c.setFuelInput((soyPerHaFuelInput/10000.0)*(cellsizeReceiving*cellsizeReceiving));
 					c.setWaterRequirement(LandUse.SOY);
@@ -1241,7 +1263,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 					c.setLastLandUse(c.getLandUse());
 					c.setLandUse(LandUse.RICE);
 					organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
-					
+				//	organicSpace.setLandUse(6, c.getXlocation(), c.getYlocation());
 					c.setFertilizerInput(LandUse.RICE);
 					c.setFuelInput((ricePerHaFuelInput/10000.0)*(cellsizeReceiving*cellsizeReceiving));
 					c.setWaterRequirement(LandUse.RICE);
@@ -1258,19 +1280,12 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			  
 			  
 			  
-//			System.out.println("total fertilizer use = "+totalFertilizerInput);	
-//			System.out.println("total fuel use = "+totalFuelInput);	
-//			System.out.println(tick+" "+"id"+this.getID()+" soy size at decision: "+planningSoyCells.size());
-//			System.out.println("corn size at decision: "+planningCornCells.size());
-//			System.out.println("rice cells: "+planningRiceCells.size());
-//			System.out.println("\\");
+
 			setTotalFertilizerInput(totalFertilizerInput);
 			setTotalFuelInput(totalFuelInput);
 			setTotalWaterInput(totalWaterInput);
 			
-	//		System.out.println("farmer id: "+ this.getID()+ " has size "+ this.tenureCells.size()
-	//		                 +" soy size "+soyCells.size()+ " corn size " +cornCells.size()
-	//		                 + " rice size "+riceCells.size());
+	
 	}
 
 	public double getSoySubsidy() {
@@ -1301,6 +1316,484 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	public void landUseDecisionLogisticRegression(OrganicSpace organicSpace) {
 		// TODO Auto-generated method stub
 		
+		int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		double meanAllSchoolYear = 6.29;
+		double meanNoOffFarmIncome = 0.45;
+		double meanNoBigMachine = 1.02;
+		
+	
+		
+		planningSoyCells.clear();
+		planningCornCells.clear();
+		planningRiceCells.clear();
+		planningOtherCells.clear();
+		
+		double[] profit = new double[4];
+		
+		profit[0] = lastYearSoyPerHaProfit;
+		profit[1] = lastYearCornPerHaProfit;
+		profit[2] = lastYearRicePerHaProfit;
+		profit[3] = lastYearOtherPerHaProfit; 
+		
+		//this.nextdouble controls coef 13-17
+		
+		
+		double[] coef_rice= new double[33];
+		double[] coef_corn= new double[33];
+		
+		double r=RandomHelper.nextDoubleFromTo(0, 1.0);
+		if(r < 0.18) {
+			coef_rice[13]= -0.038;  //against strongly
+			coef_rice[14]=0; coef_rice[15]=0;coef_rice[16]=0;coef_rice[17]=0;
+			
+			coef_corn[13] = -0.003;
+			coef_corn[14] = 0;coef_corn[15] = 0; coef_corn[16] = 0; coef_corn[17] = 0;
+			
+		}
+		
+		else if( r<0.279) {
+			coef_rice[14]=0.203;  //neutral
+			coef_rice[13]=0; coef_rice[15]=0;coef_rice[16]=0;coef_rice[17]=0;
+			
+			coef_corn[14] = -0.210;
+			coef_corn[13] = 0;coef_corn[15] = 0; coef_corn[16] = 0; coef_corn[17] = 0;
+			
+		} else if(r<0.443) {
+			coef_rice[15]=0.181;  //not known
+			coef_rice[13]=0; coef_rice[14]=0;coef_rice[16]=0;coef_rice[17]=0;
+			
+			coef_corn[15] = -0.26;
+			coef_corn[13] = 0;coef_corn[14] = 0; coef_corn[16] = 0; coef_corn[17] = 0;
+			
+		} else if(r<0.5) {
+			coef_rice[16]=0.123;  //support
+			coef_rice[13]=0; coef_rice[14]=0;coef_rice[15]=0;coef_rice[17]=0;
+			
+			coef_corn[16] = -0.101;
+			coef_corn[14] = 0;coef_corn[15] = 0; coef_corn[13] = 0; coef_corn[17] = 0;
+		} else {
+			coef_rice[16]=0;  //rest
+			coef_rice[13]=0; coef_rice[14]=0;coef_rice[15]=0;coef_rice[17]=0;
+			
+			coef_corn[16] = 0;
+			coef_corn[14] = 0;coef_corn[15] = 0; coef_corn[13] = 0; coef_corn[17] = 0;
+		}
+		
+		
+		coef_rice[0] = 0.071; coef_rice[1] = 0.002;coef_rice[2] = 0.043; coef_rice[3] =0.011;
+		coef_rice[4] = 0.136; coef_rice[5] = -0.030; coef_rice[6] = 0.130; coef_rice[7] = -0.192;
+		coef_rice[8] = 0.007; coef_rice[9] = 0.020;coef_rice[10] = 0.008; coef_rice[11] = -0.012;
+		coef_rice[12] = -0.08;coef_rice[18] = 0.125; coef_rice[19] = -0.04;	
+		coef_rice[20] = 0.037; coef_rice[21] = -0.007;coef_rice[22] = 0.16; coef_rice[23] = 0.028;
+		coef_rice[24] = 0.031; coef_rice[25] = -0.18;
+		
+		coef_corn[0] = 1.273; coef_corn[1] = -0.0066;coef_corn[2] = -0.1995; coef_corn[3] = -0.0214;
+		coef_corn[4] = -0.1335; coef_corn[5] = -0.005; coef_corn[6] = -0.185; coef_corn[7] = 0.328;
+		coef_corn[8] = -0.029; coef_corn[9] = 0.0176;coef_corn[10] = 0.0057; coef_corn[11] = 0.025;
+		coef_corn[12] = 0.161;  coef_corn[18] = -0.166; coef_corn[19] = 0.093;	
+		coef_corn[20] = -0.047; coef_corn[21] = 0.011;coef_corn[22] = -0.168; coef_corn[23] = 0.035;
+		coef_corn[24] = -0.05; coef_corn[25] = 0.161;
+		
+		
+		double soyPriceDelta = getPriceDelta(LandUse.SOY)	;
+//		System.out.println("soy price delta"+soyPriceDelta);
+		double cornPriceDelta = getPriceDelta(LandUse.CORN);
+		double ricePriceDelta = getPriceDelta(LandUse.RICE);
+		
+		double coef_two = 1.0;
+		double coef_three = 1.0;
+		if(occupation==3)  coef_two = 1.0; else coef_two = 0.0;
+		if(occupation ==2) coef_three = 1.0; else coef_three = 0.0;
+			//full time farmer, 2=part time farmer, 3=non time farmer
+		
+		double dryarea = 0;  //because in regression, it's in hectare, 
+		//here we have to convert the unit from number of cells to hectares.
+		double irrigatedarea=0;
+		
+		if(this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
+				10000.0 > 10.0
+				&&
+				this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
+				10000.0 <100) 
+	    	{ 
+			   dryarea = 	(this.tenureCells.size()-this.getRiceCellSize())*
+			                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
+			                /10.0;
+		       irrigatedarea = 	this.getRiceCellSize()*
+                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
+                /10.0;
+		    }
+		else if(this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
+				10000.0 >= 100.0
+				&&
+				this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
+				10000.0 <1000.0) 
+			{
+		     	dryarea = 	(this.tenureCells.size()-this.getRiceCellSize())*	
+                            (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
+                            /100.0;
+		     	irrigatedarea = 	this.getRiceCellSize()*
+		                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
+		                /100.0;
+			}
+		else	if(this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
+				10000.0 >= 1000.0
+				&&
+				this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
+				10000.0 <10000.0) 
+			{
+			  dryarea = 	(this.tenureCells.size()-this.getRiceCellSize())*
+                             (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
+                            /1000.0;
+			  irrigatedarea = 	this.getRiceCellSize()*
+		                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
+		                /1000.0;
+			}
+		else {
+			dryarea = (this.tenureCells.size()-this.getRiceCellSize())*
+                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0);
+			irrigatedarea = 	this.getRiceCellSize()*
+	                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0);
+		
+		}
+	//	System.out.println(this.tenureCells.size()+" rice cell "+riceCells.size()+ " dry area "+dryarea);
+		
+		
+	
+	/*	System.out.println("coef_two "+coef_two+" part farmer "+coef_three);
+		System.out.println("age "+age);
+		System.out.println("head health "+hhdHeadunHealth);
+		System.out.println("family population "+familyPopulation);
+		System.out.println(" dep ratio "+dependentRatio);
+		System.out.println("gender ratio "+genderRatio);
+		System.out.println("school year "+meanAllSchoolYear);
+		System.out.println("off farm income "+meanNoOffFarmIncome);
+		System.out.println(" big machine "+meanNoBigMachine);
+		System.out.println("unhealth prop "+unhealthProportion);
+		System.out.println("international trade "+knowInternationalTrade);
+		System.out.println(coef_rice[13]);
+		System.out.println(coef_rice[14]);
+		System.out.println(coef_rice[15]);
+		System.out.println(coef_rice[16]);
+		System.out.println(coef_rice[17]);
+		System.out.println("konw ix "+whetherknow_soybean_ixYes);
+		System.out.println("konw transgene  "+whetherknow_transgeneYes);
+		System.out.println("konw  gmo "+whether_know_import_gmoYes);
+		System.out.println("dry land " +dryarea);
+		System.out.println("irragated land " +irrigatedarea);
+		System.out.println("soy price delta "+soyPriceDelta);
+		System.out.println("corn price delta  "+cornPriceDelta);	
+		System.out.println("rice  price delta "+ricePriceDelta);*/
+		
+		
+		
+		riceProportion = 
+				coef_rice[0] +  //constant
+				coef_rice[1]*age +  //age
+				coef_rice[2]*coef_two + //nonfarmer
+				coef_rice[3]*coef_three + //part time farmer
+		         coef_rice[4]*hhdHeadunHealth + //if household head unhealthy
+		         coef_rice[5]*familyPopulation + //husband age
+		         coef_rice[6]*dependentRatio + //husband education
+		         coef_rice[7]*genderRatio +
+		         coef_rice[8]*meanAllSchoolYear +
+		         coef_rice[9]*meanNoOffFarmIncome +//mean average all school year
+		         coef_rice[10]*meanNoBigMachine + 
+		         coef_rice[11] *  unhealthProportion +
+		         coef_rice[12]*knowInternationalTrade+ 
+		         coef_rice[13]+
+		         coef_rice[14]+
+		         coef_rice[15]+
+		         coef_rice[16]+
+		         coef_rice[17]+
+		          coef_rice[18]*whetherknow_soybean_ixYes+
+		          coef_rice[19] * whetherknow_transgeneYes +
+		          coef_rice[20] * whether_know_import_gmoYes +
+		          coef_rice[21]* dryarea +
+		          coef_rice[22] * irrigatedarea +
+		          coef_rice[23] *soyPriceDelta +
+		          coef_rice[24] * cornPriceDelta +
+		          coef_rice[25] *ricePriceDelta
+		          		          ;
+		
+		
+		cornProportion = 
+				coef_corn[0] +  //constant
+				coef_corn[1]*age +  //age
+				coef_corn[2]*coef_two + //nonfarmer
+				coef_corn[3]*coef_three + //part time farmer
+				coef_corn[4]*hhdHeadunHealth + //if household head unhealthy
+				coef_corn[5]*familyPopulation + //husband age
+				coef_corn[6]*dependentRatio + //husband education
+				coef_corn[7]*genderRatio +
+				coef_corn[8]*meanAllSchoolYear +
+				coef_corn[9]*meanNoOffFarmIncome +//mean average all school year
+				coef_corn[10]*meanNoBigMachine + 
+				coef_corn[11] *  unhealthProportion +
+				coef_corn[12]*knowInternationalTrade+ 
+				coef_corn[13]+
+				coef_corn[14]+
+				coef_corn[15]+
+				coef_corn[16]+
+				coef_corn[17]+
+				coef_corn[18]* whetherknow_soybean_ixYes+
+				coef_corn[19] * whetherknow_transgeneYes +
+				coef_corn[20] * whether_know_import_gmoYes +
+				coef_corn[21]* dryarea +
+				//has to change size to area
+				coef_corn[22] * irrigatedarea +
+				coef_corn[23] *soyPriceDelta +
+				coef_corn[24] * cornPriceDelta +
+				coef_corn[25] *ricePriceDelta
+		          		          ;
+		
+	//	if(cornProportion>1||cornProportion<0) {
+	//		cornProportion = 0.33;
+	//	}
+	//	if(riceProportion>1||riceProportion<0){
+	//		riceProportion = 0.33;
+	//	}
+		
+		soyProportion = 1.0 - cornProportion - riceProportion;
+		
+	//	if(soyProportion>1|soyProportion<0) soyProportion = 0;
+	/*	System.out.println(soyProportion);
+		System.out.println(cornProportion);
+		System.out.println(riceProportion);*/
+		
+	/*	
+		System.out.println("s: "+soyProportion*this.tenureCells.size()+
+				          " c: "+cornProportion*this.tenureCells.size()+
+				          " r: "+riceProportion*this.tenureCells.size());*/
+		
+	/*	System.out.println("soy cell true "+soyCells.size());
+		System.out.println("rice cell true "+riceCells.size());
+		System.out.println("corn cell true "+cornCells.size());
+		
+		  Collections.sort(this.tenureCells, new SortByRcount());
+		   Collections.sort(this.tenureCells, new SortbyRoll());
+		   
+		   Collections.sort(cornCells, new SortByRcount());
+		   Collections.sort(soyCells, new SortByRcount());
+		   
+			List<Integer> listToChange = new ArrayList<Integer>(); */
+			
+			
+			
+		  
+		        	
+	/*	   if(  (double) (riceCells.size()/this.tenureCells.size()) < riceProportion) 
+		   {
+			//   System.out.println("here need more rice");
+			   //need more cells convert to rice
+			   //first add all existing riceCells to planning Rice cell list;
+			   for(int j=0; j< riceCells.size(); j ++) 
+			   {
+				   planningRiceCells.add(riceCells.get(j));
+			   } 
+			   //then convert Soy cells to rice
+			  for ( int j=0; j <soyCells.size() - soyProportion*this.tenureCells.size() && 
+					  j <riceProportion*this.tenureCells.size()-planningRiceCells.size(); j++ ) 
+			  {
+				  planningRiceCells.add(soyCells.get(j));
+				  listToChange.add(j);
+				  
+			  }
+			  for (Integer i: listToChange) {
+				  soyCells.remove(i);
+			  }
+			  listToChange.clear();
+			  System.out.println("plan size "+planningRiceCells.size());
+			  //then convert corn cells to rice
+			  for ( int j=0; j <cornCells.size() - cornProportion*this.tenureCells.size() && 
+					  j <riceProportion*this.tenureCells.size()-planningRiceCells.size(); j++ ) 
+			  {
+				  planningRiceCells.add(cornCells.get(j));
+				  listToChange.add(j);
+			  }
+			  for (Integer i: listToChange) {
+				  cornCells.remove(i);
+				//  System.out.println(i);
+			  }
+			  listToChange.clear();
+			  
+			  
+			  if(soyProportion*this.tenureCells.size() > soyCells.size())
+			  {  //if need more soy cells
+				  
+			    for(int j = 0; j< cornCells.size()-cornProportion*this.tenureCells.size(); j++)
+			    {
+			    	planningSoyCells.add(cornCells.get(j));
+			    	listToChange.add(j);
+			    }
+			    for (Integer i: listToChange) {
+					  cornCells.remove(i);
+				  }
+			  } 
+			  if(cornProportion*this.tenureCells.size() > cornCells.size())
+			  {  //if need more soy cells
+				  
+			    for(int j = 0; j< soyCells.size()-soyProportion*this.tenureCells.size(); j++)
+			    {
+			    	planningCornCells.add(soyCells.get(j));
+			    	listToChange.add(j);
+			    }
+			    for (Integer i: listToChange) {
+					  soyCells.remove(i);
+				  }
+			  }
+			  
+			  for(LandCell c:soyCells) {
+				  planningSoyCells.add(c);
+			  }
+			  for(LandCell c:cornCells) {
+				  planningCornCells.add(c);
+			  }   
+			 
+			   			   
+		   } //end of if(need more rice than existing rices), so it's convert rice to soy/corn cells
+		   else
+		   {
+			   for(int j=0; j< (int) riceProportion*this.tenureCells.size()&& j<riceCells.size(); j ++) 
+			   {
+				   planningRiceCells.add(riceCells.get(j));
+			   } 
+			   
+			  for(int j = (int) riceProportion*this.tenureCells.size(); j < riceCells.size(); j++) 
+			  {  //first add all soy cells to planned soy cells
+				  //and add all corn cells to planned corn cells
+				  for(int k=0; k<cornCells.size(); k++)
+					   planningCornCells.add(cornCells.get(k));
+				   for(int k=0; k<soyCells.size(); k++)
+					   planningSoyCells.add(soyCells.get(k));
+				  
+				 if((int) cornProportion*this.tenureCells.size() > cornCells.size())  
+				   while((int) cornProportion*this.tenureCells.size()> planningCornCells.size())
+					  //if there are more corn needed than existing
+					  {					   
+					    //add these riceCells to planning corn cell list
+					       if(!riceCells.get(j).getNextToRice())
+						      {
+					    	   planningCornCells.add(riceCells.get(j));
+					    	   listToChange.add(j);
+						      }
+					       else
+					       {
+					    	   planningCornCells.add(planningSoyCells.getLast());
+					    	   planningSoyCells.removeLast();
+					       }
+					       break;
+					   					    
+					  }
+				   //if there are fewer corn needed than existing
+				 else   {					 
+					    //add rice cells to soy
+					     planningSoyCells.add(riceCells.get(j));
+					     //add corn cells to soy
+					     for(int k=(int) cornProportion*this.tenureCells.size(); 
+					    		 k < planningCornCells.size();k++)
+					     { 
+					    	 planningSoyCells.add(planningCornCells.get(k));
+					    	 planningCornCells.remove(k);
+					     }
+					     
+					    
+					     
+				     }
+			  }
+			  
+			  
+			  
+		   }
+		   
+		
+			  
+		  System.out.println(this.tenureCells.size());
+		  System.out.println("plan soy cell size: "+planningSoyCells.size()+" "+soyCells.size());
+		  System.out.println("corn cell size: "+planningCornCells.size()+" "+cornCells.size());
+		  System.out.println("rice cell size: "+planningRiceCells.size()+" "+riceCells.size());
+	//	for(LandCell c: this.tenureCells)
+*/	}
+	
+	
+	public double getPriceDelta(LandUse commodity){
+		double cPrice = 0;
+		double priceDelta = 0;
+		double soyPriceDelta = 0;
+		double cornPriceDelta = 0;
+		double ricePriceDelta = 0;
+		
+		if(commodity == LandUse.SOY)
+		{ 
+		//	cPrice = soySoldToTraderAgent.getCommodityPrice(commodity);	
+	    //	soyPrices.add(cPrice);
+			//don't need to add or remove because it was add at the update price section
+	  
+	 
+   
+		   if(soyPrices.size()==1){
+	        	soyPriceDelta = soyPrices.get(0).doubleValue();
+	   // 	cornPriceDelta = cornPrices.get(0).doubleValue();
+	 //   	ricePriceDelta = ricePrices.get(0).doubleValue();
+	        } else if(soyPrices.size()==2){
+	            	soyPriceDelta = soyPrices.get(1).doubleValue() - 
+	    			soyPrices.get(0).doubleValue();
+	          
+	   // 	cornPriceDelta = cornPrices.get(1).doubleValue() - 
+	  //  			cornPrices.get(0).doubleValue();
+	  //  	ricePriceDelta = ricePrices.get(1).doubleValue()-
+	  //  			ricePrices.get(0).doubleValue();
+	         } else{
+	            	soyPriceDelta = soyPrices.get(2).doubleValue()-
+			           soyPrices.get(1).doubleValue();
+	            	
+	            	}
+		//System.out.println("to test tick ");
+			priceDelta = soyPriceDelta;
+       	}
+		if(commodity == LandUse.CORN) {
+		
+		   if(cornPrices.size()==1){
+	        	cornPriceDelta = cornPrices.get(0).doubleValue();
+	   // 	cornPriceDelta = cornPrices.get(0).doubleValue();
+	 //   	ricePriceDelta = ricePrices.get(0).doubleValue();
+	        } else if(cornPrices.size()==2){
+	            	cornPriceDelta = cornPrices.get(1).doubleValue() - 
+	    			cornPrices.get(0).doubleValue();
+	   // 	cornPriceDelta = cornPrices.get(1).doubleValue() - 
+	  //  			cornPrices.get(0).doubleValue();
+	  //  	ricePriceDelta = ricePrices.get(1).doubleValue()-
+	  //  			ricePrices.get(0).doubleValue();
+	         } else{
+	            	cornPriceDelta = cornPrices.get(2).doubleValue()-
+			           cornPrices.get(1).doubleValue();
+	            	}
+		   
+		   priceDelta = cornPriceDelta;
+		}
+		
+		if(commodity == LandUse.RICE) {
+		
+		   if(ricePrices.size()==1){
+	        	ricePriceDelta = ricePrices.get(0).doubleValue();
+	   // 	cornPriceDelta = cornPrices.get(0).doubleValue();
+	 //   	ricePriceDelta = ricePrices.get(0).doubleValue();
+	        } else if(ricePrices.size()==2){
+	        	ricePriceDelta = ricePrices.get(1).doubleValue() - 
+	            			ricePrices.get(0).doubleValue();
+	   // 	cornPriceDelta = cornPrices.get(1).doubleValue() - 
+	  //  			cornPrices.get(0).doubleValue();
+	  //  	ricePriceDelta = ricePrices.get(1).doubleValue()-
+	  //  			ricePrices.get(0).doubleValue();
+	         } else{
+	        	 ricePriceDelta = ricePrices.get(2).doubleValue()-
+	        			 ricePrices.get(1).doubleValue();
+	            	}
+		   
+		   priceDelta = ricePriceDelta;
+		}
+		
+		return priceDelta;
 	}
 
 

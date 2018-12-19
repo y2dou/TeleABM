@@ -111,13 +111,21 @@ public class LandCell {
 	 private int dscount;
 	 private int ccount;
 	 private int sccount;
+	 
+	 private int rcount;
 	
 	 List<GridCell<LandCell>> nghCell;
 	 private int suitability;
+	 private boolean changedThisTime = false;
 	
+	 private boolean nextToRice = false;
+	
+
 	public boolean isTaken() {
 		return this.taken;
 	}
+	
+
 	
 	public LandCell(OrganicSpace organicSpace, int x, int y){
 		//super(x,y);
@@ -280,11 +288,15 @@ public class LandCell {
 	//         cellsize = cellsizeSending;
 			//sending system land cell yield
 			if(this.getLandUse()==LandUse.SINGLESOY) {
-				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*1.10+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+			//	setSoyYield(((3071.2/10000.0)*(cellsize*cellsize))*1.10+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*1.10+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+				//3071 is the average yield from year book
+				//however, if we use the cells from lucc map, it has to be a bit higher 3214
 			}
 			
 			if(this.getLandUse()==LandUse.DOUBLESOY) {
-				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*0.9+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+		//		setSoyYield(((3071.2/10000.0)*(cellsize*cellsize))*1.0+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*0.95+RandomHelper.nextDoubleFromTo(-5.0,5.0));
 				//setCornYield(200.0);
 				setCornYield((4120.1/10000.0)*(cellsize*cellsize)+RandomHelper.nextDoubleFromTo(-10.0,10.0));  
 				//average of maize as second crop yield from 2003-2016, 
@@ -296,7 +308,8 @@ public class LandCell {
 			//average of cotton crop yield from 1998-2016, 
 			//in excel: cotton.xlsx
 			if(this.getLandUse()==LandUse.SOYCOTTON){
-				setSoyYield(((3007.2/10000.0)*(cellsize*cellsize))*0.85+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+			//	setSoyYield(((3071.2/10000.0)*(cellsize*cellsize))*1.0+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*0.95+RandomHelper.nextDoubleFromTo(-5.0,5.0));
 				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*0.85+RandomHelper.nextDoubleFromTo(-8.0,8.0));
 			}
 			
@@ -780,6 +793,10 @@ public class LandCell {
 				this.sccount=x;
 			}
 			
+			public void setRCount(int x){
+				this.rcount=x;
+			}
+			
 			public int getSSCount(){
 				return sscount;
 			}
@@ -794,6 +811,10 @@ public class LandCell {
 			
 			public int getSCCount(){
 				return sccount;
+			}
+			
+			public int getRCount(){
+				return rcount;
 			}
 			
 
@@ -815,7 +836,20 @@ public void setSuitability(int suit){
 public int getSuitability(){
 	return suitability;
 }
+public boolean isChangedThisTime() {
+	return changedThisTime;
+}
 
+public void setChangedThisTime(boolean changedThisTime) {
+	this.changedThisTime = changedThisTime;
+}
 
+public void setNextToRice(){
+	this.nextToRice=true;
+}
+
+public boolean getNextToRice(){
+	return this.nextToRice;
+}
 
 }

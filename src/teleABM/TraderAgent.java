@@ -107,12 +107,12 @@ public abstract class TraderAgent {
 		if(organicSpace.getTypeID()=="organicSpaceReceiving")
 	{
 		if(receivingXdim>receivingYdim)
-			setVision(receivingXdim/2);
+			setVision(receivingXdim);
 		else 
-			setVision(receivingYdim/2);
+			setVision(receivingYdim);
 	//	setVision(RandomHelper.nextIntFromTo(500,100000));
 	//	setCapital(RandomHelper.nextDoubleFromTo(10000,10000000));
-		setCapital(1000000.0);
+		setCapital(10000000000.0);
 	//	setCommodityPrices();
 		//commodity price is set at the teleABMBuilder
 		}
@@ -191,8 +191,8 @@ public abstract class TraderAgent {
 	    	grid = (Grid) organicSpace.getProjection("Grid");
 	//        xdim = receivingXdim;
 	//        ydim = receivingYdim;
-	        x= (int) (id*(receivingXdim/numTradeAgents)+RandomHelper.nextIntFromTo(-100,1000));
-	        y= (int) (id*(receivingYdim/numTradeAgents)+RandomHelper.nextIntFromTo(-100,1000));
+	        x= (int) (id*(receivingXdim/numTradeAgents)+RandomHelper.nextIntFromTo(-100,100));
+	        y= (int) (id*(receivingYdim/numTradeAgents)+RandomHelper.nextIntFromTo(-100,100));
 	        
 	    	
 	    } else {
