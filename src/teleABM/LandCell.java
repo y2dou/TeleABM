@@ -119,6 +119,10 @@ public class LandCell {
 	 private boolean changedThisTime = false;
 	
 	 private boolean nextToRice = false;
+	 
+	 private double sProb;
+	 private double cProb;
+	 private double rProb; //these are the probability based purely on bio-physical data
 	
 
 	public boolean isTaken() {
@@ -260,13 +264,19 @@ public class LandCell {
 		otherYield = otherYield * (cellsize*cellsize/10000.0);
 		//May 5, simplified yield function;
 		
+		//12/30 changed it to uniform yield
+		cornYield = 9597*(cellsize*cellsize/10000.0);  //per cell size yield;
+		riceYield = 8112*(cellsize*cellsize/10000.0);  //per cell size yield;
+		soyYield = 2000*(cellsize*cellsize/10000.0);  //per cell size yield;
 		
 		if(this.getLandUse()==LandUse.CORN)  
 			setCornYield(cornYield);
+			//setCornYield(9597);
 			//setCropYield(cornYield);
 	
 		if(this.getLandUse()==LandUse.RICE) 
 			setRiceYield(riceYield);
+			
 			//setCropYield(riceYield);
 		if(this.getLandUse()==LandUse.SOY) 
 		    setSoyYield(soyYield);
@@ -656,32 +666,7 @@ public class LandCell {
 				soc = soc + newsoc; 
 				
 			}    else soc = soc*0.95;
-				
-		//	double newsoc =0;
-			/*if (this.getLandUse()==LandUse.SOY){
-				if (this.getLastLandUse()==LandUse.CORN) 
-					newsoc = soc-0.0096*soc; //9.6% for ten years
-				if (this.getLastLandUse()==LandUse.SOY)
-					newsoc = soc-0.0377*soc; //37.7% for ten years
-				if (this.getLastLandUse() ==LandUse.RICE) 
-					newsoc = soc+RandomHelper.nextDoubleFromTo(0.79,1.37);
-				}
-			if (this.getLandUse()==LandUse.CORN){
-				if(this.getLastLandUse()==LandUse.CORN)
-					newsoc = soc+soc*0.0127;
-				if(this.getLastLandUse()==LandUse.SOY)
-					newsoc = soc-0.0096*soc;
-				if(this.getLastLandUse()==LandUse.RICE)
-					newsoc = soc+RandomHelper.nextDoubleFromTo(0.79,1.37);
-			}
-			if (this.getLandUse()==LandUse.RICE){
-				
-				newsoc = soc+RandomHelper.nextDoubleFromTo(0.79,1.37);
-			}*/
-			
-			
-	//		System.out.println("land use  "+this.getLandUse()+"  new soc: "+newsoc
-	//				           +" soc="+soc);
+
 			this.lastyearSoc=soc;
 		}
 		
@@ -815,6 +800,28 @@ public class LandCell {
 			
 			public int getRCount(){
 				return rcount;
+			}
+			
+			public void setSProb(double sProb) {
+				this.sProb = sProb;
+			}
+			
+			public void setCProb(double cProb) {
+				this.cProb = cProb;
+			}
+			
+			public void setRProb(double rProb){
+				this.rProb = rProb;
+			}
+			
+			public double getSProb(){
+				return sProb;
+			}
+			public double getCProb(){
+				return cProb;
+			}
+			public double getRProb(){
+				return rProb;
 			}
 			
 

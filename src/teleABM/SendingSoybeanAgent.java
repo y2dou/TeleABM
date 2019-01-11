@@ -1549,6 +1549,10 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	    }
 	}
 	
+	public void landUseDecisionCelluar(OrganicSpace organicSpace){
+		
+	}
+	
 	
 	public double getLastYearSoyPerHaCost() {
 		return lastYearSoyPerHaCost;

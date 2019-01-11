@@ -83,13 +83,17 @@ public class OrganicSpace extends DefaultContext<Object> {
 		GridValueLayer dsCount;
 		GridValueLayer cCount;
 		GridValueLayer scCount;
-		GridValueLayer rCount;
+	
 		
+		GridValueLayer sSuitability;   //prob for soy
+		GridValueLayer cSuitability;   //prob for corn
+		GridValueLayer rSuitability;   //prob for rice
 		
 		
 	//	if(TeleABMBuilder.receivingSystem) {
-		if(organicFile =="misc/organicmatter.asc")	{
-	//	    OrganicSpace<Object> organicSpace = new OrganicSpace<Object>; 
+	//	if(organicFile =="misc/organicmatter.asc")	{
+	    if(organicFile == "misc/gannan/gn_ag_05.asc"){
+		//	    OrganicSpace<Object> organicSpace = new OrganicSpace<Object>; 
 	
 		    xdim = (Integer)p.getValue("receivingWorldWidth");
 			 ydim = (Integer)p.getValue("receivingWorldHeight");
@@ -176,7 +180,10 @@ public class OrganicSpace extends DefaultContext<Object> {
 	//		if(TeleABMBuilder.receivingSystem)
 			if(this.getId()=="organicSpaceReceiving")	
 			{
-				stream = new BufferedInputStream(new FileInputStream("misc/organicmatter.asc"));
+				//stream = new BufferedInputStream(new FileInputStream("misc/organicmatter.asc"));
+				//the above organic matter is 30 meters
+				
+				stream = new BufferedInputStream(new FileInputStream("misc/gannan/gn_ag_05.asc"));
 				currentOrganic = loadFieldFromStream(this, stream, "CurrentOrganicReceiving", soilOrganicCarbon);
 			}
 		//	stream = new BufferedInputStream(new FileInputStream("misc/heilong_2005.asc"));
@@ -304,7 +311,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 				this.addValueLayer(landUseField);
 	        //	stream = new BufferedInputStream(new FileInputStream("misc/baoshan_06_crops.asc"));
 	        //	stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan2006.asc"));
-				stream = new BufferedInputStream(new FileInputStream("misc/gannan/gn_05_clip.txt"));
+				stream = new BufferedInputStream(new FileInputStream("misc/gannan/gn_ag_05.asc"));
 	       // 	stream = new BufferedInputStream( new FileInputStream("misc/heilongjiang_crops/heilong_2005.asc"));
 				landUseField = loadFieldFromStream(this, stream, "Land Use Field Receiving", landUseTypes);
 	        	System.out.println("receiving: land use field");
@@ -390,7 +397,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		this.addValueLayer(dsCount);
 		}
 		
-		stream = null;
+		/*stream = null;
 		
 		if(this.getTypeID() == "organicSpaceReceiving")
 		{
@@ -399,7 +406,10 @@ public class OrganicSpace extends DefaultContext<Object> {
 				dsCount = new GridValueLayer("soy corn count", true, 
 						         new WrapAroundBorders(), xdim, ydim);
 				this.addValueLayer(dsCount);
-				stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
+				//stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
+				//above is not 250m count
+				stream = new BufferedInputStream(new FileInputStream("misc/gn_ag_05.asc"));
+				
 				dsCount = loadFieldFromStream(this, stream, "soy corn count", dscount);
 			}
 			 catch (IOException e) {
@@ -416,8 +426,106 @@ public class OrganicSpace extends DefaultContext<Object> {
 			}
 			
 			this.addValueLayer(dsCount);
-			}
+			}*/
 		
+//add soy suitability
+      
+		stream = null;
+		Range<Double> ssuitability = new Range<Double>(0d, 1d);
+		if(this.getTypeID() == "organicSpaceReceiving")
+		{
+			try {
+				
+				sSuitability = new GridValueLayer("soy suitability", true, 
+						         new WrapAroundBorders(), xdim, ydim);
+				this.addValueLayer(sSuitability);
+				//stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
+				//above is not 250m count
+				stream = new BufferedInputStream(new FileInputStream("misc/gannan/suitability/gn_05_10_ss.asc"));
+				
+				sSuitability = loadFieldFromStream(this, stream, "soy suitability", ssuitability);
+			}
+			 catch (IOException e) {
+				e.printStackTrace();
+			//	elevation = createValueLayerFromRandom(this, elevation);
+				sSuitability = new GridValueLayer("soy suitability", true, 
+				         new WrapAroundBorders(), xdim, ydim);
+				createValueLayerFromRandom(this, sSuitability);
+			} finally {
+				try {
+					if (stream != null) 
+						stream.close();
+				} catch (IOException e) {}
+			}
+			
+			this.addValueLayer(sSuitability);
+			}
+
+//add corn suitability receiving
+	      
+			stream = null;
+			Range<Double> csuitability = new Range<Double>(0d, 0d);
+			if(this.getTypeID() == "organicSpaceReceiving")
+			{
+				try {
+					
+					cSuitability = new GridValueLayer("corn suitability", true, 
+							         new WrapAroundBorders(), xdim, ydim);
+					this.addValueLayer(cSuitability);
+					//stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
+					//above is not 250m count
+					stream = new BufferedInputStream(new FileInputStream("misc/gannan/suitability/gn_05_10_sc.asc"));
+					
+					cSuitability = loadFieldFromStream(this, stream, "corn suitability", csuitability);
+				}
+				 catch (IOException e) {
+					e.printStackTrace();
+				//	elevation = createValueLayerFromRandom(this, elevation);
+					cSuitability = new GridValueLayer("corn suitability", true, 
+					         new WrapAroundBorders(), xdim, ydim);
+					createValueLayerFromRandom(this, cSuitability);
+				} finally {
+					try {
+						if (stream != null) 
+							stream.close();
+					} catch (IOException e) {}
+				}
+				
+				this.addValueLayer(cSuitability);		
+			}
+//add rice suitability receiving
+			      
+				stream = null;
+				Range<Double> rsuitability = new Range<Double>(0d, 0d);
+				if(this.getTypeID() == "organicSpaceReceiving")
+				{
+					try {
+						
+						rSuitability = new GridValueLayer("rice suitability", true, 
+								         new WrapAroundBorders(), xdim, ydim);
+						this.addValueLayer(rSuitability);
+						//stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
+						//above is not 250m count
+						stream = new BufferedInputStream(new FileInputStream("misc/gannan/suitability/gn_05_10_sr.asc"));
+						
+						rSuitability = loadFieldFromStream(this, stream, "rice suitability", rsuitability);
+					}
+					 catch (IOException e) {
+						e.printStackTrace();
+					//	elevation = createValueLayerFromRandom(this, elevation);
+						rSuitability = new GridValueLayer("rice suitability", true, 
+						         new WrapAroundBorders(), xdim, ydim);
+						createValueLayerFromRandom(this, rSuitability);
+					} finally {
+						try {
+							if (stream != null) 
+								stream.close();
+						} catch (IOException e) {}
+					}
+					
+					this.addValueLayer(rSuitability);
+				}
+					
 //add cotton count
 		
 		stream = null;
@@ -478,7 +586,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 					this.addValueLayer(scCount);
 						}
 //add rice count layer
-				stream = null;
+		/*		stream = null;
 				Range<Double> rcount = new Range<Double>(0d, 0d);
 				if (this.getTypeID()=="organicSpaceReceiving")
 				{
@@ -487,7 +595,9 @@ public class OrganicSpace extends DefaultContext<Object> {
 							rCount = new GridValueLayer("rice count", true, 
 									         new WrapAroundBorders(), xdim, ydim);
 							this.addValueLayer(rCount);
-							stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_rcount.txt"));
+						//	stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_rcount.txt"));
+						//  above is not 250m file
+							stream = new BufferedInputStream(new FileInputStream("misc/gn_ag_05.asc"));
 							rCount = loadFieldFromStream(this, stream, "rice count", rcount);
 						}
 						 catch (IOException e) {
@@ -504,7 +614,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 						}
 						
 					this.addValueLayer(rCount);
-						}
+						}*/
 				
 //add last year land cover
 				
@@ -566,31 +676,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 					this.addValueLayer(landCoverTwoYearsAgo);
 						}
 				
-				
-		//try {
-		//	if(TeleABMBuilder.receivingSystem)
-				
-		//	stream = new BufferedInputStream(new FileInputStream("misc/baoshan.asc"));
-		//	stream = new BufferedInputStream(new FileInputStream("misc/heilong_2005.asc"));
-		//	else	if(TeleABMBuilder.sendingSystem)
-		//	{	
-		//	System.out.println("sending system land use read "+landUseField.get(500,500));
-		//	}
-			
-		//	System.out.println(this.getValueLayer("Land Use Field Receiving"));
-		//} catch (IOException e) {
-		//	e.printStackTrace();
-		//	elevation = createValueLayerFromRandom(this, elevation);
-		//	createValueLayerFromRandom(this, landUseField);
-		//} finally {
-		//	try {
-		//		if (stream != null) 
-		//			stream.close();
-		//	} catch (IOException e) {}
-		//}
-		
-		
-		
+					
 		
 		//add trader agent vision file
 		if(this.getTypeID()=="organicSpaceReceiving") 
@@ -601,6 +687,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 						new WrapAroundBorders(), xdim, ydim);
 	//	System.out.println(context.width);
 	//	System.out.println("height"+context.height);
+		
 		this.addValueLayer(traderAgentField);
 		
 	//	return this;
@@ -754,12 +841,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		return (int) scCount.get(x,y);
 	}
 	
-	public int getRCountAt(int x, int y){
-		GridValueLayer rCount;
-		rCount = (GridValueLayer) getValueLayer("rice count");
-		
-		return (int) rCount.get(x,y);
-	}
+	
 	
 	public int getSoyCornCountAt(int x, int y){
 		GridValueLayer dsCount;
@@ -767,6 +849,29 @@ public class OrganicSpace extends DefaultContext<Object> {
 		
 		return (int) dsCount.get(x,y);
 	}
+	
+	public double getSoySuitabilityAt(int x, int y) {
+		//this is for soybean prob in receiving system.
+		GridValueLayer sSuitability;
+		sSuitability = (GridValueLayer) getValueLayer("soy suitability");
+		return (double) sSuitability.get(x,y);
+	}
+	
+	public double getCornSuitabilityAt(int x, int y) {
+		//this is for soybean prob in receiving system.
+		GridValueLayer cSuitability;
+		cSuitability = (GridValueLayer) getValueLayer("corn suitability");
+		return (double) cSuitability.get(x,y);
+	}
+	
+	public double getRiceSuitabilityAt(int x, int y) {
+		//this is for soybean prob in receiving system.
+		GridValueLayer rSuitability;
+		rSuitability = (GridValueLayer) getValueLayer("rice suitability");
+		return (double) rSuitability.get(x,y);
+	}
+	
+	
 	public int getTwoYearsAgoLandUseAt(int x, int y){
 		//right now it's only land cover t2 for sending system
 		GridValueLayer landCoverTwoYearsAgo;
@@ -1018,6 +1123,10 @@ private GridValueLayer createField(OrganicSpace organicSpace, String fieldName, 
 					Point p=new Point(i,j);
 					allAgriculturalPoints.add(p);
 				}
+				if (this.getLandUseAt(i, j)>=40) {
+					Point p = new Point(i, j);
+					allAgriculturalPoints.add(p);
+				} //Sun Jing data
 				}
 				
 				while (TeleABMBuilder.sendingSystem){

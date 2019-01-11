@@ -11,8 +11,10 @@
 			<projection id="temp zone Receiving" type="value layer"/>
 			<projection id ="precipitation zone Receiving" type ="value layer" />
 			
-			<projection id="soy corn count" type = "value layer"/>
-			<projection id="rice count" type = "value layer"/>
+	
+			<projection id = "soy suitability" type = "value layer"/>
+			<projection id = "corn suitability" type = "value layer"/>
+			<projection id = "rice suitability" type = "value layer"/>
 			
     </context>
 	

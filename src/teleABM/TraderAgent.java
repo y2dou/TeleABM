@@ -438,7 +438,9 @@ public abstract class TraderAgent {
 				marketPrices.setPrice(LandUse.SOY, staticPrice);
 		//		System.out.println ("soyPrice =" + staticPrice);
 			} else {
-				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPrice.txt"));
+//				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPrice.txt"));
+				//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
+					priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPriceCPIAdjusted.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -450,7 +452,9 @@ public abstract class TraderAgent {
 			if (staticPrice >= 0) {
 				marketPrices.setPrice(LandUse.CORN, staticPrice);
 			} else {
-				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/corn.prices.txt"));
+				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPricesCPIAdjusted.txt"));
+				//	priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPrices.txt"));
+				//priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/corn.prices.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -461,7 +465,10 @@ public abstract class TraderAgent {
 			if (staticPrice >= 0) {
 				marketPrices.setPrice(LandUse.RICE, staticPrice);
 			} else {
-				priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices.txt"));
+				priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.pricesCPIAdjusted.txt"));
+				//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices2.txt"));
+				//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices.txt"));
+				
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -501,7 +508,7 @@ public abstract class TraderAgent {
 					if (st.ttype == StreamTokenizer.TT_EOF)
 						break;
 					else if (st.ttype == StreamTokenizer.TT_NUMBER) {
-						cPrices.add(st.nval +RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+						cPrices.add(st.nval +RandomHelper.nextDoubleFromTo(-0.01, 0.01));
 						//this is to add some randomness of each agent's price offer
 					}
 				}
@@ -550,13 +557,14 @@ public abstract class TraderAgent {
     	 else 
     	 {   
     		 tempPrice=marketPrices.getPrice(landuse)+
-    			 RandomHelper.nextDoubleFromTo(-0.01, 0.05);
+    			 RandomHelper.nextDoubleFromTo(-0.01, 0.01);
    // 	 System.out.println("land use static prices: "+tempPrice); 
     	 }
     	 }
     
-    	if (capital < 0) 
-    		 tempPrice=RandomHelper.nextDoubleFromTo(0, 0.5);
+    //	if (capital < 0) 
+    //		 tempPrice=RandomHelper.nextDoubleFromTo(0, 0.1);
+    	
     	//this means trader agent went bankrupt
     	
     //	System.out.println("trader agent: "+tempPrice);
@@ -647,9 +655,9 @@ public abstract class TraderAgent {
 	public void setSendingDynamicCommodityPrices(LandUse landuse, ArrayList cropprices){
 		prices.put(landuse, cropprices);
 		
-		 soyPrices.add(0, 0.501+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-	       cornPrices.add(0, 0.302+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-	       cottonPrices.add(0, 1.93+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+		 soyPrices.add(0, 0.501+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
+	       cornPrices.add(0, 0.302+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
+	       cottonPrices.add(0, 1.93+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
 	}
 	
 	public void setReceivingStaticCommodityPrices(LandUse landuse, double tempPrice){
@@ -661,9 +669,9 @@ public abstract class TraderAgent {
 //		System.out.println("set receive dynamic "+prices.get(landuse));
 		   //following is to add the first step price, 
 		   //this is only used at initialization stage.
-		   soyPrices.add(0, 1.31+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-	       cornPrices.add(0, 0.6+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-	       ricePrices.add(0, 1.3+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+		   soyPrices.add(0, 1.31+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
+	       cornPrices.add(0, 0.6+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
+	       ricePrices.add(0, 1.3+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
 	}
 
 

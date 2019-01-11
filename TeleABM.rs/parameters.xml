@@ -23,7 +23,7 @@
 									
 		/>
 	<parameter name="initialReceivingNumAgents" displayName="Initial Receiving Agents" type="int" 
-						defaultValue="5000" 
+						defaultValue="1000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -37,20 +37,19 @@
 		/>
 		
 		<parameter name="initialNumTradeAgents" displayName="Initial Num of Trade Agents" type="int" 
-						defaultValue="50" 
+						defaultValue="500" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 		<parameter name="receivingWorldHeight" displayName="Receiving World Height" type="int" 
-						defaultValue="479" 
+						defaultValue="550" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 			<parameter name="receivingWorldWidth" displayName="Receiving World Width" type="int" 
-						defaultValue="424" 
-						
+						defaultValue="501" 						
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -90,19 +89,19 @@
 		/>
 		
 		<parameter name="soyPrice" displayName="Soy Price" type="double" 
-						defaultValue="-0.701" 
+						defaultValue="-0.1701" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 		<parameter name="cornPrice" displayName="Corn Price" type="double" 
-						defaultValue="-0.375" 
+						defaultValue="-3.75" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 		<parameter name="ricePrice" displayName="Rice Price" type="double" 
-						defaultValue="-1.2" 
+						defaultValue="-0.12" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									

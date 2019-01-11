@@ -77,7 +77,7 @@ import teleABM.SoybeanAgent;
 			
 		  // The sugarFile contains the initial/max sugar values for every point
 			// on the 2D sugarspace.
-			String organicFile = "misc/organicmatter.asc";
+			String organicFile = "misc/gannan/gn_ag_05.asc";
 		//	String organicFileForSending = "misc/2005sinop.asc";
 			String organicFileForSending = "misc/sinop/sinop_2005.asc";
 			
@@ -408,7 +408,7 @@ import teleABM.SoybeanAgent;
 			
 			
 			// If running in batch mode, schedule the sim stop time
-			double endTime = 10.0;
+			double endTime = 13.0;
 			
 			if(RunEnvironment.getInstance().isBatch())
 				RunEnvironment.getInstance().endAt(endTime);
@@ -584,7 +584,7 @@ import teleABM.SoybeanAgent;
 	//	internationalTradeAgent.marketTrading();
 		//priority higher means it excute earlier.
 		
-  @ScheduledMethod(start = 0, interval = 1, priority = 2)		
+  @ScheduledMethod(start = 1, interval = 1, priority = 2)		
   public void tradeAction(){
 	  boolean tariff;
 	  double receivingSoyProduction = 0;
@@ -772,8 +772,10 @@ import teleABM.SoybeanAgent;
 				 h.setReceivingStaticCommodityPrices(LandUse.SOY,staticPrice);
 	
 			} else {
-				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPrice.txt"));
+			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPrice.txt"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
+			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPriceCPI.txt"));
+				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPriceCPIAdjusted.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -786,7 +788,10 @@ import teleABM.SoybeanAgent;
 				 h.setReceivingStaticCommodityPrices(LandUse.CORN,staticPrice);
 				
 			} else {
-				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPrices.txt"));
+				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPricesCPIAdjusted.txt"));
+			//	priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPricesCPI.txt"));
+			//	priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPrices.txt"));
+			//	priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/corn.prices.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -797,7 +802,10 @@ import teleABM.SoybeanAgent;
 			if (staticPrice >= 0) {
 				h.setReceivingStaticCommodityPrices(LandUse.RICE, staticPrice);
 			} else {
-				priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices.txt"));
+				priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.pricesCPIAdjusted.txt"));
+			//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.pricesCPI.txt"));
+			//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices2.txt"));
+			//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
