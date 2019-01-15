@@ -9,21 +9,21 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-	<parameter name="sending system representation" displayName="Sending System Representation" type="boolean" 
-						defaultValue="false" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+	<parameter name="sending system representation" displayName="Sending System Representation" type="string" 
+						defaultValue="No" 
+						isReadOnly="flase" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
 		
-		<parameter name="receiving system representation" displayName="Receiving System Representation" type="boolean" 
-						defaultValue="true" 
+		<parameter name="receiving system representation" displayName="Receiving System Representation" type="string" 
+						defaultValue="Yes" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
 	<parameter name="initialReceivingNumAgents" displayName="Initial Receiving Agents" type="int" 
-						defaultValue="1000" 
+						defaultValue="5000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -37,7 +37,7 @@
 		/>
 		
 		<parameter name="initialNumTradeAgents" displayName="Initial Num of Trade Agents" type="int" 
-						defaultValue="500" 
+						defaultValue="1000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -82,7 +82,7 @@
 									
 		/>
 		<parameter name="vision" displayName="Farmer Vision" type="int" 
-						defaultValue="1000" 
+						defaultValue="2000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									

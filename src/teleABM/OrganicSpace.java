@@ -92,7 +92,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		
 	//	if(TeleABMBuilder.receivingSystem) {
 	//	if(organicFile =="misc/organicmatter.asc")	{
-	    if(organicFile == "misc/gannan/gn_ag_05.asc"){
+	    if(organicFile == "./data/gannan/gn_ag_05.asc"){
 		//	    OrganicSpace<Object> organicSpace = new OrganicSpace<Object>; 
 	
 		    xdim = (Integer)p.getValue("receivingWorldWidth");
@@ -113,7 +113,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 				 
 		} 
 	//	else if(organicFile=="misc/2005sinop.asc") 
-		else if(organicFile == "misc/sinop/sinop_2005.asc")
+		else if(organicFile == "./data/sinop/sinop_2005.asc")
 		{
 			
 			  xdim = (Integer)p.getValue("sendingWorldWidth");
@@ -183,13 +183,13 @@ public class OrganicSpace extends DefaultContext<Object> {
 				//stream = new BufferedInputStream(new FileInputStream("misc/organicmatter.asc"));
 				//the above organic matter is 30 meters
 				
-				stream = new BufferedInputStream(new FileInputStream("misc/gannan/gn_ag_05.asc"));
+				stream = new BufferedInputStream(new FileInputStream("./data/gannan/gn_ag_05.asc"));
 				currentOrganic = loadFieldFromStream(this, stream, "CurrentOrganicReceiving", soilOrganicCarbon);
 			}
 		//	stream = new BufferedInputStream(new FileInputStream("misc/heilong_2005.asc"));
 			else	//if(TeleABMBuilder.sendingSystem)
 				if(this.getId()=="organicSpaceSending")	
-			{	stream = new BufferedInputStream(new FileInputStream("misc/sinop/sinop_2005.asc"));
+			{	stream = new BufferedInputStream(new FileInputStream("./data/sinop/sinop_2005.asc"));
 		    	currentOrganic = loadFieldFromStream(this, stream, "CurrentOrganicSending", soilOrganicCarbon);
 		//	System.out.println("sending system land use read "+landUseField.get(500,500));
 			}
@@ -311,7 +311,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 				this.addValueLayer(landUseField);
 	        //	stream = new BufferedInputStream(new FileInputStream("misc/baoshan_06_crops.asc"));
 	        //	stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan2006.asc"));
-				stream = new BufferedInputStream(new FileInputStream("misc/gannan/gn_ag_05.asc"));
+				stream = new BufferedInputStream(new FileInputStream("./data/gannan/gn_ag_05.asc"));
 	       // 	stream = new BufferedInputStream( new FileInputStream("misc/heilongjiang_crops/heilong_2005.asc"));
 				landUseField = loadFieldFromStream(this, stream, "Land Use Field Receiving", landUseTypes);
 	        	System.out.println("receiving: land use field");
@@ -321,7 +321,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 						new WrapAroundBorders(), xdim, ydim);
 				this.addValueLayer(landUseField);
 		   // 	stream = new BufferedInputStream(new FileInputStream("misc/2005.txt"));
-		    	stream = new BufferedInputStream(new FileInputStream("misc/sinop/sinop_2005.asc"));
+		    	stream = new BufferedInputStream(new FileInputStream("./data/sinop/sinop_2005.asc"));
 		    	landUseField = loadFieldFromStream(this, stream, "Land Use Field Sending", landUseTypes);
 			}
 		    }  catch (IOException e) {
@@ -349,7 +349,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 			ssCount = new GridValueLayer("single soy count", true, 
 					         new WrapAroundBorders(), xdim, ydim);
 			this.addValueLayer(ssCount);
-			stream = new BufferedInputStream(new FileInputStream("misc/sinop/suitability/sscount_model.asc"));
+			stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/sscount_model.asc"));
 			ssCount = loadFieldFromStream(this, stream, "single soy count", sscount);
 		}
 		 catch (IOException e) {
@@ -378,7 +378,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 			dsCount = new GridValueLayer("double soy count", true, 
 					         new WrapAroundBorders(), xdim, ydim);
 			this.addValueLayer(dsCount);
-			stream = new BufferedInputStream(new FileInputStream("misc/sinop/suitability/dscount_model.asc"));
+			stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/dscount_model.asc"));
 			dsCount = loadFieldFromStream(this, stream, "double soy count", dscount);
 		}
 		 catch (IOException e) {
@@ -441,7 +441,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 				this.addValueLayer(sSuitability);
 				//stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
 				//above is not 250m count
-				stream = new BufferedInputStream(new FileInputStream("misc/gannan/suitability/gn_05_10_ss.asc"));
+				stream = new BufferedInputStream(new FileInputStream("./data/gannan/suitability/gn_05_10_ssmax.asc"));
 				
 				sSuitability = loadFieldFromStream(this, stream, "soy suitability", ssuitability);
 			}
@@ -474,7 +474,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 					this.addValueLayer(cSuitability);
 					//stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
 					//above is not 250m count
-					stream = new BufferedInputStream(new FileInputStream("misc/gannan/suitability/gn_05_10_sc.asc"));
+					stream = new BufferedInputStream(new FileInputStream("./data/gannan/suitability/gn_05_10_scmax.asc"));
 					
 					cSuitability = loadFieldFromStream(this, stream, "corn suitability", csuitability);
 				}
@@ -506,7 +506,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 						this.addValueLayer(rSuitability);
 						//stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
 						//above is not 250m count
-						stream = new BufferedInputStream(new FileInputStream("misc/gannan/suitability/gn_05_10_sr.asc"));
+						stream = new BufferedInputStream(new FileInputStream("./data/gannan/suitability/gn_05_10_srmax.asc"));
 						
 						rSuitability = loadFieldFromStream(this, stream, "rice suitability", rsuitability);
 					}
@@ -537,7 +537,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 					cCount = new GridValueLayer("cotton count", true, 
 							         new WrapAroundBorders(), xdim, ydim);
 					this.addValueLayer(cCount);
-					stream = new BufferedInputStream(new FileInputStream("misc/sinop/suitability/ccount_model.asc"));
+					stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/ccount_model.asc"));
 					cCount = loadFieldFromStream(this, stream, "cotton count", ccount);
 				}
 				 catch (IOException e) {
@@ -567,7 +567,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 							scCount = new GridValueLayer("soy cotton count", true, 
 									         new WrapAroundBorders(), xdim, ydim);
 							this.addValueLayer(scCount);
-							stream = new BufferedInputStream(new FileInputStream("misc/sinop/suitability/sccount_model.asc"));
+							stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/sccount_model.asc"));
 							scCount = loadFieldFromStream(this, stream, "soy cotton count", ccount);
 						}
 						 catch (IOException e) {
@@ -627,7 +627,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 							landCoverLastYear = new GridValueLayer("land cover t1", true, 
 									         new WrapAroundBorders(), xdim, ydim);
 							this.addValueLayer(landCoverLastYear);
-							stream = new BufferedInputStream(new FileInputStream("misc/sinop/sinop_2005.asc"));
+							stream = new BufferedInputStream(new FileInputStream("./data/sinop/sinop_2005.asc"));
 							landCoverLastYear = loadFieldFromStream(this, stream, "land cover t1", lastlandcover);
 						}
 						 catch (IOException e) {
@@ -657,7 +657,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 							landCoverTwoYearsAgo = new GridValueLayer("land cover t2", true, 
 									         new WrapAroundBorders(), xdim, ydim);
 							this.addValueLayer(landCoverTwoYearsAgo);
-							stream = new BufferedInputStream(new FileInputStream("misc/sinop/lc_2004.txt"));
+							stream = new BufferedInputStream(new FileInputStream("./data/sinop/lc_2004.txt"));
 							landCoverTwoYearsAgo = loadFieldFromStream(this, stream, "land cover t2", lastlastlandcover);
 						}
 						 catch (IOException e) {

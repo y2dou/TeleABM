@@ -440,7 +440,7 @@ public abstract class TraderAgent {
 			} else {
 //				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPrice.txt"));
 				//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
-					priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPriceCPIAdjusted.txt"));
+					priceLists.put(LandUse.SOY, new FileInputStream("./data/prices/soyGannanPriceCPIAdjusted.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -452,7 +452,7 @@ public abstract class TraderAgent {
 			if (staticPrice >= 0) {
 				marketPrices.setPrice(LandUse.CORN, staticPrice);
 			} else {
-				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPricesCPIAdjusted.txt"));
+				priceLists.put(LandUse.CORN, new FileInputStream("./data/prices/cornGannanPricesCPIAdjusted.txt"));
 				//	priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPrices.txt"));
 				//priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/corn.prices.txt"));
 			}
@@ -465,7 +465,7 @@ public abstract class TraderAgent {
 			if (staticPrice >= 0) {
 				marketPrices.setPrice(LandUse.RICE, staticPrice);
 			} else {
-				priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.pricesCPIAdjusted.txt"));
+				priceLists.put(LandUse.RICE, new FileInputStream("./data/prices/rice.pricesCPIAdjusted.txt"));
 				//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices2.txt"));
 				//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices.txt"));
 				
@@ -479,7 +479,7 @@ public abstract class TraderAgent {
 			if (staticPrice >= 0) {
 				marketPrices.setPrice(LandUse.OTHERCROPS, staticPrice);
 			} else {
-				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("auxdata/prices/other.prices.txt"));
+				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("./data/prices/other.prices.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();

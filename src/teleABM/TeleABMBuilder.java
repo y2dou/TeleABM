@@ -4,6 +4,7 @@
 package teleABM;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,7 +17,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import repast.simphony.space.grid.Grid;
+import repast.simphony.valueLayer.*;
+import repast.simphony.context.space.grid.GridFactoryFinder;
 /**
  * @author DOU Yue
  *  version 2, sep 20, 2017
@@ -33,7 +36,14 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.ContextUtils;
-import repast.simphony.valueLayer.GridValueLayer;
+
+
+import repast.simphony.space.grid.GridBuilderParameters;
+import repast.simphony.space.grid.GridPoint;
+import repast.simphony.space.grid.RandomGridAdder;
+import repast.simphony.space.grid.WrapAroundBorders;
+
+
 
 import teleABM.Point;
 import teleABM.SoybeanAgent;
@@ -70,16 +80,16 @@ import teleABM.SoybeanAgent;
 	protected WeightedSelector<Range<Integer>> dependentRatioSelector;
 	protected WeightedSelector<Range<Integer>> genderRatioSelector;
         //this is to indicate which system the instatnce is representing, it's read through the parameter.
-	
+	protected OrganicSpace organicSpace;
 //	Map<LandUse, ArrayList<Double>> prices = new HashMap<LandUse, ArrayList<Double>>();
 	
 		public Context<Object> build(Context<Object> context) {
 			
 		  // The sugarFile contains the initial/max sugar values for every point
 			// on the 2D sugarspace.
-			String organicFile = "misc/gannan/gn_ag_05.asc";
+			String organicFile = "./data/gannan/gn_ag_05.asc";
 		//	String organicFileForSending = "misc/2005sinop.asc";
-			String organicFileForSending = "misc/sinop/sinop_2005.asc";
+			String organicFileForSending = "./data/sinop/sinop_2005.asc";
 			
 			Parameters p = RunEnvironment.getInstance().getParameters();
 			
@@ -105,8 +115,11 @@ import teleABM.SoybeanAgent;
 			//create both organicSpace no matter what. 
 			//but add them to context according to system setting
 			
-			if ( (boolean) p.getValue("sending system representation") && 
-					!(boolean) p.getValue("receiving system representation"))  {
+		//	if ( (boolean) p.getValue("sending system representation") && 
+		//			!(boolean) p.getValue("receiving system representation"))  
+			if( p.getValue("sending system representation").equals("Yes") &&
+			    p.getValue("receiving system representation").equals("No"))
+			{
 				 sendingSystem=true;
 				 receivingSystem = false;
 				 organicSpaceSending = new OrganicSpace(organicFileForSending);
@@ -117,8 +130,11 @@ import teleABM.SoybeanAgent;
 				//	 System.out.println("contains receiving: "+context.contains(organicSpaceReceiving));
 				     System.out.println("only sending System");
 			 }
-			 if ( !(boolean) p.getValue("sending system representation") && 
-			 (boolean) p.getValue("receiving system representation")) {
+		//	 if ( !(boolean) p.getValue("sending system representation") && 
+		//	 (boolean) p.getValue("receiving system representation"))
+				 if( p.getValue("sending system representation").equals("No") &&
+				    p.getValue("receiving system representation").equals("Yes"))
+			 {
 				 receivingSystem=true;
 				 sendingSystem=false;
 					
@@ -126,22 +142,30 @@ import teleABM.SoybeanAgent;
 		//		 context.add(internationalTradeAgent);
 						context.add(organicSpaceReceiving);
 						context.addSubContext(organicSpaceReceiving);
+						this.organicSpace=organicSpaceReceiving;
 						System.out.println("receiving context being build="+context.getId());
 						System.out.println("contains receiving: "+context.contains(organicSpaceReceiving));
 				//		 System.out.println("contains sending: "+context.contains(organicSpaceSending));
 				 System.out.println("only receiving System");
 				 
 			 }
-			 if ( !(boolean) p.getValue("sending system representation") &&
-					 !(boolean) p.getValue("receiving system representation")) {
+		//	 if ( !(boolean) p.getValue("sending system representation") &&
+		//			 !(boolean) p.getValue("receiving system representation")) 
+				 if( p.getValue("sending system representation").equals("No") &&
+				    p.getValue("receiving system representation").equals("No"))
+			 {
 				 receivingSystem=false;
 				 sendingSystem=false;
 					System.err.println("TeleABM Creator: Skipping run: invalid parameters.");
 					System.exit(1);
 			 }
 			 
-			 if ( (boolean) p.getValue("sending system representation") &&
-					 (boolean) p.getValue("receiving system representation")) {
+		//	 if ( (boolean) p.getValue("sending system representation") &&
+		//			 (boolean) p.getValue("receiving system representation"))
+				 if( p.getValue("sending system representation").equals("Yes") &&
+				    p.getValue("receiving system representation").equals("Yes")) 
+			 
+			 {
 				 receivingSystem=true;
 				 organicSpaceReceiving = new OrganicSpace(organicFile);
 				 
@@ -406,9 +430,9 @@ import teleABM.SoybeanAgent;
 		//	context.add(soybeanAgents);
 		//	System.out.println(2);
 			
-			
+	
 			// If running in batch mode, schedule the sim stop time
-			double endTime = 13.0;
+			double endTime = 12.0;
 			
 			if(RunEnvironment.getInstance().isBatch())
 				RunEnvironment.getInstance().endAt(endTime);
@@ -419,10 +443,11 @@ import teleABM.SoybeanAgent;
 			
 			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 			ScheduleParameters  generate = ScheduleParameters.createRepeating(1, 1,1);
-		
+		    
 			schedule.schedule(generate , this ,"tradeAction");
 			
-			
+			ScheduleParameters  generateMap = ScheduleParameters.createOneTime(6);
+		    schedule.schedule(generateMap,this,"outPutMap");
 	//		tradeAction();
 			/*ISchedule schedule = RunEnvironment.init(schedule, scheduleRunner, parameters, isBatch);
 					.getCurrentSchedule();
@@ -645,6 +670,12 @@ import teleABM.SoybeanAgent;
 			  h.setSoySubsidy(soySubsidy);
     	    }
 		  System.out.println(receivingSoyProduction+" has soy subsidy "+ soySubsidy);	
+		  
+		  
+	
+	 
+		
+		//    System.out.println("text writing work here");
 		
 	}
   
@@ -668,7 +699,7 @@ import teleABM.SoybeanAgent;
 	
 			} else {
 		//		priceLists.put(LandUse.SINGLESOY, new FileInputStream("auxdata/prices/soySinopPrice.txt"));
-				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soySinopPrice.txt"));
+				priceLists.put(LandUse.SOY, new FileInputStream("./data/auxdata/prices/soySinopPrice.txt"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyScenarioSinopPrice"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
 			}
@@ -685,7 +716,7 @@ import teleABM.SoybeanAgent;
 				
 			} else {
 			//	priceLists.put(LandUse.DOUBLESOY, new FileInputStream("auxdata/prices/cornSinopPrice.txt"));
-				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornSinopPrice.txt"));
+				priceLists.put(LandUse.CORN, new FileInputStream("./data/auxdata/prices/cornSinopPrice.txt"));
 				
 			}
 		} catch (FileNotFoundException e1) {
@@ -699,7 +730,7 @@ import teleABM.SoybeanAgent;
 		//		h.setSendingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
 				h.setSendingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
 			} else {
-				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("auxdata/prices/other.prices.txt"));
+				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("./data/auxdata/prices/other.prices.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -711,7 +742,7 @@ import teleABM.SoybeanAgent;
 				 h.setSendingStaticCommodityPrices(LandUse.COTTON,staticPrice);
 			}
 		 else {
-			priceLists.put(LandUse.COTTON, new FileInputStream("auxdata/prices/cottonSinopPrice.txt"));
+			priceLists.put(LandUse.COTTON, new FileInputStream("./data/auxdata/prices/cottonSinopPrice.txt"));
 		 }
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -775,7 +806,7 @@ import teleABM.SoybeanAgent;
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPrice.txt"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPriceCPI.txt"));
-				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPriceCPIAdjusted.txt"));
+				priceLists.put(LandUse.SOY, new FileInputStream("./data/prices/soyGannanPriceCPIAdjusted.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -788,7 +819,7 @@ import teleABM.SoybeanAgent;
 				 h.setReceivingStaticCommodityPrices(LandUse.CORN,staticPrice);
 				
 			} else {
-				priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPricesCPIAdjusted.txt"));
+				priceLists.put(LandUse.CORN, new FileInputStream("./data/prices/cornGannanPricesCPIAdjusted.txt"));
 			//	priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPricesCPI.txt"));
 			//	priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/cornGannanPrices.txt"));
 			//	priceLists.put(LandUse.CORN, new FileInputStream("auxdata/prices/corn.prices.txt"));
@@ -802,7 +833,7 @@ import teleABM.SoybeanAgent;
 			if (staticPrice >= 0) {
 				h.setReceivingStaticCommodityPrices(LandUse.RICE, staticPrice);
 			} else {
-				priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.pricesCPIAdjusted.txt"));
+				priceLists.put(LandUse.RICE, new FileInputStream("./data/prices/rice.pricesCPIAdjusted.txt"));
 			//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.pricesCPI.txt"));
 			//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices2.txt"));
 			//	priceLists.put(LandUse.RICE, new FileInputStream("auxdata/prices/rice.prices.txt"));
@@ -817,7 +848,7 @@ import teleABM.SoybeanAgent;
 			if (staticPrice >= 0) {
 				h.setReceivingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
 			} else {
-				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("auxdata/prices/other.prices.txt"));
+				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("./data/prices/other.prices.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -865,6 +896,27 @@ import teleABM.SoybeanAgent;
 	
 	 
 }
+	  
+	  
+//	  @ScheduledMethod(start = 1, interval = 1, priority = 1)		
+	  public void outPutMap() throws IOException{
+	
+	
+	    
+	  //    String organicFile
+	      OrganicSpace organicSpace = TeleABMBuilder.this.organicSpace;
+	    
+		  GridValueLayer landUseField;
+		  
+			//	if(this.receivingSystem)
+					landUseField = (GridValueLayer) organicSpace.getValueLayer("Land Use Field Receiving");
+					
+		//	if(tick==5)
+			  ImageUtility.writeFile(landUseField);
+					ImageUtility.createPNG(landUseField, new File((String) "./output/test.png"));
+		//	  ImageUtility.write("./output/test.txt", int[510]);
+			  System.out.println(" to check here");
+	  }
   
   
   

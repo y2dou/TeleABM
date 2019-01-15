@@ -101,10 +101,16 @@ public abstract class SoybeanAgent {
 
 	protected boolean grownRice = false;
 	protected boolean grownSoy = false;
-	protected int grownSoyYears=0;
+	
 	protected boolean grownCorn = false;
 	protected boolean grownOther = false;
 	protected boolean grownCotton = false;
+	
+	protected int grownSoyYears=0;
+	protected int grownCornYears=0;
+
+
+	protected int grownRiceYears=0;
 	   
 	   protected boolean proTeleCoupling;
 	
@@ -396,6 +402,7 @@ public abstract class SoybeanAgent {
 	      //     this.landUseDecisionLogisticRegression(organicSpace);
 	           this.landUseDecisionCelluar(organicSpace);
 	           this.updateLandUse(organicSpace);
+	           
 	          
 		}
 		
@@ -421,6 +428,25 @@ public int getGrownSoyYears() {
 public void setGrownSoyYears(int grownSoyYears) {
 		this.grownSoyYears = grownSoyYears;
 	}
+
+public int getGrownCornYears() {
+	return grownCornYears;
+}
+
+
+public void setGrownCornYears(int grownCornYears) {
+	this.grownCornYears = grownCornYears;
+}
+
+
+public int getGrownRiceYears() {
+	return grownRiceYears;
+}
+
+
+public void setGrownRiceYears(int grownRiceYears) {
+	this.grownRiceYears = grownRiceYears;
+}
 
 public abstract void landUseDecision(OrganicSpace organicSpace);
 	

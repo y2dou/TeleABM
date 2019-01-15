@@ -313,14 +313,11 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	   
 	 //here it updates this year's production, so this.riceCells etc are newly counted
 	//   System.out.println(riceProduction);
-	   if (riceProduction>0) this.grownRice=true;
-	   else this.grownRice=false;
-	   if (cornProduction>0) this.grownCorn=true;
-	   else this.grownCorn=false;
-	   if (soyProduction>0) { this.grownSoy=true; this.grownSoyYears=grownSoyYears+1;
-	//   System.out.println("has soy production "+grownSoyYears);
-	
-	   }
+	   if (riceProduction>0) { this.grownRice=true; this.grownRiceYears = grownRiceYears+1;}
+	     else this.grownRice=false;
+	   if (cornProduction>0) {this.grownCorn=true; this.grownCornYears = grownCornYears+1;}
+	     else this.grownCorn=false;
+	   if (soyProduction>0) { this.grownSoy=true; this.grownSoyYears=grownSoyYears+1;   }
 	   
 	   if (otherProduction>0) this.grownOther=true;
 	   
@@ -830,7 +827,8 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SOY)*2;	   
 		 }
 		 else
-			{cPrice =0.5;
+			{
+			 cPrice =0.5;
 			 System.out.println("this worked? "+cPrice);
 			}
 		
@@ -1278,54 +1276,50 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		double dryarea = 0;  //because in regression, it's in hectare, 
 		//here we have to convert the unit from number of cells to hectares.
 		double irrigatedarea=0;
-		
-		if(this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
-				10000.0 > 10.0
+		int cellSize;
+		int noAgCells;
+		if(!this.agriculturalCells.isEmpty())
+		{ 
+			 cellSize = this.agriculturalCells.get(0).getCellSize();		
+		}
+		else 
+		{
+			cellSize=250;			
+		}
+		  noAgCells = this.agriculturalCells.size();
+	/*	if(noAgCells*cellSize*cellSize/10000.0 > 10.0
 				&&
-				this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
-				10000.0 <100) 
+				noAgCells*cellSize*cellSize/10000.0 <100) 
 	    	{ 
-			   dryarea = 	(this.tenureCells.size()-this.getRiceCellSize())*
-			                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
-			                /10.0;
-		       irrigatedarea = 	this.getRiceCellSize()*
-                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
-                /10.0;
+			   dryarea = (double)	(noAgCells-this.getRiceCellSize())*
+			                (cellSize*cellSize/10000.0)/10.0;
+		       irrigatedarea = (double)	this.getRiceCellSize()*(cellSize*cellSize/10000.0)/10.0;
 		    }
-		else if(this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
-				10000.0 >= 100.0
+		else if(noAgCells*cellSize*cellSize/10000.0 >= 100.0
 				&&
-				this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
+				noAgCells*cellSize*cellSize/
 				10000.0 <1000.0) 
 			{
-		     	dryarea = 	(this.tenureCells.size()-this.getRiceCellSize())*	
-                            (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
-                            /100.0;
-		     	irrigatedarea = 	this.getRiceCellSize()*
-		                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
-		                /100.0;
+		     	dryarea = (double)	(noAgCells-this.getRiceCellSize())*(cellSize*cellSize/10000.0)/100.0;
+		     	irrigatedarea = (double)	this.getRiceCellSize()*(cellSize*cellSize/10000.0)/100.0;
 			}
-		else	if(this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
-				10000.0 >= 1000.0
+		else	if(noAgCells*cellSize*cellSize/10000.0 >= 1000.0
 				&&
-				this.tenureCells.size()*this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/
-				10000.0 <10000.0) 
+				noAgCells*cellSize*cellSize/10000.0 <10000.0) 
 			{
-			  dryarea = 	(this.tenureCells.size()-this.getRiceCellSize())*
-                             (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
-                            /1000.0;
-			  irrigatedarea = 	this.getRiceCellSize()*
-		                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0)
-		                /1000.0;
+			  dryarea = (double)	(noAgCells-this.getRiceCellSize())*(cellSize*cellSize/10000.0)/1000.0;
+			  irrigatedarea = (double)	this.getRiceCellSize()*(cellSize*cellSize/10000.0)/1000.0;
 			}
 		else {
-			dryarea = (this.tenureCells.size()-this.getRiceCellSize())*
-                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0);
-			irrigatedarea = 	this.getRiceCellSize()*
-	                (this.tenureCells.get(0).getCellSize()*this.tenureCells.get(0).getCellSize()/10000.0);
+			dryarea = (double) (noAgCells-this.getRiceCellSize())*(cellSize*cellSize/10000.0);
+			irrigatedarea = (double)	this.getRiceCellSize()*(cellSize*cellSize/10000.0);
 		
-		}
+		}*/
 		
+		dryarea = 	(double)(noAgCells-this.getRiceCellSize())* (cellSize*cellSize/10000.0)/10;
+        irrigatedarea = (double) this.getRiceCellSize()*(cellSize*cellSize/10000.0)/10;
+      //this is to compensate with computational cost;    
+	//	System.out.println("dry area: "+dryarea+" // "+irrigatedarea);
 		//at this moment, updateProduction recounts all three; 
 		int maxProb = maxLogisticProbility();
 	    //[1] abandon soybean
@@ -1339,17 +1333,23 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
     	    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
     	0.004376 0.200000 0.500000 0.555600 1.000000 1.000000 */
   //if(dryarea==0 && maxProb ==0)
-    if(dryarea==0 && maxProb==0)
+  /*  if(    dryarea==0
+    	//	dryarea/(dryarea+irrigatedarea)<0.2 
+    		&& 
+    		maxProb==0)
     	   //before adding "||maxProb ==0", the full rice farmers proportion is too small
     		//however, after adding it, it grows too easily;
     		//the proper pattern shows up at early simulation stage (tick==1)
     		{ 
+    	      if(this.grownSoyYears==0) {
     		  riceProportion = 1.0;
     		  soyProportion = 0.0;
     		  cornProportion = 0.0;
-    		}
-    	else
-    	{ riceProportion = 
+    		  System.out.println("here all rice: "+irrigatedarea);}
+    		}*/
+  //  	else
+  //	{ 
+    		riceProportion = 
     			   0.966394 +  //constant
    				-0.002925*age +  //age
    				0.00318 *(irrigatedarea+dryarea)*(agriculturalCells.size()/tenureCells.size()) +   			
@@ -1376,7 +1376,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
     		   cornProportion = 1-riceProportion-soyProportion;
                else 
             	   cornProportion = 0.0;
-           }
+   //       }
        }
        else {
 				
@@ -1485,8 +1485,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		else
 			soyProportion = soyProportion *rand;
 		
-		cornProportion = cornProportion * RandomHelper.nextDoubleFromTo(1.2, 1.5);
+		cornProportion = cornProportion * RandomHelper.nextDoubleFromTo(1.1, 1.3);
 		riceProportion = 1-soyProportion - cornProportion;
+		//this line, rice Proportion and others, if used, will make rice Proportion less. 
 	}	//this is to adjust the downgoing soybean price;
     
     if(tick>=6 || getPriceDelta(LandUse.CORN)>0.1){
@@ -1505,6 +1506,8 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
 		soyProportion = soyProportion * RandomHelper.nextDoubleFromTo(0.7,0.95);
 		riceProportion = 1-soyProportion - cornProportion;
+		//this line, rice Proportion and others, if used, will make rice Proportion less. 
+		
     }
     	
     if(tick<3 ) {
@@ -1520,7 +1523,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			cornProportion = cornProportion *rand;
 		
 		soyProportion = soyProportion * RandomHelper.nextDoubleFromTo(1.05, 1.1);
-	//	riceProportion = 1-soyProportion - cornProportion;	
+		riceProportion = 1-soyProportion - cornProportion;	
     
     }	
     
@@ -1573,7 +1576,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			//riceProportion = riceProportion;
 	//	}
 
-
+	
 		
 		setCornProportion(cornProportion);
 		setSoyProportion (soyProportion);
@@ -1871,10 +1874,42 @@ if(tick==1) {
 			 Collections.sort(this.tenureCells, new SortByRcount());
 			 Collections.sort(this.agriculturalCells, new SortByRcount());
 			 
+			 
+				if (maxProb == 0 && (grownRice) )
+				{
+					 if( this.grownSoyYears==0 && this.grownRiceYears>1)
+							 
+				//			 && riceProportion >= 0.9)    //[1] abandon soybean
+				//			 || maxProb == 0) 
+					 { 
+					//	 System.out.println("almost abandoned soybean "+cornProportion+" s: "+
+					//	 soyProportion);
+					//	 soyProportion = 0.0+RandomHelper.nextDoubleFromTo(0.0, 0.1);
+					//	 cornProportion =1-soyProportion-riceProportion;
+						Random r = new Random();
+						
+					    riceProportion = 1.0;
+					//	riceProportion=r.nextGaussian()*0.1+0.9;
+					//	 soyProportion = RandomHelper.nextDoubleFromTo(0, 1-riceProportion);
+						 soyProportion = 0;
+					    cornProportion = 1-soyProportion-riceProportion;
+					//forgot to update the count first time, because now I'm using int
+						 //count to control not the proportions.
+						 
+						 cornCellCount = (int) cornProportion*numberOfCells;
+						 soyCellCount = (int) soyProportion * numberOfCells;
+						 riceCellCount = (int) riceProportion*numberOfCells;
+					  			  
+					 } 
+					 
+					 
+					 
+					 }
+			 
 	        double riceCutOff=0.0;
 			 if(tick==1)
 				 riceCutOff=0.03;
-			 else riceCutOff=0.08;
+			 else riceCutOff=0.2;
 		//	 planningRiceCells.addAll(riceCells);
 			 
 			 for ( int n=0; n < numberOfCells; n++)	    
@@ -1896,7 +1931,7 @@ if(tick==1) {
 			    		       
 			    	  else 
 			    		  if (c.getLandUse()==LandUse.SOY
-			    	//	  ||c.getSProb()>c.getCProb() 
+			    		//  ||c.getSProb()>c.getCProb() 
 			    			  )
 			    			//	   &&
 			    			//	   (double) planningSoyCells.size()/numberOfCells < soyProportion)
@@ -1948,10 +1983,10 @@ if(tick==1) {
 		     
 		     Collections.sort(planningSoyCells, new SortBySoyProbability());
 		     
-		     
+		     double soyCutOff=0.48;
 		     for (int k=0;k<planningSoyCells.size();k++) {
 		    	// if(k<(int) soyProportion*tenureCells.size()) {
-		    	 if(k < soyCellCount) { 
+		    	 if(k < soyCellCount || planningSoyCells.get(k).getSProb()<soyCutOff) { 
 		    		 listNotChange.add(k);		    	
 		    	 } else
 		    	  { listToChange.add(k);
@@ -1966,7 +2001,8 @@ if(tick==1) {
 		     for (int k=0; k<planningCornCells.size(); k++) {
 		    	 if(k>cornCellCount) {
 		    		 listToChange.add(k);
-		    		 planningSoyCells.add(planningCornCells.get(k));
+		    	//	 planningOtherCells.add(planningCornCells.get(k));
+		      		 planningSoyCells.add(planningCornCells.get(k));
 		    	 }
 		     }
 		     planningCornCells.remove(listToChange);
@@ -2059,9 +2095,9 @@ if(tick==1) {
 		     planningRiceCells.remove(listToChange);
 		    
 		     Collections.sort(planningSoyCells,  new SortBySoyProbability());
-		     
+		     double soyCutOff=0.428; 
 		     for( int k=0; k< planningSoyCells.size(); k++){
-		    	 if(k>soyCellCount) {
+		    	 if(k>soyCellCount  && planningSoyCells.get(k).getSProb()< soyCutOff) {
 		    		 planningCornCells.add(planningSoyCells.get(k));
 		    		 listToChange.add(k);
 		    	 }
@@ -2170,10 +2206,10 @@ if(tick==1) {
 	     
 	     listToChange.clear();
 	     Collections.sort(planningSoyCells, new SortBySoyProbability());
-	     
+	     double soyCutOff = 0.48;
 	     for (int k=0;k<planningSoyCells.size();k++) {
 		    	// if(k<(int) soyProportion*tenureCells.size()) {
-		    	 if(k > soyCellCount) 
+		    	 if(k > soyCellCount && planningSoyCells.get(k).getSProb()<soyCutOff) 
 		    	  { listToChange.add(k);
 		    	    planningCornCells.add(planningSoyCells.get(k));
 		    	  }
@@ -2315,8 +2351,7 @@ if(tick==1) {
 		}
 		
 		public double getRiceProportion() {
-			return (double) riceCells.size()/(soyCells.size()+cornCells.size()
-			+riceCells.size());
+			return (double) riceCells.size()/this.getTenureCellSize();
 		//	return this.riceProportion;
 		}
 
