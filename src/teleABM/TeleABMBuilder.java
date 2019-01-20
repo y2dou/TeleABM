@@ -97,6 +97,8 @@ import teleABM.SoybeanAgent;
 			int numSendingAgents = (Integer) p.getValue("initialSendingNumAgents");
 			
 			int numTradeAgents = (Integer) p.getValue("initialNumTradeAgents");
+			context.clear();
+			
 			context.add(internationalTradeAgent);
 			context.add(governmentAgent);
 			
@@ -122,6 +124,9 @@ import teleABM.SoybeanAgent;
 			{
 				 sendingSystem=true;
 				 receivingSystem = false;
+				 
+				 sendingSoybeanAgents.clear();
+				 sendingTraderAgents.clear();
 				 organicSpaceSending = new OrganicSpace(organicFileForSending);
 				     context.add(organicSpaceSending);
 			    	 context.addSubContext(organicSpaceSending);
@@ -137,9 +142,14 @@ import teleABM.SoybeanAgent;
 			 {
 				 receivingSystem=true;
 				 sendingSystem=false;
-					
+				 
+				 receivingSoybeanAgents.clear();
+				 receivingTraderAgents.clear();
+				 
 				 organicSpaceReceiving = new OrganicSpace(organicFile);
 		//		 context.add(internationalTradeAgent);
+		//		 System.out.println("receiving context being build="+context.getId());
+		//			System.out.println("contains receiving: "+context.contains(organicSpaceReceiving));
 						context.add(organicSpaceReceiving);
 						context.addSubContext(organicSpaceReceiving);
 						this.organicSpace=organicSpaceReceiving;
@@ -171,11 +181,16 @@ import teleABM.SoybeanAgent;
 				 
 						context.add(organicSpaceReceiving);
 						context.addSubContext(organicSpaceReceiving);
+						receivingSoybeanAgents.clear();
+						receivingTraderAgents.clear();
 						
 				 sendingSystem=true;
 				 organicSpaceSending = new OrganicSpace(organicFileForSending);	
 				        context.add(organicSpaceSending);
 				        context.addSubContext(organicSpaceSending);
+				        sendingSoybeanAgents.clear();
+				        sendingTraderAgents.clear();
+				        
 				    System.out.println("receiving context being build="+context.getId());
 					System.out.println("contains receiving: "+context.contains(organicSpaceReceiving));
 					 System.out.println("contains sending: "+context.contains(organicSpaceSending));
@@ -223,6 +238,7 @@ import teleABM.SoybeanAgent;
 				 genderRatioSelector.add(new Range<Integer>(701, 800), 1);
 						
 				
+				
 				for(int i =0; i<numReceivingAgents; i++){					
 			    ReceivingSoybeanAgent h = 
 					new ReceivingSoybeanAgent(i);
@@ -240,7 +256,8 @@ import teleABM.SoybeanAgent;
 				//		receivingSoybeanAgents.get(i).initialize();		
 						organicSpaceReceiving = (OrganicSpace) context.findContext("organicSpaceReceiving");
 						organicSpaceReceiving.add(receivingSoybeanAgents.get(i));	
-						
+					
+						receivingSoybeanAgents.get(i).resetLandCells();
 						receivingSoybeanAgents.get(i).addSoybeanAgentFromLandscape(
 								organicSpaceReceiving, receivingCorners.get(i));
 					//	System.out.println("i = "+i+" add soybean agents: "+
@@ -261,6 +278,9 @@ import teleABM.SoybeanAgent;
 					//		receivingSoybeanAgents.get(i).initialize();
 							organicSpaceReceiving = (OrganicSpace) context.findContext("organicSpaceReceiving");
 							organicSpaceReceiving.add(receivingSoybeanAgents.get(i));
+							
+							receivingSoybeanAgents.get(i).resetLandCells();
+							
 							receivingSoybeanAgents.get(i).addSoybeanAgentFromField(
 									organicSpaceReceiving, receivingCorners.get(i));
 							receivingSoybeanAgents.get(i).addLandUseFromField(organicSpaceReceiving);		
@@ -332,7 +352,9 @@ import teleABM.SoybeanAgent;
 				if (modeAddAgents ==0) //add agents covering whole landscape
 					for(int i =0; i<numSendingAgents; i++){
 						sendingSoybeanAgents.get(i).initialize(organicSpaceSending);										
-						organicSpaceSending.add(sendingSoybeanAgents.get(i));			
+						organicSpaceSending.add(sendingSoybeanAgents.get(i));
+						
+						sendingSoybeanAgents.get(i).resetLandCells();
 						sendingSoybeanAgents.get(i).addSoybeanAgentFromLandscape(organicSpaceSending,							                                  
 								sendingCorners.get(i));
 						sendingSoybeanAgents.get(i).addLandUseFromField(organicSpaceSending);
@@ -348,6 +370,7 @@ import teleABM.SoybeanAgent;
 							sendingSoybeanAgents.get(i).initialize(organicSpaceSending);
 							organicSpaceSending.add(sendingSoybeanAgents.get(i));
 							System.out.println("organic space sending="+organicSpaceSending.numAgents);
+							sendingSoybeanAgents.get(i).resetLandCells();
 							sendingSoybeanAgents.get(i).addSoybeanAgentFromField(organicSpaceSending,
 									sendingCorners.get(i));
 							sendingSoybeanAgents.get(i).addLandUseFromField(organicSpaceSending);
@@ -393,7 +416,9 @@ import teleABM.SoybeanAgent;
 			
 			//add trade agents
 			if(receivingSystem){
+				
 				organicSpaceReceiving = (OrganicSpace) context.findContext("organicSpaceReceiving");
+		//		organicSpaceReceiving.clear();
 		 	for (int i = 0; i<numTradeAgents; i++){
 			 	ReceivingTraderAgent receivingTraderAgent = new ReceivingTraderAgent(i);	
 				
@@ -408,6 +433,7 @@ import teleABM.SoybeanAgent;
 			}
 			if(sendingSystem){
 				organicSpaceSending = (OrganicSpace) context.findContext("organicSpaceSending");
+			
 				for (int i = 0; i<numTradeAgents; i++){
 			//	for (int i=0; i< 2; i++)	{
 					SendingTraderAgent sendingTraderAgent = new SendingTraderAgent(i);		
@@ -432,13 +458,19 @@ import teleABM.SoybeanAgent;
 			
 	
 			// If running in batch mode, schedule the sim stop time
-			double endTime = 12.0;
+			double endTime = 10.0;
+		
 			
 			if(RunEnvironment.getInstance().isBatch())
-				RunEnvironment.getInstance().endAt(endTime);
-			
+			//	RunEnvironment.getInstance().endAt(endTime);
+			{	
+			//	  organicSpace.receivingSoybeanAgents.clear();
+			//	  organicSpace.removeValueLayer("land use field");
+		//		organicSpace.removeAll(organicSpace);
+			//	  organicSpace.clear();
 			RunEnvironment.getInstance().endAt(endTime);
-
+			
+			}
 		//	internationalTradeAgent.marketTrading();
 			
 			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
@@ -447,7 +479,9 @@ import teleABM.SoybeanAgent;
 			schedule.schedule(generate , this ,"tradeAction");
 			
 			ScheduleParameters  generateMap = ScheduleParameters.createOneTime(6);
-		    schedule.schedule(generateMap,this,"outPutMap");
+		//    schedule.schedule(generateMap,this,"outPutMap");
+		
+		
 	//		tradeAction();
 			/*ISchedule schedule = RunEnvironment.init(schedule, scheduleRunner, parameters, isBatch);
 					.getCurrentSchedule();
@@ -913,7 +947,7 @@ import teleABM.SoybeanAgent;
 					
 		//	if(tick==5)
 			  ImageUtility.writeFile(landUseField);
-					ImageUtility.createPNG(landUseField, new File((String) "./output/test.png"));
+		//			ImageUtility.createPNG(landUseField, new File((String) "./output/test.png"));
 		//	  ImageUtility.write("./output/test.txt", int[510]);
 			  System.out.println(" to check here");
 	  }

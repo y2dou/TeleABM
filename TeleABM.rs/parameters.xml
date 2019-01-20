@@ -23,7 +23,7 @@
 									
 		/>
 	<parameter name="initialReceivingNumAgents" displayName="Initial Receiving Agents" type="int" 
-						defaultValue="5000" 
+						defaultValue="500" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -37,7 +37,7 @@
 		/>
 		
 		<parameter name="initialNumTradeAgents" displayName="Initial Num of Trade Agents" type="int" 
-						defaultValue="1000" 
+						defaultValue="500" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -82,7 +82,7 @@
 									
 		/>
 		<parameter name="vision" displayName="Farmer Vision" type="int" 
-						defaultValue="2000" 
+						defaultValue="500" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									

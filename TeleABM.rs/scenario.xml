@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Scenario>
-<repast.simphony.action.data_set context="TeleABM" file="repast.simphony.action.data_set_0.xml" />
+<repast.simphony.dataLoader.engine.ClassNameDataLoaderAction context="TeleABM" file="repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_0.xml" />
 <repast.simphony.action.data_set context="TeleABM" file="repast.simphony.action.data_set_1.xml" />
 <repast.simphony.action.data_set context="TeleABM" file="repast.simphony.action.data_set_2.xml" />
 <repast.simphony.action.data_set context="TeleABM" file="repast.simphony.action.data_set_3.xml" />
-<repast.simphony.action.file_sink context="TeleABM" file="repast.simphony.action.file_sink_4.xml" />
+<repast.simphony.action.data_set context="TeleABM" file="repast.simphony.action.data_set_4.xml" />
 <repast.simphony.action.file_sink context="TeleABM" file="repast.simphony.action.file_sink_5.xml" />
-<repast.simphony.dataLoader.engine.ClassNameDataLoaderAction context="TeleABM" file="repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_6.xml" />
+<repast.simphony.action.file_sink context="TeleABM" file="repast.simphony.action.file_sink_6.xml" />
 <repast.simphony.action.data_set context="organicSpaceReceiving" file="repast.simphony.action.data_set_7.xml" />
 <repast.simphony.action.data_set context="organicSpaceReceiving" file="repast.simphony.action.data_set_8.xml" />
 <repast.simphony.action.data_set context="organicSpaceReceiving" file="repast.simphony.action.data_set_9.xml" />
 <repast.simphony.action.data_set context="organicSpaceReceiving" file="repast.simphony.action.data_set_10.xml" />
 <repast.simphony.action.histogram_chart context="organicSpaceReceiving" file="repast.simphony.action.histogram_chart_11.xml" />
 <repast.simphony.action.histogram_chart context="organicSpaceReceiving" file="repast.simphony.action.histogram_chart_12.xml" />
-<repast.simphony.action.histogram_chart context="organicSpaceReceiving" file="repast.simphony.action.histogram_chart_13.xml" />
-<repast.simphony.action.histogram_chart context="organicSpaceReceiving" file="repast.simphony.action.histogram_chart_14.xml" />
-<repast.simphony.action.display context="organicSpaceReceiving" file="repast.simphony.action.display_15.xml" />
-<repast.simphony.action.display context="organicSpaceSending" file="repast.simphony.action.display_16.xml" />
+<repast.simphony.action.display context="organicSpaceReceiving" file="repast.simphony.action.display_13.xml" />
+<repast.simphony.action.display context="organicSpaceSending" file="repast.simphony.action.display_14.xml" />
 </Scenario>

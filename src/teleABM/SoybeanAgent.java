@@ -4,14 +4,23 @@
 package teleABM;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,9 +117,9 @@ public abstract class SoybeanAgent {
 	
 	protected int grownSoyYears=0;
 	protected int grownCornYears=0;
-
-
 	protected int grownRiceYears=0;
+	
+	
 	   
 	   protected boolean proTeleCoupling;
 	
@@ -192,6 +201,7 @@ public abstract class SoybeanAgent {
 		protected double lastYearRicePerHaProfit;
 		protected double lastYearCottonPerHaProfit;
 		protected double lastYearOtherPerHaProfit;
+		 int soybeanLowestYears=0;
 		
 		protected List<Double> soyPrices = new LinkedList<Double>();
 		protected List<Double> cornPrices = new LinkedList<Double>();
@@ -217,9 +227,20 @@ public abstract class SoybeanAgent {
 
 		public SoybeanAgent(int id) {
 			this.id = id;
-
+           
 		}
 		
+		public void resetLandCells(){
+		//	System.out.println("reset success---"+this.cornCells.size());
+			this.cornCells.clear();
+			this.soyCells.clear();
+			this.riceCells.clear();
+			this.soyMaizeCells.clear();
+			this.traderAgents.clear();
+			this.agriculturalCells.clear();
+			this.tenureCells.clear();
+		//	System.out.println("reset success?"+this.cornCells.size());
+		}
 
 		public void initialize(OrganicSpace organicSpace) {
 		// TODO Auto-generated method stub	
@@ -228,6 +249,7 @@ public abstract class SoybeanAgent {
 			 
 		//	if(TeleABMBuilder.receivingSystem){
 			if(organicSpace.getTypeID()=="organicSpaceReceiving"){
+				
 			    setFarmCost(RandomHelper.getDistribution("farmCostReceiving").nextDouble());	
 			    setCapital(RandomHelper.getDistribution("capitalReceiving").nextDouble());
 		        setLabour(RandomHelper.getDistribution("labourReceiving").nextDouble());
@@ -237,7 +259,7 @@ public abstract class SoybeanAgent {
 			    setCommodityType(LandUse.SOY);
 				setCommodityType(LandUse.CORN);
 				setCommodityType(LandUse.RICE);
-			
+			 //   resetLandCells();
 	//			setReceivingCommodityPrices();
 			}
 			
@@ -371,7 +393,7 @@ public abstract class SoybeanAgent {
 	    
 	//bigger the priority number, more ahead.
 	@ScheduledMethod(start = 1, interval = 1, priority = 2)
-	  public void step() {
+	  public void step(){
 	// this is to calculate last year's profit and make this year's decision
 	//	System.out.println("which step is first");
 	   OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this);
@@ -386,6 +408,7 @@ public abstract class SoybeanAgent {
 			//   this.landUseDecisionBeta(organicSpace);
 			   this.landUseDecisionLogisticRegression(organicSpace);
 		       this.updateLandUse(organicSpace);
+		       
 		}
 		  
 		
@@ -402,6 +425,7 @@ public abstract class SoybeanAgent {
 	      //     this.landUseDecisionLogisticRegression(organicSpace);
 	           this.landUseDecisionCelluar(organicSpace);
 	           this.updateLandUse(organicSpace);
+	          
 	           
 	          
 		}
@@ -418,6 +442,7 @@ public abstract void landUseDecisionBeta(OrganicSpace organicSpace) ;
 public abstract void landUseDecisionCelluar(OrganicSpace organicSpace);
 
 public abstract void updateProduction(OrganicSpace organicSpace);
+
 
 
 public int getGrownSoyYears() {
@@ -809,12 +834,26 @@ public abstract void updateProfit();
 		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.SOY);
 	
 		    	} else if (organicSpace.getLandUseAt(x, y)==3||organicSpace.getLandUseAt(x, y)==41) {
-		 //   	} else if (organicSpace.getLandUseAt(x, y)==41) {		
+		 //   	} else if (organicSpace.getLandUseAt(x, y)==41) {	
+		    		if(this.getTenureCells().get(i).getRProb()>0.2)
 		    		this.getTenureCells().get(i).setLandUse(LandUse.RICE);
+		    		else
+		    			this.getTenureCells().get(i).setLandUse(LandUse.OTHERCROPS);
 		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.RICE);
 		    	} else if (organicSpace.getLandUseAt(x, y)==6||organicSpace.getLandUseAt(x, y)==42) {
 		  //  	} else if (organicSpace.getLandUseAt(x, y)==42) {
-		    		this.getTenureCells().get(i).setLandUse(LandUse.CORN);
+		    		if(this.getTenureCells().get(i).getCProb()>0.6037)
+		    	//	0.5727) 
+		    			
+		    			//this is to reduce initial corn gap between rm image and stats
+		    		  this.getTenureCells().get(i).setLandUse(LandUse.CORN);
+		    		//   System.out.println("it's a corn cell"); worked
+		    		
+		    		else
+		    			
+		    			 this.getTenureCells().get(i).setLandUse(LandUse.OTHERCROPS);		    			
+		    	//		 System.out.println("it's an other cell");
+		    			 
 		    	//	this.getTenureCells().get(i).setLastLandUse(LandUse.CORN);
 		    	} else if (organicSpace.getLandUseAt(x, y) == 4) {
 		    		this.getTenureCells().get(i).setLandUse(LandUse.OTHERCROPS);
@@ -908,7 +947,12 @@ public abstract void updateProfit();
 	//	   System.out.println(corner.x+" "+(corner.x+xboundary));
 	//	   System.out.println(corner.y+" "+(corner.y+yboundary));
 		    
-		    
+	//	    this.agriculturalCells.clear();
+	//		this.cornCells.clear();
+	//		this.soyCells.clear();
+	//		this.riceCells.clear();
+	//		this.otherCells.clear();
+	//		this.tenureCells.clear();
 		 //first, go through all agricultural cells in this sub-section   
 if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 	
@@ -917,7 +961,7 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 				 Point p=new Point(i,j);
 				 GridPoint pt = grid.getLocation(this);		
 				 //    System.out.println(pt.getX()+" "+pt.getY());	     
-				     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(grid, pt, LandCell.class,2,2);     
+				     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(grid, pt, LandCell.class,1,1);     
 				     List<GridCell<LandCell>> gridCells = nghCreator.getNeighborhood(true); 
 				     
 				 LandCell c = new LandCell(organicSpace,grid,p.x,p.y,
@@ -1003,6 +1047,7 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 					 if(organicSpace.getLandUseAt(i, j)==3||organicSpace.getLandUseAt(i, j)==41) {
 				//		if(organicSpace.getLandUseAt(i, j)==41) {
 							//sun jing
+						 if(c.getRProb()>0.2) {
 						 c.setLandUse(LandUse.RICE);
 					
 							 c.setLandHolder(true, this);
@@ -1012,10 +1057,23 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 							 this.riceCells.add(c);
 							 c.setFertilizerInput(LandUse.RICE);
 							 this.grownRice=true;
+							 }
+						 else {
+							 c.setLandUse(LandUse.OTHERCROPS);											
+							 c.setLandHolder(true,this);
+							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+						//	 this.agriculturalCells.add(c);
+							 this.tenureCells.add(c);	
+							 this.otherCells.add(c);
+							 c.setFertilizerInput(LandUse.OTHERCROPS);
+						 }
 						 
 					 }
 					 if(organicSpace.getLandUseAt(i, j)==6||organicSpace.getLandUseAt(i, j)==42){
 				//		 if(organicSpace.getLandUseAt(i, j)==42){
+					// if(c.getCProb()>0.5727) 
+						if(c.getCProb()>0.6037) 
+					 {
 						 c.setLandUse(LandUse.CORN);											
 							 c.setLandHolder(true,this);
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
@@ -1024,7 +1082,16 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 							 this.cornCells.add(c);
 							 c.setFertilizerInput(LandUse.CORN);
 							 //have to add recommended and observed for all crops when iterate through all cells.
-							 
+					 }
+					 else {
+						 c.setLandUse(LandUse.OTHERCROPS);											
+						 c.setLandHolder(true,this);
+						 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
+					//	 this.agriculturalCells.add(c);
+						 this.tenureCells.add(c);	
+						 this.otherCells.add(c);
+						 c.setFertilizerInput(LandUse.OTHERCROPS);
+					 }
 						
 					 }
 					 
@@ -1267,7 +1334,7 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 					
 					 //    System.out.println(pt.getX()+" "+pt.getY());
 					     
-					     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(gridTest, pt, LandCell.class,2,2);
+					     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(gridTest, pt, LandCell.class,1,1);
 					     
 					     List<GridCell<LandCell>> gridCells = nghCreator.getNeighborhood(true); 
 					//     SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
@@ -1287,7 +1354,7 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 					  
 					   
 	                      
-						 VNQuery<LandCell> query = new VNQuery<LandCell>(gridTest,this.tenureCells.get(k), 3,3);
+				//		 VNQuery<LandCell> query = new VNQuery<LandCell>(gridTest,this.tenureCells.get(k), 3,3);
 						
 						
 						 
@@ -1428,6 +1495,10 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 			
 			public int getOtherCellSize(){
 				return otherCells.size();
+			}
+			
+			public int getAgCellSize(){
+				return agriculturalCells.size();
 			}
 			public int getTenureCellSize(){
 				return tenureCells.size();
