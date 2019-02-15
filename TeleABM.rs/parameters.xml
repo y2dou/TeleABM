@@ -10,27 +10,43 @@
 									
 		/>
 	<parameter name="sending system representation" displayName="Sending System Representation" type="string" 
-						defaultValue="No" 
+						defaultValue="Yes" 
 						isReadOnly="flase" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
 		
+	
 		<parameter name="receiving system representation" displayName="Receiving System Representation" type="string" 
 						defaultValue="Yes" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
+		
+	<parameter name="tariffScenario" displayName="25%Tariff, DynamicTariff or No" type="string" 
+						defaultValue="No" 
+						isReadOnly="flase" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
+		
+		<parameter name="droughtScenario" displayName="Normal or Drought" type="string" 
+						defaultValue="Normal" 
+						isReadOnly="flase" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+									
+		/>
+		
 	<parameter name="initialReceivingNumAgents" displayName="Initial Receiving Agents" type="int" 
-						defaultValue="500" 
+						defaultValue="4000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 		
 		<parameter name="initialSendingNumAgents" displayName="Initial Sending Agents" type="int" 
-						defaultValue="3000" 
+						defaultValue="500" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -118,5 +134,6 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
+		
 		
 </parameters>

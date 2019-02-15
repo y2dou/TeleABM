@@ -34,34 +34,34 @@ import repast.simphony.util.SimUtilities;
 public class ReceivingSoybeanAgent extends SoybeanAgent{
 	
 	
-	private int familyPopulation;
+	private int familyPopulation=0;
 	//average is 3.65
-	private double hhdHeadMale;
-	private int age;
+	private double hhdHeadMale=0;
+	private int age=0;
 	//household head age, use average 45 (minus 10 to meet the 2005 time) for now
-	private double dependentRatio;
+	private double dependentRatio=0;
 	//average is 0.21
-	private double genderRatio;
+	private double genderRatio=0;
 	
 
 	//private boolean hhdHeadHealth;
-	private double hhdHeadunHealth;
+	private double hhdHeadunHealth=0;
 	//411 is healthy, 28 is unhealty
-	private int occupation;
+	private int occupation=0;
 	//full time farmer, 2=part time farmer, 3=non time farmer
 	
-	private double unhealthProportion;
+	private double unhealthProportion=0;
 	
 	boolean joinedCooperatives=false;
-	protected double lastYearSoyPrice;
-	protected double lastYearCornPrice;
-	protected double lastYearRicePrice;
-	protected double lastYearOtherPrice;
-	protected double knowInternationalTrade;
-	protected double whetherknow_soybean_ixYes;
-	protected double whether_pericoupledperi;
-	protected double whetherknow_transgeneYes;
-	protected double whether_know_import_gmoYes;
+	protected double lastYearSoyPrice=0;
+	protected double lastYearCornPrice=0;
+	protected double lastYearRicePrice=0;
+	protected double lastYearOtherPrice=0;
+	protected double knowInternationalTrade=0;
+	protected double whetherknow_soybean_ixYes=0;
+	protected double whether_pericoupledperi=0;
+	protected double whetherknow_transgeneYes=0;
+	protected double whether_know_import_gmoYes=0;
 	 
 	protected double costConvertToRicePaddy=2000.0/(cellsizeReceiving*cellsizeReceiving);
 	
@@ -824,7 +824,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		 else
 			{
 			 cPrice =0.5;
-			 System.out.println("this worked? "+cPrice);
+	//		 System.out.println("this worked? "+cPrice);
 			}
 		
 		soyPrices.add(cPrice);
@@ -970,7 +970,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		   }
 	 
 	   
-	 //  System.out.println("last year "+soybeanLowestYears+": "+lastYearSoyPerHaProfit+" /"+
+	//   System.out.println("last year "+soybeanLowestYears+": "+lastYearSoyPerHaProfit+" /"+
 	//			lastYearCornPerHaProfit+" /"+lastYearRicePerHaProfit);
 	}
 	
@@ -1317,10 +1317,10 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
 		}*/
 		
-		dryarea = 	(double)(noAgCells-this.getRiceCellSize())* (cellSize*cellSize/10000.0);
-        irrigatedarea = (double) this.getRiceCellSize()*(cellSize*cellSize/10000.0);
+		dryarea = 	(double)(noAgCells-this.getRiceCellSize())* (cellSize*cellSize/10000.0)/10.0;
+        irrigatedarea = (double) this.getRiceCellSize()*(cellSize*cellSize/10000.0)/10.0;
       //this is to compensate with computational cost;    
-	//	System.out.println("dry area: "+dryarea+" // "+irrigatedarea);
+//		System.out.println("dry area: "+dryarea+" // "+irrigatedarea);
 		//at this moment, updateProduction recounts all three; 
 		int maxProb = maxLogisticProbility();
 	    //[1] abandon soybean
@@ -1425,7 +1425,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	//	cornProportion = 0.352334 + 0.137903*cornSoldToTraderAgent.getCommodityPrice(LandUse.CORN);
         cornProportion = 1-soyProportion-riceProportion; 
      //   riceProportion = 0.0;
-        
+  //     System.out.println(soyProportion) ;
        }
        
     int		tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount(); 
@@ -1489,7 +1489,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
     }*/
     	
-    if(tick<3 ) {
+   /* if(tick<3 ) {
     	double rand = RandomHelper.nextDoubleFromTo(0.6, 0.8);
 		if(cornProportion *  rand > lastYearCornProportion 
 				&&
@@ -1506,7 +1506,8 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		soyProportion = soyProportion * RandomHelper.nextDoubleFromTo(1.05, 1.2);
 		riceProportion = 1-soyProportion - cornProportion;	
     
-    }	
+    }	*/
+    //removed above (tick<3) to make sure it is fully adjusted by price only, not controlled so much. 
     
     if(tick==1) {
 		if(grownRice) {
@@ -1817,8 +1818,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
 	//	 System.out.println("rice proportion " + riceProportion+"// last year "+lastYearRiceProportion);
 				 
-		 List<Integer> listToChange = new ArrayList<Integer>();
-			List<Integer> listNotChange = new ArrayList<Integer>();
+		
 
 		 int count = 0;
 	//	 highest = 0;
@@ -1835,7 +1835,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	//	 double expansion= RandomHelper.nextDoubleFromTo(-0.02, 0.03);
 		 int numberOfCells;
 		 //this is to simulate expansion;
-	
+		 int newNumberOfCells = 0;
 		
 		 if( agriculturalCells.size()*(1+expansion) < tenureCells.size())
 			 numberOfCells =  (int) (agriculturalCells.size()*(1+expansion)) ;
@@ -1856,19 +1856,29 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		int soyCellCount = (int) (soyProportion * numberOfCells);
 		
 		if(tick<=2) 
-			cornCellCount = (int) (0.8*cornCellCount);
+			{  
+			  cornCellCount = (int) (0.8*cornCellCount);
+			  soyCellCount = (int) (1.2*soyCellCount);
+			}
 		
 		if(tick>=7 && soybeanLowestYears>1) 
 		{
+			if(numberOfCells*(1+soybeanLowestYears/20.0)<tenureCells.size())
+			{
+			//	System.out.println(numberOfCells+" / "+cornCellCount);
+			//	cornCellCount += (int) (numberOfCells*(1+soybeanLowestYears/20.0))-numberOfCells;
+				newNumberOfCells = (int) ( numberOfCells*(1+soybeanLowestYears/20.0));
+		//		System.out.println(newNumberOfCells+" / "+cornCellCount);
+			}
+		}
+	/*	if(tick>=7 && soybeanLowestYears>1) 
+		{
 		//	numberOfCells = (int) numberOfCells*(1+soybeanLowestYears/10);
 			cornCellCount += (int) numberOfCells*(1+soybeanLowestYears/10)-numberOfCells;
-		}
+		}*/
 		
-		listToChange.clear();
-		 listNotChange.clear();
-
 		 FastTable<LandCell> planningExpansionCells = new FastTable<LandCell>();
-
+//highest=0;
 		 if (highest == 2 )    //rice highest		
 		 { 
            tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
@@ -1898,8 +1908,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 						 riceCellCount = (int) riceProportion*numberOfCells;
 					  			  
 					  } 
-					 					 
+					 								 
 					}
+			 				
 				
 //summary(atest$s41)
 //			     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
@@ -1956,128 +1967,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				  Collections.sort(planningExpansionCells,  new SortByRcount());
 			
 				  Collections.sort(tenureCells, new SortByRcount());
-	/*			  if(getMoreRice) 
-				  {
-					  for(int i=planningExpansionCells.size()-1; i>0;i--){
-				          
-							 if(planningExpansionCells.get(i).getNextToRice()
-									 ||
-									 planningExpansionCells.get(i).getRProb()>riceUpperBound
-									 ) 
-							 { 
-								 if(planningRiceCells.size()<riceCellCount)
-								 {  planningRiceCells.add(planningExpansionCells.get(i));
-								    planningExpansionCells.remove(i);   
-						//		    System.out.println("dada");
-								 }
-							 }
-								 else 
-								 {
-									 planningCornCells.add(planningExpansionCells.get(i));
-									 planningExpansionCells.remove(i);   
-				
-								 }
-					
-					 }
-				   }
-				  
-			      if(planningRiceCells.size()>=riceCellCount)
-						 getMoreRice = false;
-			      else getMoreRice = true;
-			      			      
-				  if(getMoreRice && (!getMoreCorn))
-					 {
-						 for(int i = planningCornCells.size()-1; i>=cornCellCount; i--)
-						 {
-						   	if(planningCornCells.get(i).getNextToRice()
-						   			||
-						   			planningCornCells.get(i).getRProb()>riceUpperBound) 
-						   	{
-							  
-							   planningRiceCells.add(planningCornCells.get(i));			
-							   planningCornCells.remove(i);
-							
-						   	}
-						   	
-						  }						
-					 }
 
-				  				  
-				  if(planningRiceCells.size()>=riceCellCount)
-						 getMoreRice = false;
-				  else getMoreRice = true;
-				  
-				  if(getMoreRice && (!getMoreSoybean))
-				 {
-					 for(int i = planningSoyCells.size()-1; i>=soyCellCount; i--)
-					 {
-					   	 if(planningSoyCells.get(i).getSProb()<=soyUpperCutOff)
-						 { 
-					   		if(planningSoyCells.get(i).getNextToRice()
-					   				||
-					   				planningSoyCells.get(i).getRProb()>riceUpperBound) 
-					   		{
-					   	
-						   planningRiceCells.add(planningSoyCells.get(i));
-						   planningSoyCells.remove(i);
-						   }
-						 }
-					 }
-					 
-				 }
-			      
-					 if(planningSoyCells.size()<=soyCellCount)
-						 getMoreSoybean = true;
-					 else getMoreSoybean = false;
-					 
-					 if(getMoreSoybean) {						
-						    	for(int i=0;i<planningExpansionCells.size();i++) {
-                		          if(planningExpansionCells.get(i).getSProb()>=soyLowerCutOff
-                		    		&& planningSoyCells.size()<soyCellCount) {
-                		        	   planningSoyCells.add(planningExpansionCells.get(i));
-                		               planningExpansionCells.remove(i);
-                		           }
-						    	}
-						    	if(planningSoyCells.size()<soyCellCount) {
-						    		for(int j=planningCornCells.size()-1; j>cornCellCount;j--){
-						    			planningSoyCells.add(planningCornCells.get(j));
-						    			planningCornCells.remove(j);
-						    		}
-						    	}
-					 }
-					 
-					 if(planningCornCells.size()<cornCellCount)
-						 getMoreCorn = true;
-					 else getMoreCorn = false;
-					 if(getMoreCorn) {						
-						    	for(int i=0;i<planningExpansionCells.size();i++) {               		       
-                		        	   planningCornCells.add(planningExpansionCells.get(i));
-                		               planningExpansionCells.remove(i);           		           
-						    	}
-						    	if(planningCornCells.size()<cornCellCount) 
-						    	{    		
-						    		for(int j=planningSoyCells.size() - 1; j> soyCellCount; j--){
-						    			if(planningSoyCells.get(j).getSProb()<soyUpperCutOff)
-						    			{	planningCornCells.add(planningSoyCells.get(j));
-						    	    	    planningSoyCells.remove(j);
-						    	    	}
-						    		}
-						    	}
-						
-					 }
-					 
-					for(int i=0;i<planningExpansionCells.size();i++)
-					{
-					  LandCell c=planningExpansionCells.get(i);
-							
-							 if(c.getNextToRice()||c.getRProb()>riceUpperBound)
-								 planningRiceCells.add(c);
-							 else if(c.getSProb()>c.getCProb()
-									 ||c.getSProb()>soyUpperCutOff)
-								 planningSoyCells.add(c);
-							 else
-								 planningCornCells.add(c);
-						 }*/
 				  
 				  if(getMoreRice){
 						 for(int i=planningExpansionCells.size()-1; i>=0;i--)
@@ -2134,7 +2024,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 								    planningExpansionCells.remove(i);   
 								 }						
 							 }
-					/*  for(int j=planningRiceCells.size()-1;j>riceCellCount;j--)
+					  for(int j=planningRiceCells.size()-1;j>riceCellCount;j--)
 					  {
 						  if(planningSoyCells.size()<soyCellCount)
 							 {  
@@ -2145,7 +2035,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				     		    }
 								
 							 }
-					  }*/
+					  }
 					  for(int i=planningCornCells.size()-1; i>cornCellCount;i--)
 					  {    
 								 if(planningSoyCells.size()<soyCellCount)
@@ -2173,17 +2063,17 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 								    planningExpansionCells.remove(i);   
 								 }						
 						}
-					/*  for(int i=planningRiceCells.size()-1; i>riceCellCount;i--)
+					  for(int i=planningRiceCells.size()-1; i>riceCellCount;i--)
 					  {    
-								 if(planningCornCells.size()<cornCellCount)
-								 {  
+							//	 if(planningCornCells.size()<cornCellCount)
+							//	 {  
 									 if(planningRiceCells.get(i).getRProb()<riceUpperBound)
 									 { planningCornCells.add(planningRiceCells.get(i));
 									   planningRiceCells.remove(i);   
 								      }
 									 //System.out.println("dada");
-								 }						
-							 }*/
+							//	 }						
+							 }
 					  for(int j=planningSoyCells.size()-1;j>soyCellCount;j--)
 					  {		
 						  if(planningCornCells.size()<cornCellCount)	 
@@ -2257,12 +2147,13 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 							 riceProportion = 0.0;
 						     cornProportion = 0.0;
 						     
-							 cornCellCount = (int) cornProportion*numberOfCells;
-							 soyCellCount = (int) soyProportion * numberOfCells;
+							 cornCellCount = (int) (cornProportion*numberOfCells);
+							 soyCellCount = (int) (soyProportion * numberOfCells);
 							 riceCellCount = (int) riceProportion*numberOfCells;
 						  			  
 						 }
-					}
+					}					
+				 		
 		   	 for (int n=0; n<numberOfCells; n++){
 				 LandCell c = this.tenureCells.get(n);
 				 
@@ -2427,7 +2318,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 					 planningExpansionCells.remove(c);
 				 }
 				 
-				 for(int i=planningSoyCells.size()-1;i>soyCellCount;i--) {
+		/*		 for(int i=planningSoyCells.size()-1;i>soyCellCount;i--) {
 					 LandCell c = planningSoyCells.get(i);
 					 if(c.getNextToRice()||c.getRProb()>riceUpperBound)
 						 planningRiceCells.add(c);
@@ -2435,7 +2326,7 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 						 planningCornCells.add(c);
 					 
 					 planningSoyCells.remove(c);
-				 }
+				 }*/
 
 		 }
 
@@ -2490,25 +2381,6 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 	
 		}
 		
-		if(tick>7)	 
-		{
-		//	numberOfCells = (int) numberOfCells*(1+soybeanLowestYears/10);
-	//	System.out.println(cornCellCount+"/"+numberOfCells);
-		int temp=0;
-		double tempsoy= (double) (soybeanLowestYears)/12.0;
-	//	System.out.println(tempsoy);
-		temp = (int) (( tenureCells.size()-numberOfCells)*
-				tempsoy);
-		
-	//		System.out.println( tenureCells.size()-numberOfCells);
-			
-			cornCellCount = cornCellCount+temp;
-	//		System.out.println(numberOfCells+" "+soybeanLowestYears);
-		
-			numberOfCells = numberOfCells+temp;
-	//		System.out.println(cornCellCount+"/"+numberOfCells);
-		}
-		
 		 //first to go through all old land use types
 		 for (int n=0; n<numberOfCells; n++){
 			 LandCell c = this.tenureCells.get(n);
@@ -2541,24 +2413,6 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 			  Collections.sort(planningCornCells,  new SortByRcount());
 			  Collections.sort(planningExpansionCells,  new SortByRcount());
 			  
-		 /*     for(int i=0; i<planningExpansionCells.size();i++)
-			//add other cells to corns
-				 {
-		    	  if(planningCornCells.size()<=cornCellCount)
-		    	  {	
-					planningCornCells.add(planningExpansionCells.get(i));
-					planningExpansionCells.remove(i);
-				 }
-		    	  }
-			  
-			  if(planningCornCells.size()>=cornCellCount)
-					 getMoreCorn = false;
-			  else getMoreCorn = true;
-						  
-		      if(planningRiceCells.size()>=riceCellCount)
-					 getMoreRice = false;
-		      else getMoreRice = true;*/
-			  						   
 			 if(getMoreCorn) {
 				 
 				 for(int i=planningExpansionCells.size()-1; i>0;i--)
@@ -2684,12 +2538,12 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				 for(int i=0;i<planningExpansionCells.size();i++) {
 						LandCell c = planningExpansionCells.get(i);
 					 
-						 if(c.getNextToRice()||c.getRProb()>riceUpperBound)
-							 planningRiceCells.add(c);
+					//	 if(c.getNextToRice()||c.getRProb()>riceUpperBound)
+					//		 planningRiceCells.add(c);
 						/* else if(c.getSProb()>c.getCProb()
 								 ||c.getSProb()>soyLowerBound)
 							 planningSoyCells.add(c);*/
-						 else
+					//	 else
 							 planningCornCells.add(c);
 					 
 					 planningExpansionCells.remove(c);
@@ -2697,9 +2551,9 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 				 
 				 for(int i=planningSoyCells.size()-1;i>soyCellCount;i--) {
 					 LandCell c = planningSoyCells.get(i);
-					 if(c.getNextToRice()||c.getRProb()>riceUpperBound)
-						 planningRiceCells.add(c);
-					 else 
+				//	 if(c.getNextToRice()||c.getRProb()>riceUpperBound)
+				//		 planningRiceCells.add(c);
+				//	 else 
 						 planningCornCells.add(c);
 					 
 					 planningSoyCells.remove(c);
@@ -2707,14 +2561,27 @@ public class ReceivingSoybeanAgent extends SoybeanAgent{
 		
 		 }
 		 
+		 if(newNumberOfCells>0) {
+		 for(int i=numberOfCells; i<newNumberOfCells;i++) {
+			 LandCell c = this.tenureCells.get(i);
+			 planningCornCells.add(c);
+	//		 System.out.println(x);
+		 }
 		 //the rest of cells are allocated for others; 
-		 for(int n=numberOfCells; n < this.getTenureCellSize() ; n++)	    
+		 for(int n=newNumberOfCells; n < this.getTenureCellSize() ; n++)	    
 	     {   
 	    	 LandCell c = this.tenureCells.get(n);
 	    	 
 	    	 planningOtherCells.add(c);
 	    	 }
-		 
+	//	 System.out.println(numberOfCells+":=="+newNumberOfCells);
+		 }
+		 else {
+			 for(int n=numberOfCells; n<this.getTenureCellSize();n++){
+				 LandCell c = this.tenureCells.get(n);
+				 planningOtherCells.add(c);
+			 }
+		 }
 }
 		 
 		 

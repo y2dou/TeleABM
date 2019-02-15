@@ -1,158 +1,209 @@
-INFO  [Thread-5] 2019-01-20 05:50:59,545 repast.simphony.batch.ssh.LocalSession - test receiving soy production 6.6925E7
-INFO  [Thread-5] 2019-01-20 05:50:59,545 repast.simphony.batch.ssh.LocalSession - 6.6925E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 05:51:03,530 repast.simphony.batch.ssh.LocalSession - rta total: 6.7975E7
-INFO  [Thread-5] 2019-01-20 05:51:03,530 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 05:51:03,530 repast.simphony.batch.ssh.LocalSession - test receiving soy production 6.7975E7
-INFO  [Thread-5] 2019-01-20 05:51:03,531 repast.simphony.batch.ssh.LocalSession - 6.7975E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 05:51:07,481 repast.simphony.batch.ssh.LocalSession - rta total: 7.575E7
-INFO  [Thread-5] 2019-01-20 05:51:07,481 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 05:51:07,481 repast.simphony.batch.ssh.LocalSession - test receiving soy production 7.575E7
-INFO  [Thread-5] 2019-01-20 05:51:07,481 repast.simphony.batch.ssh.LocalSession - 7.575E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 05:51:07,494 repast.simphony.batch.ssh.LocalSession - test if receiving context being created=organicSpaceReceiving
-INFO  [Thread-5] 2019-01-20 05:51:07,494 repast.simphony.batch.ssh.LocalSession - receiving: current organic
-INFO  [Thread-5] 2019-01-20 05:51:07,538 repast.simphony.batch.ssh.LocalSession - receiving: elevation
-INFO  [Thread-5] 2019-01-20 05:51:07,544 repast.simphony.batch.ssh.LocalSession - receiving: land holder field
-INFO  [Thread-5] 2019-01-20 05:51:07,607 repast.simphony.batch.ssh.LocalSession - receiving: land use field
-INFO  [Thread-5] 2019-01-20 05:51:07,697 repast.simphony.batch.ssh.LocalSession - receiving context being build=TeleABM
-INFO  [Thread-5] 2019-01-20 05:51:07,697 repast.simphony.batch.ssh.LocalSession - contains receiving: true
-INFO  [Thread-5] 2019-01-20 05:51:07,697 repast.simphony.batch.ssh.LocalSession - only receiving System
-INFO  [Thread-5] 2019-01-20 05:51:07,709 repast.simphony.batch.ssh.LocalSession - perAgentArea 34.44375
-INFO  [Thread-5] 2019-01-20 05:51:07,709 repast.simphony.batch.ssh.LocalSession - ydim 550 xdim 501 ydim/xdim 1.0978043912175648
-INFO  [Thread-5] 2019-01-20 05:51:07,709 repast.simphony.batch.ssh.LocalSession - xcount 100
-INFO  [Thread-5] 2019-01-20 05:51:07,709 repast.simphony.batch.ssh.LocalSession - ycount 91
-INFO  [Thread-5] 2019-01-20 05:51:07,709 repast.simphony.batch.ssh.LocalSession - xboundary=5.6013502836369735 yboundary=6.149186938124422
-INFO  [Thread-5] 2019-01-20 05:51:09,525 repast.simphony.batch.ssh.LocalSession - add soybean agents finished
-INFO  [pool-3-thread-1] 2019-01-20 05:51:27,870 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 05:52:27,870 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 05:53:27,871 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 05:54:27,872 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 05:55:27,872 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 05:56:27,873 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 05:57:27,873 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 05:58:27,874 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 05:59:27,874 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:00:27,875 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:01:27,875 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:02:27,875 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:03:27,876 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:04:27,876 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:05:27,877 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [Thread-5] 2019-01-20 06:05:33,568 repast.simphony.batch.ssh.LocalSession - rta total: 1.753E8
-INFO  [Thread-5] 2019-01-20 06:05:33,568 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:05:33,568 repast.simphony.batch.ssh.LocalSession - test receiving soy production 1.753E8
-INFO  [Thread-5] 2019-01-20 06:05:33,568 repast.simphony.batch.ssh.LocalSession - 1.753E8 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:05:38,788 repast.simphony.batch.ssh.LocalSession - rta total: 1.13325E8
-INFO  [Thread-5] 2019-01-20 06:05:38,788 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:05:38,788 repast.simphony.batch.ssh.LocalSession - test receiving soy production 1.13325E8
-INFO  [Thread-5] 2019-01-20 06:05:38,789 repast.simphony.batch.ssh.LocalSession - 1.13325E8 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:05:44,164 repast.simphony.batch.ssh.LocalSession - rta total: 1.021875E8
-INFO  [Thread-5] 2019-01-20 06:05:44,164 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:05:44,164 repast.simphony.batch.ssh.LocalSession - test receiving soy production 1.021875E8
-INFO  [Thread-5] 2019-01-20 06:05:44,164 repast.simphony.batch.ssh.LocalSession - 1.021875E8 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:05:49,374 repast.simphony.batch.ssh.LocalSession - rta total: 9.74875E7
-INFO  [Thread-5] 2019-01-20 06:05:49,374 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:05:49,374 repast.simphony.batch.ssh.LocalSession - test receiving soy production 9.74875E7
-INFO  [Thread-5] 2019-01-20 06:05:49,374 repast.simphony.batch.ssh.LocalSession - 9.74875E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:05:54,578 repast.simphony.batch.ssh.LocalSession - rta total: 9.1725E7
-INFO  [Thread-5] 2019-01-20 06:05:54,579 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:05:54,579 repast.simphony.batch.ssh.LocalSession - test receiving soy production 9.1725E7
-INFO  [Thread-5] 2019-01-20 06:05:54,579 repast.simphony.batch.ssh.LocalSession - 9.1725E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:05:59,802 repast.simphony.batch.ssh.LocalSession - rta total: 8.6925E7
-INFO  [Thread-5] 2019-01-20 06:05:59,802 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:05:59,803 repast.simphony.batch.ssh.LocalSession - test receiving soy production 8.6925E7
-INFO  [Thread-5] 2019-01-20 06:05:59,803 repast.simphony.batch.ssh.LocalSession - 8.6925E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:06:05,064 repast.simphony.batch.ssh.LocalSession - rta total: 6.48E7
-INFO  [Thread-5] 2019-01-20 06:06:05,064 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:06:05,064 repast.simphony.batch.ssh.LocalSession - test receiving soy production 6.48E7
-INFO  [Thread-5] 2019-01-20 06:06:05,064 repast.simphony.batch.ssh.LocalSession - 6.48E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:06:10,395 repast.simphony.batch.ssh.LocalSession - rta total: 6.49625E7
-INFO  [Thread-5] 2019-01-20 06:06:10,395 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:06:10,395 repast.simphony.batch.ssh.LocalSession - test receiving soy production 6.49625E7
-INFO  [Thread-5] 2019-01-20 06:06:10,395 repast.simphony.batch.ssh.LocalSession - 6.49625E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:06:15,659 repast.simphony.batch.ssh.LocalSession - rta total: 6.51E7
-INFO  [Thread-5] 2019-01-20 06:06:15,659 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:06:15,659 repast.simphony.batch.ssh.LocalSession - test receiving soy production 6.51E7
-INFO  [Thread-5] 2019-01-20 06:06:15,659 repast.simphony.batch.ssh.LocalSession - 6.51E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:06:21,017 repast.simphony.batch.ssh.LocalSession - rta total: 7.74375E7
-INFO  [Thread-5] 2019-01-20 06:06:21,017 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:06:21,017 repast.simphony.batch.ssh.LocalSession - test receiving soy production 7.74375E7
-INFO  [Thread-5] 2019-01-20 06:06:21,017 repast.simphony.batch.ssh.LocalSession - 7.74375E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:06:21,040 repast.simphony.batch.ssh.LocalSession - test if receiving context being created=organicSpaceReceiving
-INFO  [Thread-5] 2019-01-20 06:06:21,041 repast.simphony.batch.ssh.LocalSession - receiving: current organic
-INFO  [Thread-5] 2019-01-20 06:06:21,086 repast.simphony.batch.ssh.LocalSession - receiving: elevation
-INFO  [Thread-5] 2019-01-20 06:06:21,092 repast.simphony.batch.ssh.LocalSession - receiving: land holder field
-INFO  [Thread-5] 2019-01-20 06:06:21,119 repast.simphony.batch.ssh.LocalSession - receiving: land use field
-INFO  [Thread-5] 2019-01-20 06:06:21,209 repast.simphony.batch.ssh.LocalSession - receiving context being build=TeleABM
-INFO  [Thread-5] 2019-01-20 06:06:21,209 repast.simphony.batch.ssh.LocalSession - contains receiving: true
-INFO  [Thread-5] 2019-01-20 06:06:21,209 repast.simphony.batch.ssh.LocalSession - only receiving System
-INFO  [Thread-5] 2019-01-20 06:06:21,223 repast.simphony.batch.ssh.LocalSession - perAgentArea 27.555
-INFO  [Thread-5] 2019-01-20 06:06:21,223 repast.simphony.batch.ssh.LocalSession - ydim 550 xdim 501 ydim/xdim 1.0978043912175648
-INFO  [Thread-5] 2019-01-20 06:06:21,223 repast.simphony.batch.ssh.LocalSession - xcount 100
-INFO  [Thread-5] 2019-01-20 06:06:21,223 repast.simphony.batch.ssh.LocalSession - ycount 110
-INFO  [Thread-5] 2019-01-20 06:06:21,223 repast.simphony.batch.ssh.LocalSession - xboundary=5.01 yboundary=5.5
-INFO  [Thread-5] 2019-01-20 06:06:23,989 repast.simphony.batch.ssh.LocalSession - add soybean agents finished
-INFO  [pool-3-thread-1] 2019-01-20 06:06:27,877 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:07:27,878 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:08:27,878 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:09:27,878 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:10:27,879 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:11:27,879 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:12:27,880 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:13:27,880 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:14:27,881 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:15:27,881 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:16:27,882 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:17:27,882 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:18:27,883 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:19:27,883 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:20:27,884 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:21:27,884 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:22:27,884 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [pool-3-thread-1] 2019-01-20 06:23:27,884 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [Thread-5] 2019-01-20 06:23:32,803 repast.simphony.batch.ssh.LocalSession - rta total: 1.753875E8
-INFO  [Thread-5] 2019-01-20 06:23:32,803 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:23:32,803 repast.simphony.batch.ssh.LocalSession - test receiving soy production 1.753875E8
-INFO  [Thread-5] 2019-01-20 06:23:32,804 repast.simphony.batch.ssh.LocalSession - 1.753875E8 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:23:39,462 repast.simphony.batch.ssh.LocalSession - rta total: 1.09525E8
-INFO  [Thread-5] 2019-01-20 06:23:39,463 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:23:39,463 repast.simphony.batch.ssh.LocalSession - test receiving soy production 1.09525E8
-INFO  [Thread-5] 2019-01-20 06:23:39,463 repast.simphony.batch.ssh.LocalSession - 1.09525E8 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:23:46,072 repast.simphony.batch.ssh.LocalSession - rta total: 9.93625E7
-INFO  [Thread-5] 2019-01-20 06:23:46,072 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:23:46,072 repast.simphony.batch.ssh.LocalSession - test receiving soy production 9.93625E7
-INFO  [Thread-5] 2019-01-20 06:23:46,073 repast.simphony.batch.ssh.LocalSession - 9.93625E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:23:52,679 repast.simphony.batch.ssh.LocalSession - rta total: 9.1975E7
-INFO  [Thread-5] 2019-01-20 06:23:52,679 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:23:52,679 repast.simphony.batch.ssh.LocalSession - test receiving soy production 9.1975E7
-INFO  [Thread-5] 2019-01-20 06:23:52,680 repast.simphony.batch.ssh.LocalSession - 9.1975E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:23:59,410 repast.simphony.batch.ssh.LocalSession - rta total: 8.72125E7
-INFO  [Thread-5] 2019-01-20 06:23:59,410 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:23:59,410 repast.simphony.batch.ssh.LocalSession - test receiving soy production 8.72125E7
-INFO  [Thread-5] 2019-01-20 06:23:59,411 repast.simphony.batch.ssh.LocalSession - 8.72125E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:24:06,021 repast.simphony.batch.ssh.LocalSession - rta total: 8.3125E7
-INFO  [Thread-5] 2019-01-20 06:24:06,021 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:24:06,022 repast.simphony.batch.ssh.LocalSession - test receiving soy production 8.3125E7
-INFO  [Thread-5] 2019-01-20 06:24:06,022 repast.simphony.batch.ssh.LocalSession - 8.3125E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:24:12,587 repast.simphony.batch.ssh.LocalSession - rta total: 6.40125E7
-INFO  [Thread-5] 2019-01-20 06:24:12,587 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:24:12,587 repast.simphony.batch.ssh.LocalSession - test receiving soy production 6.40125E7
-INFO  [Thread-5] 2019-01-20 06:24:12,588 repast.simphony.batch.ssh.LocalSession - 6.40125E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:24:19,181 repast.simphony.batch.ssh.LocalSession - rta total: 6.24125E7
-INFO  [Thread-5] 2019-01-20 06:24:19,181 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:24:19,181 repast.simphony.batch.ssh.LocalSession - test receiving soy production 6.24125E7
-INFO  [Thread-5] 2019-01-20 06:24:19,182 repast.simphony.batch.ssh.LocalSession - 6.24125E7 has soy subsidy 400.0
-INFO  [Thread-5] 2019-01-20 06:24:25,779 repast.simphony.batch.ssh.LocalSession - rta total: 6.2925E7
-INFO  [Thread-5] 2019-01-20 06:24:25,779 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:24:25,779 repast.simphony.batch.ssh.LocalSession - test receiving soy production 6.2925E7
-INFO  [Thread-5] 2019-01-20 06:24:25,780 repast.simphony.batch.ssh.LocalSession - 6.2925E7 has soy subsidy 400.0
-INFO  [pool-3-thread-1] 2019-01-20 06:24:27,885 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  no
-INFO  [Thread-5] 2019-01-20 06:24:32,409 repast.simphony.batch.ssh.LocalSession - rta total: 7.5575E7
-INFO  [Thread-5] 2019-01-20 06:24:32,409 repast.simphony.batch.ssh.LocalSession - sta: 0.0
-INFO  [Thread-5] 2019-01-20 06:24:32,409 repast.simphony.batch.ssh.LocalSession - test receiving soy production 7.5575E7
-INFO  [Thread-5] 2019-01-20 06:24:32,410 repast.simphony.batch.ssh.LocalSession - 7.5575E7 has soy subsidy 400.0
-INFO  [pool-3-thread-1] 2019-01-20 06:25:27,886 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740 for DONE:  yes
-INFO  [SwingWorker-pool-2-thread-1] 2019-01-20 06:25:27,892 repast.simphony.batch.ssh.SessionsDriver - Run Time: 347.0747
-INFO  [SwingWorker-pool-2-thread-1] 2019-01-20 06:25:28,084 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1547962692740
-INFO  [SwingWorker-pool-2-thread-1] 2019-01-20 06:25:28,179 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/DOU Yue/workspace/RePast WorkSpace/TeleABM/output
-INFO  [SwingWorker-pool-2-thread-1] 2019-01-20 06:25:28,946 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0.0175
-INFO  [SwingWorker-pool-2-thread-1] 2019-01-20 06:25:28,946 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 347.2707
+INFO  [Thread-5] 2019-02-14 21:58:14,777 repast.simphony.batch.ssh.LocalSession - sta: 3.4026878068201363E8
+INFO  [Thread-5] 2019-02-14 21:58:14,778 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 21:58:14,778 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 400.0
+INFO  [Thread-5] 2019-02-14 21:58:15,694 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 21:58:15,695 repast.simphony.batch.ssh.LocalSession - sta: 3.336335278357977E8
+INFO  [Thread-5] 2019-02-14 21:58:15,695 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 21:58:15,695 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 400.0
+INFO  [Thread-5] 2019-02-14 21:58:16,625 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 21:58:16,626 repast.simphony.batch.ssh.LocalSession - sta: 3.3635700093621355E8
+INFO  [Thread-5] 2019-02-14 21:58:16,626 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 21:58:16,626 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 400.0
+INFO  [Thread-5] 2019-02-14 21:58:16,644 repast.simphony.batch.ssh.LocalSession - ERROR [main] 21:58:16,641 repast.simphony.batch.InstanceRunner - Error while running model
+INFO  [Thread-5] 2019-02-14 21:58:16,647 repast.simphony.batch.ssh.LocalSession - java.lang.NullPointerException
+INFO  [Thread-5] 2019-02-14 21:58:16,648 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.data2.AbstractDataSetManager$ScheduledDataSet.reset(AbstractDataSetManager.java:111)
+INFO  [Thread-5] 2019-02-14 21:58:16,649 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.data2.AbstractDataSetManager.runEnded(AbstractDataSetManager.java:238)
+INFO  [Thread-5] 2019-02-14 21:58:16,650 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.data2.BatchRunDataSetManager.runEnded(BatchRunDataSetManager.java:52)
+INFO  [Thread-5] 2019-02-14 21:58:16,652 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.data2.engine.DataInitActionCreator$1.runCleanup(DataInitActionCreator.java:86)
+INFO  [Thread-5] 2019-02-14 21:58:16,654 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController$5.visit(DefaultController.java:286)
+INFO  [Thread-5] 2019-02-14 21:58:16,655 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController$5.visit(DefaultController.java:1)
+INFO  [Thread-5] 2019-02-14 21:58:16,655 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:292)
+INFO  [Thread-5] 2019-02-14 21:58:16,656 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:295)
+INFO  [Thread-5] 2019-02-14 21:58:16,656 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.util.collections.NaryTree.preOrderTraversal(NaryTree.java:288)
+INFO  [Thread-5] 2019-02-14 21:58:16,656 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController.runCleanup(DefaultController.java:284)
+INFO  [Thread-5] 2019-02-14 21:58:16,656 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController.runCleanup(DefaultController.java:291)
+INFO  [Thread-5] 2019-02-14 21:58:16,657 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController.runCleanup(DefaultController.java:444)
+INFO  [Thread-5] 2019-02-14 21:58:16,657 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.batch.OneRunBatchRunner.run(OneRunBatchRunner.java:104)
+INFO  [Thread-5] 2019-02-14 21:58:16,657 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.batch.InstanceRunner.run(InstanceRunner.java:195)
+INFO  [Thread-5] 2019-02-14 21:58:16,657 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.batch.InstanceRunner.main(InstanceRunner.java:217)
+INFO  [pool-3-thread-1] 2019-02-14 21:59:03,915 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550177685497 for DONE:  yes
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 21:59:03,918 repast.simphony.batch.ssh.SessionsDriver - Run Time: 4.0711
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 21:59:04,032 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550177685497
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 21:59:04,077 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/DOU Yue/workspace/RePast WorkSpace/TeleABM/output
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 21:59:04,105 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0.0031
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 21:59:04,105 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 4.3105
+INFO  [AWT-EventQueue-0] 2019-02-14 22:14:18,277 repast.simphony.batch.gui.BatchConfigMediator - Writing batch run config file to: C:\Users\DOU Yue\workspace\RePast WorkSpace\TeleABM\output\config.props
+INFO  [AWT-EventQueue-0] 2019-02-14 22:14:18,565 repast.simphony.batch.gui.BatchConfigMediator - Unrolling batch parameter file:
+	C:\Users\DOU Yue\workspace\RePast WorkSpace\TeleABM\batch\batch_params.xml to
+	C:\Users\DOUYUE~1\AppData\Local\Temp\unrolledParamFile.txt
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:14:51,229 repast.simphony.batch.ssh.LocalSession - 
+	Copying locally C:\Users\DOUYUE~1\AppData\Local\Temp\DOU Yue_localhost2440938763775384490.zip to 
+C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550178881004 ...
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:14:51,442 repast.simphony.batch.ssh.LocalSession - Copying Finished.
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:14:51,443 repast.simphony.batch.ssh.SessionsDriver - Initialization Time: 0.1740
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:14:51,443 repast.simphony.batch.ssh.LocalSession - Unzipping model C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550178881004\DOU Yue_localhost2440938763775384490.zip
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:14:55,545 repast.simphony.batch.ssh.LocalSession - Running model on localhost ...
+INFO  [Thread-5] 2019-02-14 22:15:08,871 repast.simphony.batch.ssh.LocalSession - test if sending context being created=organicSpaceSending
+INFO  [Thread-5] 2019-02-14 22:15:08,878 repast.simphony.batch.ssh.LocalSession - sending dimension=[351.0, 412.0]
+INFO  [Thread-5] 2019-02-14 22:15:09,021 repast.simphony.batch.ssh.LocalSession - sending: elevation
+INFO  [Thread-5] 2019-02-14 22:15:09,236 repast.simphony.batch.ssh.LocalSession - sending context being build=TeleABM
+INFO  [Thread-5] 2019-02-14 22:15:09,237 repast.simphony.batch.ssh.LocalSession - contains sending: true
+INFO  [Thread-5] 2019-02-14 22:15:09,237 repast.simphony.batch.ssh.LocalSession - only sending System
+INFO  [Thread-5] 2019-02-14 22:15:09,253 repast.simphony.batch.ssh.LocalSession - SENDING SYSTEM
+INFO  [Thread-5] 2019-02-14 22:15:09,253 repast.simphony.batch.ssh.LocalSession - perAgentArea 144.612
+INFO  [Thread-5] 2019-02-14 22:15:09,254 repast.simphony.batch.ssh.LocalSession - ydim 412 xdim 351 ydim/xdim 1.1737891737891737
+INFO  [Thread-5] 2019-02-14 22:15:09,255 repast.simphony.batch.ssh.LocalSession - xcount 31
+INFO  [Thread-5] 2019-02-14 22:15:09,256 repast.simphony.batch.ssh.LocalSession - ycount 31
+INFO  [Thread-5] 2019-02-14 22:15:09,258 repast.simphony.batch.ssh.LocalSession - xboundary=11.099594587191012 yboundary=13.028583959893723
+INFO  [Thread-5] 2019-02-14 22:15:10,694 repast.simphony.batch.ssh.LocalSession - add soybean agents finished
+INFO  [pool-3-thread-1] 2019-02-14 22:15:55,591 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550178881004 for DONE:  no
+INFO  [pool-3-thread-1] 2019-02-14 22:16:55,591 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550178881004 for DONE:  no
+INFO  [pool-3-thread-1] 2019-02-14 22:17:55,592 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550178881004 for DONE:  no
+INFO  [Thread-5] 2019-02-14 22:17:56,880 repast.simphony.batch.ssh.LocalSession - internationa agent added to sending system
+INFO  [Thread-5] 2019-02-14 22:17:58,488 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:17:58,499 repast.simphony.batch.ssh.LocalSession - sta: 2.56199618147073E8
+INFO  [Thread-5] 2019-02-14 22:17:58,500 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:17:58,507 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:17:59,743 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:17:59,743 repast.simphony.batch.ssh.LocalSession - sta: 2.856040437732694E8
+INFO  [Thread-5] 2019-02-14 22:17:59,744 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:17:59,745 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:00,924 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:18:00,924 repast.simphony.batch.ssh.LocalSession - sta: 3.2186750468057644E8
+INFO  [Thread-5] 2019-02-14 22:18:00,924 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:18:00,924 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:01,930 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:18:01,930 repast.simphony.batch.ssh.LocalSession - sta: 3.348984128161107E8
+INFO  [Thread-5] 2019-02-14 22:18:01,930 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:18:01,930 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:02,820 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:18:02,820 repast.simphony.batch.ssh.LocalSession - sta: 3.2194234479062825E8
+INFO  [Thread-5] 2019-02-14 22:18:02,820 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:18:02,820 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:03,706 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:18:03,707 repast.simphony.batch.ssh.LocalSession - sta: 3.333205699291041E8
+INFO  [Thread-5] 2019-02-14 22:18:03,708 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:18:03,708 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:04,752 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:18:04,752 repast.simphony.batch.ssh.LocalSession - sta: 3.251528222893526E8
+INFO  [Thread-5] 2019-02-14 22:18:04,752 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:18:04,752 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:05,644 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:18:05,645 repast.simphony.batch.ssh.LocalSession - sta: 3.4026878068201363E8
+INFO  [Thread-5] 2019-02-14 22:18:05,645 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:18:05,645 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:06,598 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:18:06,598 repast.simphony.batch.ssh.LocalSession - sta: 3.336335278357977E8
+INFO  [Thread-5] 2019-02-14 22:18:06,598 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:18:06,598 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:07,538 repast.simphony.batch.ssh.LocalSession - rta total: 0.0
+INFO  [Thread-5] 2019-02-14 22:18:07,539 repast.simphony.batch.ssh.LocalSession - sta: 3.3635700093621355E8
+INFO  [Thread-5] 2019-02-14 22:18:07,539 repast.simphony.batch.ssh.LocalSession - test receiving soy production 0.0
+INFO  [Thread-5] 2019-02-14 22:18:07,539 repast.simphony.batch.ssh.LocalSession - 0.0 has soy subsidy 4000.0
+INFO  [Thread-5] 2019-02-14 22:18:07,556 repast.simphony.batch.ssh.LocalSession - ERROR [main] 22:18:07,552 repast.simphony.batch.InstanceRunner - Error while running model
+INFO  [Thread-5] 2019-02-14 22:18:07,556 repast.simphony.batch.ssh.LocalSession - java.lang.NullPointerException
+INFO  [Thread-5] 2019-02-14 22:18:07,556 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.data2.AbstractDataSetManager$ScheduledDataSet.reset(AbstractDataSetManager.java:111)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.data2.AbstractDataSetManager.runEnded(AbstractDataSetManager.java:238)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.data2.BatchRunDataSetManager.runEnded(BatchRunDataSetManager.java:52)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.data2.engine.DataInitActionCreator$1.runCleanup(DataInitActionCreator.java:86)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController$5.visit(DefaultController.java:286)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController$5.visit(DefaultController.java:1)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:292)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:295)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.util.collections.NaryTree.preOrderTraversal(NaryTree.java:288)
+INFO  [Thread-5] 2019-02-14 22:18:07,557 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController.runCleanup(DefaultController.java:284)
+INFO  [Thread-5] 2019-02-14 22:18:07,559 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController.runCleanup(DefaultController.java:291)
+INFO  [Thread-5] 2019-02-14 22:18:07,559 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.engine.controller.DefaultController.runCleanup(DefaultController.java:444)
+INFO  [Thread-5] 2019-02-14 22:18:07,559 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.batch.OneRunBatchRunner.run(OneRunBatchRunner.java:104)
+INFO  [Thread-5] 2019-02-14 22:18:07,560 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.batch.InstanceRunner.run(InstanceRunner.java:195)
+INFO  [Thread-5] 2019-02-14 22:18:07,560 repast.simphony.batch.ssh.LocalSession - 	at repast.simphony.batch.InstanceRunner.main(InstanceRunner.java:217)
+INFO  [pool-3-thread-1] 2019-02-14 22:18:55,593 repast.simphony.batch.ssh.LocalDonePoller - Polled C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550178881004 for DONE:  yes
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:18:55,596 repast.simphony.batch.ssh.SessionsDriver - Run Time: 4.0692
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:18:55,696 repast.simphony.batch.ssh.LocalSession - Finding output on localhost in C:\Users\DOUYUE~1\AppData\Local\Temp\simphony_model_1550178881004
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:18:55,736 repast.simphony.batch.ssh.SessionsDriver - Aggregating output into C:/Users/DOU Yue/workspace/RePast WorkSpace/TeleABM/output
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:18:55,755 repast.simphony.batch.ssh.SessionsDriver - Get Output Time: 0.0026
+INFO  [SwingWorker-pool-2-thread-1] 2019-02-14 22:18:55,755 repast.simphony.batch.ssh.SessionsDriver - Finished. Elapsed Time: 4.2462
+FATAL [Thread-7] 2019-02-14 22:25:54,951 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (16.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:72)
+	at repast.simphony.engine.controller.ScheduledMethodControllerAction$ScheduleMethodAllAction.execute(ScheduledMethodControllerAction.java:333)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.reflect.InvocationTargetException
+	at teleABM.ReceivingTraderAgent$$FastClassByCGLIB$$e24c7b43.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:69)
+	... 7 more
+Caused by: java.lang.IndexOutOfBoundsException: Index: 15, Size: 15
+	at java.util.ArrayList.rangeCheck(Unknown Source)
+	at java.util.ArrayList.get(Unknown Source)
+	at teleABM.ReceivingTraderAgent.step(ReceivingTraderAgent.java:62)
+	... 10 more
+FATAL [Thread-8] 2019-02-14 22:30:06,574 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (16.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:72)
+	at repast.simphony.engine.controller.ScheduledMethodControllerAction$ScheduleMethodAllAction.execute(ScheduledMethodControllerAction.java:333)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.reflect.InvocationTargetException
+	at teleABM.ReceivingTraderAgent$$FastClassByCGLIB$$e24c7b43.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:69)
+	... 7 more
+Caused by: java.lang.IndexOutOfBoundsException: Index: 15, Size: 15
+	at java.util.ArrayList.rangeCheck(Unknown Source)
+	at java.util.ArrayList.get(Unknown Source)
+	at teleABM.ReceivingTraderAgent.step(ReceivingTraderAgent.java:62)
+	... 10 more
+FATAL [Thread-7] 2019-02-14 22:38:00,050 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (16.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:72)
+	at repast.simphony.engine.controller.ScheduledMethodControllerAction$ScheduleMethodAllAction.execute(ScheduledMethodControllerAction.java:333)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.reflect.InvocationTargetException
+	at teleABM.ReceivingTraderAgent$$FastClassByCGLIB$$e24c7b43.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:69)
+	... 7 more
+Caused by: java.lang.IndexOutOfBoundsException: Index: 15, Size: 15
+	at java.util.ArrayList.rangeCheck(Unknown Source)
+	at java.util.ArrayList.get(Unknown Source)
+	at teleABM.ReceivingTraderAgent.step(ReceivingTraderAgent.java:62)
+	... 10 more
+FATAL [Thread-7] 2019-02-14 22:38:36,378 repast.simphony.ui.GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (16.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:72)
+	at repast.simphony.engine.controller.ScheduledMethodControllerAction$ScheduleMethodAllAction.execute(ScheduledMethodControllerAction.java:333)
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38)
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205)
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231)
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352)
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.reflect.InvocationTargetException
+	at teleABM.SendingTraderAgent$$FastClassByCGLIB$$73a70d89.invoke(<generated>)
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53)
+	at repast.simphony.engine.schedule.DynamicTargetAction.execute(DynamicTargetAction.java:69)
+	... 7 more
+Caused by: java.lang.IndexOutOfBoundsException: Index: 15, Size: 15
+	at java.util.ArrayList.rangeCheck(Unknown Source)
+	at java.util.ArrayList.get(Unknown Source)
+	at teleABM.SendingTraderAgent.step(SendingTraderAgent.java:64)
+	... 10 more

@@ -649,7 +649,10 @@ import teleABM.SoybeanAgent;
 	  double receivingSoyProduction = 0;
 	  double sendingSoyProduction = 0;
 	  double soySubsidy;
-	  
+	  Parameters p = RunEnvironment.getInstance().getParameters();
+		
+	  String tariffScenario = (String)p.getValue("tariffScenario");
+	  int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 	  if(receivingSystem) {
 	   internationalTradeAgent.setReceivingTotalSoyProduction(0);
 		for ( ReceivingTraderAgent rta:receivingTraderAgents) 
@@ -677,13 +680,33 @@ import teleABM.SoybeanAgent;
 	 
 	  System.out.println("sta: "+internationalTradeAgent.getSendingTotalSoyProduction());
 	//  System.out.println( "rta: "+internationalTradeAgent.getReceivingTotalSoyProduction());
+	
+	  if(receivingSystem&&!sendingSystem)
+		  TeleABMBuilder.internationalTradeMode=false;
+	  if(!receivingSystem&&sendingSystem)
+		  TeleABMBuilder.internationalTradeMode = false;
 	  
 	  if(receivingSystem && sendingSystem)
 	  {
 		  TeleABMBuilder.internationalTradeMode = true;
-	      tariff = governmentAgent.decideTariff();
-	      tariff=false;
+	  //    tariff = governmentAgent.decideTariff();
+	 //     tariff=true;
 	      //
+		  if(tariffScenario.equals("25%Tariff") )
+		   { if(tick<6) 
+			   tariff =false;
+		     else
+			  tariff = true;
+		   }
+		  else if(tariffScenario.equals("DynamicTariff")) 
+		  {	  
+	        if(receivingSoyProduction<1.3E8)
+	    	  tariff=governmentAgent.decideTariff();
+	        else
+	    	  tariff = false;
+		  } else 
+			  tariff = false;
+	    
 		  internationalTradeAgent.priceSetting(receivingTraderAgents, sendingTraderAgents,tariff);
 		
 	  }
@@ -695,9 +718,9 @@ import teleABM.SoybeanAgent;
 	  System.out.println("test receiving soy production "+receivingSoyProduction);
 		 
 		  if (receivingSoyProduction<2.0E8)
-		      soySubsidy = 400;
+		      soySubsidy = 4000;
 		  else 
-			  soySubsidy = 100;
+			  soySubsidy = 0;
 		  
 		  for ( ReceivingSoybeanAgent h:receivingSoybeanAgents) 
 		    { 
@@ -728,12 +751,12 @@ import teleABM.SoybeanAgent;
 			
 			if (staticPrice >= 0) {
 	
-		//		 h.setSendingStaticCommodityPrices(LandUse.SINGLESOY,staticPrice);
-				 h.setSendingStaticCommodityPrices(LandUse.SOY, staticPrice);
+				 h.setSendingStaticCommodityPrices(LandUse.SINGLESOY,staticPrice);
+		//		 h.setSendingStaticCommodityPrices(LandUse.SOY, staticPrice);
 	
 			} else {
 		//		priceLists.put(LandUse.SINGLESOY, new FileInputStream("auxdata/prices/soySinopPrice.txt"));
-				priceLists.put(LandUse.SOY, new FileInputStream("./data/auxdata/prices/soySinopPrice.txt"));
+				priceLists.put(LandUse.SINGLESOY, new FileInputStream("./data/prices/soySinopPrice.txt"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyScenarioSinopPrice"));
 			//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
 			}
@@ -750,7 +773,7 @@ import teleABM.SoybeanAgent;
 				
 			} else {
 			//	priceLists.put(LandUse.DOUBLESOY, new FileInputStream("auxdata/prices/cornSinopPrice.txt"));
-				priceLists.put(LandUse.CORN, new FileInputStream("./data/auxdata/prices/cornSinopPrice.txt"));
+				priceLists.put(LandUse.CORN, new FileInputStream("./data/prices/cornSinopPrice.txt"));
 				
 			}
 		} catch (FileNotFoundException e1) {
@@ -764,7 +787,7 @@ import teleABM.SoybeanAgent;
 		//		h.setSendingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
 				h.setSendingStaticCommodityPrices(LandUse.OTHERCROPS, staticPrice);
 			} else {
-				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("./data/auxdata/prices/other.prices.txt"));
+				priceLists.put(LandUse.OTHERCROPS, new FileInputStream("./data/prices/other.prices.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -776,7 +799,7 @@ import teleABM.SoybeanAgent;
 				 h.setSendingStaticCommodityPrices(LandUse.COTTON,staticPrice);
 			}
 		 else {
-			priceLists.put(LandUse.COTTON, new FileInputStream("./data/auxdata/prices/cottonSinopPrice.txt"));
+			priceLists.put(LandUse.COTTON, new FileInputStream("./data/prices/cottonSinopPrice.txt"));
 		 }
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -955,4 +978,3 @@ import teleABM.SoybeanAgent;
   
   
 	}
-

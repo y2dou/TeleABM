@@ -70,6 +70,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		GridValueLayer currentOrganic;
 		GridValueLayer maxOrganic;
 		GridValueLayer elevation;
+		GridValueLayer elevationSending;
 		GridValueLayer landHolderField;
 		GridValueLayer tempField;
 		GridValueLayer precipitationField;
@@ -83,7 +84,10 @@ public class OrganicSpace extends DefaultContext<Object> {
 		GridValueLayer dsCount;
 		GridValueLayer cCount;
 		GridValueLayer scCount;
-	
+		
+		GridValueLayer disToUrban;
+		GridValueLayer disToRoad;
+	    GridValueLayer Slope;
 		
 		GridValueLayer sSuitability;   //prob for soy
 		GridValueLayer cSuitability;   //prob for corn
@@ -142,13 +146,6 @@ public class OrganicSpace extends DefaultContext<Object> {
 	    
 		}
 		
-		
-		
-	/*	Grid<Object> grid = GridFactoryFinder.createGridFactory(null)
-		.createGrid("Grid", this, new GridBuilderParameters<Object>(
-				new WrapAroundBorders(), 
-				new RandomGridAdder<Object>(), false, xdim, ydim));*/
-
 		
 //add current organic layer
 	
@@ -235,32 +232,41 @@ public class OrganicSpace extends DefaultContext<Object> {
 		    this.addValueLayer(elevation);
 			System.out.println("receiving: elevation");
 		    }
-		else {
-			 elevation = new GridValueLayer("ElevationSending",true,
+		else if(this.getTypeID()=="organicSpaceSending"){
+			stream = null;
+			Range<Double> elevationsending = new Range<Double>(0d, 0d);
+			try {
+				
+				elevationSending = new GridValueLayer("ElevationSending", true, 
+						         new WrapAroundBorders(), xdim, ydim);
+				this.addValueLayer(elevationSending);
+				stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/elevation.asc"));
+				elevationSending = loadFieldFromStream(this, stream, "ElevationSending", elevationsending);
+			}
+			 catch (IOException e) {
+				e.printStackTrace();
+			//	elevation = createValueLayerFromRandom(this, elevation);
+				elevationSending = new GridValueLayer("ElevationSending", true, 
+				         new WrapAroundBorders(), xdim, ydim);
+				createValueLayerFromRandom(this, elevationSending);
+			} finally {
+				try {
+					if (stream != null) 
+						stream.close();
+				} catch (IOException e) {}
+			}
+			
+			this.addValueLayer(elevationSending);
+			/* elevation = new GridValueLayer("ElevationSending",true,
 						new WrapAroundBorders(), xdim, ydim);
 			    this.addValueLayer(elevation);
-				    createValueLayerFromRandom(this, elevation); 
+				    createValueLayerFromRandom(this, elevation); */
 				    System.out.println("sending: elevation");
 		}
 				
 	//	this.addValueLayer(elevation);
 		//finish reading ascii file here
 
-		
-
-//iterate land cells
-		for (int i = 0 ;i < xdim; i++){
-			for (int j = 0; j<ydim; j++){
-				if (elevation.get(i,j) >= 0){
-			//	new LandCell(this, grid, i, j, elevation.get(i,j), currentOrganic.get(i,j));
-				
-		//		this.add(LandCell);
-			
-			} else {
-		//		new WaterCell(context, landscapeGrid, i, j, elevation);
-			}
-			}
-		}
 		
 //create Land holder value layer to the system		
 		if(this.getTypeID()=="organicSpaceReceiving")
@@ -396,37 +402,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 		
 		this.addValueLayer(dsCount);
 		}
-		
-		/*stream = null;
-		
-		if(this.getTypeID() == "organicSpaceReceiving")
-		{
-			try {
-				
-				dsCount = new GridValueLayer("soy corn count", true, 
-						         new WrapAroundBorders(), xdim, ydim);
-				this.addValueLayer(dsCount);
-				//stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_sc.txt"));
-				//above is not 250m count
-				stream = new BufferedInputStream(new FileInputStream("misc/gn_ag_05.asc"));
-				
-				dsCount = loadFieldFromStream(this, stream, "soy corn count", dscount);
-			}
-			 catch (IOException e) {
-				e.printStackTrace();
-			//	elevation = createValueLayerFromRandom(this, elevation);
-				dsCount = new GridValueLayer("soy corn count", true, 
-				         new WrapAroundBorders(), xdim, ydim);
-				createValueLayerFromRandom(this, dsCount);
-			} finally {
-				try {
-					if (stream != null) 
-						stream.close();
-				} catch (IOException e) {}
-			}
-			
-			this.addValueLayer(dsCount);
-			}*/
+	
 		
 //add soy suitability
       
@@ -568,7 +544,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 									         new WrapAroundBorders(), xdim, ydim);
 							this.addValueLayer(scCount);
 							stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/sccount_model.asc"));
-							scCount = loadFieldFromStream(this, stream, "soy cotton count", ccount);
+							scCount = loadFieldFromStream(this, stream, "soy cotton count", sccount);
 						}
 						 catch (IOException e) {
 							e.printStackTrace();
@@ -585,27 +561,25 @@ public class OrganicSpace extends DefaultContext<Object> {
 						
 					this.addValueLayer(scCount);
 						}
-//add rice count layer
-		/*		stream = null;
-				Range<Double> rcount = new Range<Double>(0d, 0d);
-				if (this.getTypeID()=="organicSpaceReceiving")
+//add distance to urban
+				stream = null;
+				Range<Double> distourban = new Range<Double>(0d, 0d);
+				if (this.getTypeID()=="organicSpaceSending")
 				{
 						try {
 						
-							rCount = new GridValueLayer("rice count", true, 
+							disToUrban = new GridValueLayer("Distance to Urban", true, 
 									         new WrapAroundBorders(), xdim, ydim);
-							this.addValueLayer(rCount);
-						//	stream = new BufferedInputStream(new FileInputStream("misc/gannan/gannan_rcount.txt"));
-						//  above is not 250m file
-							stream = new BufferedInputStream(new FileInputStream("misc/gn_ag_05.asc"));
-							rCount = loadFieldFromStream(this, stream, "rice count", rcount);
+							this.addValueLayer(disToUrban);
+							stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/distance_tourban.asc"));
+							disToUrban = loadFieldFromStream(this, stream, "Distance to Urban", distourban);
 						}
 						 catch (IOException e) {
 							e.printStackTrace();
 						//	elevation = createValueLayerFromRandom(this, elevation);
-							rCount = new GridValueLayer("rice count", true, 
+							disToUrban = new GridValueLayer("Distance to Urban", true, 
 							         new WrapAroundBorders(), xdim, ydim);
-							createValueLayerFromRandom(this, rCount);
+							createValueLayerFromRandom(this, disToUrban);
 						} finally {
 							try {
 								if (stream != null) 
@@ -613,9 +587,65 @@ public class OrganicSpace extends DefaultContext<Object> {
 							} catch (IOException e) {}
 						}
 						
-					this.addValueLayer(rCount);
-						}*/
-				
+					this.addValueLayer(disToUrban);
+						}
+//add distance to roads
+				stream = null;
+				Range<Double> distoroad = new Range<Double>(0d, 0d);
+				if (this.getTypeID()=="organicSpaceSending")
+				{
+						try {
+						
+							disToRoad = new GridValueLayer("Distance to Road", true, 
+									         new WrapAroundBorders(), xdim, ydim);
+							this.addValueLayer(disToRoad);
+							stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/distance_toroads.asc"));
+							disToRoad = loadFieldFromStream(this, stream, "Distance to Road", distoroad);
+						}
+						 catch (IOException e) {
+							e.printStackTrace();
+						//	elevation = createValueLayerFromRandom(this, elevation);
+							disToRoad = new GridValueLayer("Distance to Road", true, 
+							         new WrapAroundBorders(), xdim, ydim);
+							createValueLayerFromRandom(this, disToRoad);
+						} finally {
+							try {
+								if (stream != null) 
+									stream.close();
+							} catch (IOException e) {}
+						}
+						
+					this.addValueLayer(disToRoad);
+						}	
+
+//add slope
+				stream = null;
+				Range<Double> slope = new Range<Double>(0d, 0d);
+				if (this.getTypeID()=="organicSpaceSending")
+				{
+						try {
+						
+							Slope = new GridValueLayer("Slope", true, 
+									         new WrapAroundBorders(), xdim, ydim);
+							this.addValueLayer(Slope);
+							stream = new BufferedInputStream(new FileInputStream("./data/sinop/suitability/slope.asc"));
+							Slope = loadFieldFromStream(this, stream, "Slope", slope);
+						}
+						 catch (IOException e) {
+							e.printStackTrace();
+						//	elevation = createValueLayerFromRandom(this, elevation);
+							Slope = new GridValueLayer("Slope", true, 
+							         new WrapAroundBorders(), xdim, ydim);
+							createValueLayerFromRandom(this, Slope);
+						} finally {
+							try {
+								if (stream != null) 
+									stream.close();
+							} catch (IOException e) {}
+						}
+						
+					this.addValueLayer(Slope);
+						}
 //add last year land cover
 				
 				stream = null;
@@ -695,42 +725,7 @@ public class OrganicSpace extends DefaultContext<Object> {
 
 
 
-	// The actual implementation of growback rule G, pg 182 (Appendix B).
-//	@ScheduledMethod(start=0,interval=1)
-/*	public void updateOrganic() {
-		int organicAtSpot;
-		int maxOrganicAtSpot;
 
-		GridValueLayer currentOrganic ;
-		GridValueLayer maxOrganic ;
-
-		
-		if(this.getTypeID()=="organicSpaceReceiving"){
-			currentOrganic = (GridValueLayer)getValueLayer("CurrentOrganicReceiving");
-			maxOrganic = (GridValueLayer)getValueLayer("MaxOrganicReceiving");
-		} else
-		{
-			currentOrganic = (GridValueLayer)getValueLayer("CurrentOrganicSending");
-			maxOrganic = (GridValueLayer)getValueLayer("MaxOrganicSending");
-		}
-		for (int i = 0; i < xdim; i++) {
-			for (int j = 0; j < ydim; j++) {
-				organicAtSpot = (int)currentOrganic.get(i,j);
-				maxOrganicAtSpot = (int)maxOrganic.get(i,j);
-
-				if (organicGrowRate == -1) 
-					currentOrganic.set(maxOrganicAtSpot,i,j);
-
-				else 
-					if (organicAtSpot != maxOrganicAtSpot) 
-						if (organicAtSpot + organicGrowRate <= maxOrganicAtSpot) 
-							currentOrganic.set(organicAtSpot + organicGrowRate, i, j);
-
-						else 
-							currentOrganic.set(maxOrganicAtSpot, i, j);         
-			}
-		}
-	}*/
 
 	// takes all the sugar at this coordinate, leaving no sugar.
 	public int takeOrganicAt(int x, int y) {
@@ -820,6 +815,12 @@ public class OrganicSpace extends DefaultContext<Object> {
 		return (int)ssCount.get(x,y);
 	}
 	
+	public double getSlopeAt(int x, int y){
+		GridValueLayer Slope;
+		Slope = (GridValueLayer)getValueLayer("Slope");
+		return (double) Slope.get(x,y);
+	}
+	
 	public int getDSCountAt(int x, int y){
 		GridValueLayer dsCount;
 		dsCount = (GridValueLayer)getValueLayer("double soy count");
@@ -848,6 +849,20 @@ public class OrganicSpace extends DefaultContext<Object> {
 		dsCount = (GridValueLayer) getValueLayer("soy corn count");
 		
 		return (int) dsCount.get(x,y);
+	}
+	
+	public double getDisToUrbanAt(int x, int y){
+		//extract distance to urban value
+		GridValueLayer disToUrban;
+		disToUrban =(GridValueLayer) getValueLayer("Distance to Urban");
+		return (double) disToUrban.get(x,y);
+	}
+	
+	public double getDisToRoadAt(int x, int y){
+		//extract distance to urban value
+		GridValueLayer disToRoad;
+		disToRoad =(GridValueLayer) getValueLayer("Distance to Road");
+		return (double) disToRoad.get(x,y);
 	}
 	
 	public double getSoySuitabilityAt(int x, int y) {

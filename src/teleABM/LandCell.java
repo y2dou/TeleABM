@@ -114,6 +114,10 @@ public class LandCell {
 	 
 	 private int rcount;
 	
+	 private double distourban;
+	 private double distoroad;
+	 private double slope;
+	 
 	 List<GridCell<LandCell>> nghCell;
 	 private int suitability;
 	 private boolean changedThisTime = false;
@@ -124,6 +128,9 @@ public class LandCell {
 	 private double cProb;
 	 private double rProb; //these are the probability based purely on bio-physical data
 	
+	
+		
+	  String droughtScenario = (String)p.getValue("droughtScenario");
 
 	public boolean isTaken() {
 		return this.taken;
@@ -294,21 +301,57 @@ public class LandCell {
 		
 				
       if(organicSpace.getTypeID()=="organicSpaceSending") 
-		{
+		{  
+    	  double droughtEffectFirstSeason ;
+	       double droughtEffectSecondSeason ;
+    	 
+    	  if(droughtScenario.equals("Normal")) {
+    		  droughtEffectFirstSeason = 1.0;
+   	        droughtEffectSecondSeason = 1.0;
+    	  }
+    	  else {
+    		  if(RandomHelper.nextDoubleFromTo(0.0, 1.0)<0.5) 
+      	    {
+      	    	droughtEffectFirstSeason =0.80;
+      	    	droughtEffectSecondSeason = 0.30;
+      	    }
+    		  else{
+    			  droughtEffectFirstSeason =1.0;
+        	    	droughtEffectSecondSeason =1.0;
+    		  }
+    	  }
+	       
+    	/*    if(RandomHelper.nextDoubleFromTo(0.0, 1.0)<0.5) 
+    	    {
+    	    	droughtEffectFirstSeason =0.80;
+    	    	droughtEffectSecondSeason = 0.50;
+    	    }*/
+    	    
 	//         cellsize = cellsizeSending;
 			//sending system land cell yield
 			if(this.getLandUse()==LandUse.SINGLESOY) {
 			//	setSoyYield(((3071.2/10000.0)*(cellsize*cellsize))*1.10+RandomHelper.nextDoubleFromTo(-5.0,5.0));
-				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*1.10+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*
+	//					1.10
+						1.05
+	//					1.0
+						+RandomHelper.nextDoubleFromTo(-5.0,5.0));
 				//3071 is the average yield from year book
 				//however, if we use the cells from lucc map, it has to be a bit higher 3214
 			}
 			
 			if(this.getLandUse()==LandUse.DOUBLESOY) {
 		//		setSoyYield(((3071.2/10000.0)*(cellsize*cellsize))*1.0+RandomHelper.nextDoubleFromTo(-5.0,5.0));
-				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*0.95+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*
+						0.95*droughtEffectFirstSeason
+			//			1.0
+				        
+						+RandomHelper.nextDoubleFromTo(-5.0,5.0));
 				//setCornYield(200.0);
-				setCornYield((4120.1/10000.0)*(cellsize*cellsize)+RandomHelper.nextDoubleFromTo(-10.0,10.0));  
+				setCornYield((4120.1/10000.0)*(cellsize*cellsize)
+						*
+						droughtEffectSecondSeason
+						+RandomHelper.nextDoubleFromTo(-10.0,10.0));  
 				//average of maize as second crop yield from 2003-2016, 
 				//in excel: maize_second_crop.xlsx
 				//4120 is kg/hectare 
@@ -319,8 +362,11 @@ public class LandCell {
 			//in excel: cotton.xlsx
 			if(this.getLandUse()==LandUse.SOYCOTTON){
 			//	setSoyYield(((3071.2/10000.0)*(cellsize*cellsize))*1.0+RandomHelper.nextDoubleFromTo(-5.0,5.0));
-				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*0.95+RandomHelper.nextDoubleFromTo(-5.0,5.0));
-				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*0.85+RandomHelper.nextDoubleFromTo(-8.0,8.0));
+				setSoyYield(((3214.0/10000.0)*(cellsize*cellsize))*
+						0.95*droughtEffectFirstSeason
+				//	1.0
+						+RandomHelper.nextDoubleFromTo(-5.0,5.0));
+				setCottonYield(((3346.2/10000.0)*(cellsize*cellsize))*droughtEffectSecondSeason+RandomHelper.nextDoubleFromTo(-8.0,8.0));
 			}
 			
 		}
@@ -824,7 +870,37 @@ public class LandCell {
 				return rProb;
 			}
 			
+			public void setDisToUrban(double distourban) {
+				this.distourban = distourban;
+			}
+			
+			public void setDisToRoad(double distoroad){
+				this.distoroad = distoroad;
+			}
+			
+			public double getDisToUrban(){
+				return distourban;
+			}
+			
+			public double getDisToRoad(){
+				return distoroad;
+			}
+			
+			public void setElevation(double elevation){
+				this.elevation = elevation;
+			}
+			
+			public double getElevation(){
+				return elevation;
+			}
+			
+			public void setSlope(double slope){
+				this.slope = slope;
+			}
 
+			public double getSlope(){
+				return slope;
+			}
 public void  setNgh(List<GridCell<LandCell>> gridCell){
 //	return null;
 	// OrganicSpace organicSpace = (OrganicSpace) ContextUtils.getContext(this.landHolder);

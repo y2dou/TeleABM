@@ -77,6 +77,7 @@ public abstract class TraderAgent {
 	protected LinkedList<SoybeanAgent> purchasingfromSoybeanAgents = new LinkedList<SoybeanAgent>();
 //	protected LinkedList<SoybeanAgent> purchasingfromSoybeanAgentsTEST = new LinkedList<SoybeanAgent>();
 	protected double internationalTradeSoyPrice = 0;    
+	protected double internationalTradeBrazilSoyPrice = 0;
 	
 	protected List<Double> soyPrices = new LinkedList<Double>();
 	protected List<Double> cornPrices = new LinkedList<Double>();
@@ -130,42 +131,7 @@ public abstract class TraderAgent {
 	//		setCommodityPrices();
 			//commodity price is set at the teleABMBuilder
 		}
-	//	int rand = RandomHelper.nextIntFromTo(1, 9);
-	/*	int rand = 9;
-		//this is to test the price difference; 
-		if (rand==1) {
-			setCommodityType(LandUse.SOY);
-		} else if(rand==2) {
-			setCommodityType(LandUse.CORN);
-		} else if (rand==3){
-		setCommodityType(LandUse.RICE);
-		} else if (rand==4){
-			setCommodityType(LandUse.OTHERCROPS);
-		} else if (rand==5){
-		  setCommodityType(LandUse.SOY);
-		  setCommodityType(LandUse.CORN);
-		} else if (rand==6){
-			setCommodityType(LandUse.SOY);
-			setCommodityType(LandUse.RICE);			
-		} else if(rand==7){
-			setCommodityType(LandUse.CORN);
-			setCommodityType(LandUse.RICE);
-		}  else if(rand==8) {
-			setCommodityType(LandUse.SOY);
-			setCommodityType(LandUse.OTHERCROPS);
-		} else {
-			setCommodityType(LandUse.SOY);
-			setCommodityType(LandUse.CORN);
-			setCommodityType(LandUse.RICE);
-		}*/
-		//overwrite
-	//	setCommodityType(LandUse.RICE);
-		
-	
-		
-	
-//		System.out.println("trader agent initiliaze price");
-	//	if(TeleABMBuilder.receivingSystem)
+
 		findSoybeanAgent(organicSpace);
 //		System.out.println("ok size "+this.getID()+" "+this.purchasingfromSoybeanAgents.size());
 	//	if(TeleABMBuilder.sendingSystem)
@@ -315,58 +281,7 @@ public abstract class TraderAgent {
 				      }
 		 }
 		 
-		 
-		 
-		 
-//		 System.out.println("purchase size "+purchasingfromSoybeanAgentsTEST);
-		 
-		 
-		/* int count =0;
-		 for (xLook = x - vision/2; xLook <= x + vision/2; xLook++) {
-			 for (yLook = y-vision/2;yLook<=y+vision/2;yLook++){
-				
-			Iterable neighbors = grid.getObjectsAt(xLook, yLook);
-			
-	//		Iterable<SoybeanAgent> agents = organicSpace.getLandHolder(xLook, yLook);
-			 if (!neighbors.iterator().hasNext())
-			        neighborExists = false;
-                
-			      else for (Object o : neighbors) {
-			    	
-			        if (o instanceof SoybeanAgent)
-			        	{ 
-			        	  if (((SoybeanAgent) o).getTenureCells().size()>0)
-			        	  { 
-			        		  count++;
-			        		  if(!this.purchasingfromSoybeanAgents.contains((SoybeanAgent) o)) {
-			        			  //this if is to control that soybean agents not been added more than once
-			        			  
-			        			  ((SoybeanAgent) o).addTraderAgent(this);
-				        		  this.purchasingfromSoybeanAgents.add((SoybeanAgent) o);
-				        		  System.out.println("not added more than once "+((SoybeanAgent) o).getID());
-			        		//		      +" "+count);
-			        		  }
-			        		
-			      //  		  System.out.println(" more than once "+((SoybeanAgent) o).getID()
-		        //				      +" "+count);	  
-			        	
-			        		
-			        		  //this list is not the final trading partner list,
-			        		  //this list is to record who is in their vision.
-			        		  //to decide which soybean farmer this agent buys from
-			        		  //it is at SoybeanAgent.decidingTradingPartner
-			        		  
-		//	  System.out.println("trader: "+this.getID()+" "+((SoybeanAgent) o).getID());
-			   //    		+" tenure size"+  ((SoybeanAgent) o).getTenureCells().size());
-			        	  }
-			        	}
-			        //  break;
-			      }
-				 neighborExists=false;
-			 }
-			 }
-//		System.out.println("purchasing from soybean agents "+purchasingfromSoybeanAgents);		 	
-*/		
+		
 	}
 
 
@@ -436,11 +351,12 @@ public abstract class TraderAgent {
 			
 			if (staticPrice >= 0) {
 				marketPrices.setPrice(LandUse.SOY, staticPrice);
+				marketPrices.setPrice(LandUse.SINGLESOY, staticPrice);
 		//		System.out.println ("soyPrice =" + staticPrice);
 			} else {
 //				priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyGannanPrice.txt"));
-				//	priceLists.put(LandUse.SOY, new FileInputStream("auxdata/prices/soyPriceTest.txt"));
-					priceLists.put(LandUse.SOY, new FileInputStream("./data/prices/soyGannanPriceCPIAdjusted.txt"));
+					priceLists.put(LandUse.SOY, new FileInputStream("./data/prices/soyPriceTest.txt"));
+					priceLists.put(LandUse.SINGLESOY, new FileInputStream("./data/prices/soySinopPrice.txt"));
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -540,18 +456,23 @@ public abstract class TraderAgent {
     	
     	if(TeleABMBuilder.internationalTradeMode)
 		{
-		 if(landuse==LandUse.SOY||landuse==LandUse.SINGLESOY){
+		 if(landuse==LandUse.SOY)
+		 {
 	//		 tempPrice=marketPrices.getPrice(landuse)+
 	//    			 RandomHelper.nextDoubleFromTo(-0.01, 0.05);
 	//	     System.out.println(tick+": land use "+landuse+" price "+tempPrice);
 			 tempPrice = getInternationalTradeSoyPrice();
-		 }
-		} else  if(commodityType.contains(landuse)) {
+		 } 
+		 if(landuse==LandUse.SINGLESOY)
+				tempPrice = getInternationalTradeBrazilSoyPrice();
+		} 
+		
+		else if(commodityType.contains(landuse)) {
  //   		System.out.println("commodity type "+commodityType.contains(landuse));
     	 if(prices.containsKey(landuse))  
     			 {
     	     
-    		 tempPrice=prices.get(landuse).get(tick);
+    	       	 tempPrice=prices.get(landuse).get(tick);
     		
     			 } 
     	 else 
@@ -578,6 +499,9 @@ public abstract class TraderAgent {
 		return internationalTradeSoyPrice;
 	}
     
+	public double getInternationalTradeBrazilSoyPrice(){
+		return internationalTradeBrazilSoyPrice;
+	}
 
     
 
@@ -646,6 +570,9 @@ public abstract class TraderAgent {
     	internationalTradeSoyPrice = cprice;
     }
 	
+    public void setInternationalTradeBrazilSoyPrice(double bprice){
+    	internationalTradeBrazilSoyPrice = bprice;
+    }
 	
 
 	public void setSendingStaticCommodityPrices(LandUse landuse, double tempPrice){

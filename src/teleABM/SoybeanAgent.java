@@ -96,16 +96,16 @@ public abstract class SoybeanAgent {
 	   //if true, they use less fertilizer
 	   //if false, they use as much as possible
 
-	protected double fertilizerUnitCost; //price of fertilizer 
+	protected double fertilizerUnitCost=0; //price of fertilizer 
 	
-	protected double fuelUnitCost;  //unit price for diesel,
+	protected double fuelUnitCost=0;  //unit price for diesel,
 	
-	protected double riceProduction;
-	protected double soyProduction;	
-	protected double cornProduction;
-	protected double otherProduction;
-	protected double cottonProduction;
-	protected double soyTotalProduction;
+	protected double riceProduction=0;
+	protected double soyProduction=0;	
+	protected double cornProduction=0;
+	protected double otherProduction=0;
+	protected double cottonProduction=0;
+	protected double soyTotalProduction=0;
 	
 
 	protected boolean grownRice = false;
@@ -128,7 +128,7 @@ public abstract class SoybeanAgent {
     protected int riceCellsCount;
     protected int otherCellsCount;*/
 	//   protected boolean isDead;	
-	   protected double credit;
+	   protected double credit=0;
 	//	int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 	//	double tick = RunState.getInstance().getScheduleRegistry().getModelSchedule().getTickCount();
 	//	double tick
@@ -152,11 +152,13 @@ public abstract class SoybeanAgent {
 		
 		protected List<LandCell> tenureCells = new LinkedList<LandCell>();
 		protected List<LandCell> agriculturalCells = new LinkedList<LandCell>();
+		
 		protected  FastTable<LandCell> soyCells = new FastTable<LandCell>();
 		protected  FastTable<LandCell> cornCells = new FastTable<LandCell>();
 		protected FastTable<LandCell> riceCells = new FastTable<LandCell>();
 		protected  FastTable<LandCell> otherCells = new FastTable<LandCell>();
 		
+		protected FastTable<LandCell> singleSoyCells = new FastTable<LandCell>();
 		protected FastTable<LandCell> soyMaizeCells = new FastTable<LandCell>();
 		protected FastTable<LandCell> soyCottonCells = new FastTable<LandCell>();
 		protected FastTable<LandCell> cottonCells = new FastTable<LandCell>();
@@ -166,41 +168,41 @@ public abstract class SoybeanAgent {
 		 
 		  //to place agents at best location
 		
-		protected double soyPerHaYield;
-		protected double cornPerHaYield;
-		protected double ricePerHaYield;
-		protected double cottonPerHaYield;
+		protected double soyPerHaYield=0;
+		protected double cornPerHaYield=0;
+		protected double ricePerHaYield=0;
+		protected double cottonPerHaYield=0;
 		
-		protected double otherPerHaYield;
+		protected double otherPerHaYield=0;
 		
-		protected double soyPerHaFertilizerInput;
-		protected double cornPerHaFertilizerInput;
-		protected double ricePerHaFertilizerInput;
-		protected double cottonPerHaFertilizerInput;
-		protected double soyMaizePerHaFertilizerInput;
-		protected double soyCottonPerHaFertilizerInput;
-		protected double otherPerHaFertilizerInput;
+		protected double soyPerHaFertilizerInput=0;
+		protected double cornPerHaFertilizerInput=0;
+		protected double ricePerHaFertilizerInput=0;
+		protected double cottonPerHaFertilizerInput=0;
+		protected double soyMaizePerHaFertilizerInput=0;
+		protected double soyCottonPerHaFertilizerInput=0;
+		protected double otherPerHaFertilizerInput=0;
 		
-		protected double soyPerHaFuelInput;		
-		protected double cornPerHaFuelInput;
-		protected double ricePerHaFuelInput;
-		protected double cottonPerHaFuelInput;
+		protected double soyPerHaFuelInput=0;		
+		protected double cornPerHaFuelInput=0;
+		protected double ricePerHaFuelInput=0;
+		protected double cottonPerHaFuelInput=0;
 		
-		protected double otherPerHaFuelInput;
+		protected double otherPerHaFuelInput=0;
 		//above fuel unit cost are all from direct fossil fuel energy cost (in tab energy in Equations.xlsx) 
 		//
 		
-		protected double lastYearSoyPrice;
-		protected double lastYearCornPrice;
-		protected double lastYearRicePrice;
-		protected double lastYearCottonPrice;
-		protected double lastYearOtherPrice;
+		protected double lastYearSoyPrice=0;
+		protected double lastYearCornPrice=0;
+		protected double lastYearRicePrice=0;
+		protected double lastYearCottonPrice=0;
+		protected double lastYearOtherPrice=0;
 		
-		protected double lastYearSoyPerHaProfit;
-		protected double lastYearCornPerHaProfit;
-		protected double lastYearRicePerHaProfit;
-		protected double lastYearCottonPerHaProfit;
-		protected double lastYearOtherPerHaProfit;
+		protected double lastYearSoyPerHaProfit=0;
+		protected double lastYearCornPerHaProfit=0;
+		protected double lastYearRicePerHaProfit=0;
+		protected double lastYearCottonPerHaProfit=0;
+		protected double lastYearOtherPerHaProfit=0;
 		 int soybeanLowestYears=0;
 		
 		protected List<Double> soyPrices = new LinkedList<Double>();
@@ -232,6 +234,8 @@ public abstract class SoybeanAgent {
 		
 		public void resetLandCells(){
 		//	System.out.println("reset success---"+this.cornCells.size());
+			this.singleSoyCells.clear();
+			this.soyCottonCells.clear();
 			this.cornCells.clear();
 			this.soyCells.clear();
 			this.riceCells.clear();
@@ -259,7 +263,7 @@ public abstract class SoybeanAgent {
 			    setCommodityType(LandUse.SOY);
 				setCommodityType(LandUse.CORN);
 				setCommodityType(LandUse.RICE);
-			 //   resetLandCells();
+			   // resetLandCells();
 	//			setReceivingCommodityPrices();
 			}
 			
@@ -275,7 +279,8 @@ public abstract class SoybeanAgent {
 		//		setCommodityType(LandUse.DOUBLESOY);
 		//		setCommodityType(LandUse.COTTON);
 				
-			    setCommodityType(LandUse.SOY);
+			    setCommodityType(LandUse.SINGLESOY);
+			    //setCommodityType(LandUse.SOY);
 			    setCommodityType(LandUse.CORN);
 			    setCommodityType(LandUse.COTTON);
 		//		setSendingCommodityPrices();
@@ -319,9 +324,9 @@ public abstract class SoybeanAgent {
 		}
 		public void setSendingDynamicCommodityPrices(LandUse landuse, ArrayList cropprices){
 			prices.put(landuse, cropprices);
-			 soyPrices.add(0, 0.501+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-		       cornPrices.add(0, 0.302+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
-		       cottonPrices.add(0, 1.93+RandomHelper.nextDoubleFromTo(-0.01, 0.05));
+			 soyPrices.add(0, 0.501+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
+		       cornPrices.add(0, 0.302+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
+		       cottonPrices.add(0, 1.93+RandomHelper.nextDoubleFromTo(-0.01, 0.01));
 		}
 		
 		public void setReceivingStaticCommodityPrices(LandUse landuse, double tempPrice){
@@ -347,17 +352,19 @@ public abstract class SoybeanAgent {
 	    	int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 	    	
 	    //	System.out.println("tick at trader "+tick);
-	    	if(TeleABMBuilder.internationalTradeMode)
+	   /* 	if(TeleABMBuilder.internationalTradeMode)
 	    		{
-	    		 if(landuse==LandUse.SOY||landuse==LandUse.SINGLESOY){
+	    		 if(landuse==LandUse.SOY){
 	    	//		 tempPrice=marketPrices.getPrice(landuse)+
 			//    			 RandomHelper.nextDoubleFromTo(-0.01, 0.05);
 	    	//	     System.out.println(tick+": land use "+landuse+" price "+tempPrice);
 	    			 tempPrice = getInternationalTradeSoyPrice();
+	    			 if(landuse==LandUse.SINGLESOY)
+	    				 tempPrice = getInternationalTradeBrazilSoyPrice();
 	    		 }
 	    		
 	    		
-	    	} else  if(commodityType.contains(landuse)) {
+	    	} else */ if(commodityType.contains(landuse)) {
 	   // 		System.out.println("commodity type "+commodityType.contains(landuse));
 	    		
 	    	 if(prices.containsKey(landuse))  
@@ -391,7 +398,7 @@ public abstract class SoybeanAgent {
 	    
 	    
 	    
-	//bigger the priority number, more ahead.
+	//bigger the priority number, more ahead. duration means this can only excute 10 steps
 	@ScheduledMethod(start = 1, interval = 1, priority = 2)
 	  public void step(){
 	// this is to calculate last year's profit and make this year's decision
@@ -926,21 +933,45 @@ public abstract void updateProfit();
 		   yboundary = xboundary*ydim/xdim;
 		   
 		 
-		Grid<Object> grid;
+	   /* Grid<Object> grid=(Grid) organicSpace.getProjection("Grid");
 	
-
+	    GridPoint pointReceiving;
+	    GridPoint pointSending;
 		if(organicSpace.getId()=="organicSpaceReceiving") {
-			grid = (Grid) organicSpace.getProjection("Grid");
+		//	gridReceiving = (Grid) organicSpace.getProjection("Grid");
+			grid=(Grid) organicSpace.getProjection("Grid");
+			pointReceiving = grid.getLocation(this);
+			grid.moveTo(this, corner.x, corner.y);
 	//		System.out.println("organic space receiving "+grid.getName());
 			
-		} else {
-			grid = (Grid) organicSpace.getProjection("gridSending");
+		} else if(organicSpace.getId()=="organicSpaceSending") {
+		//	gridSending = (Grid) organicSpace.getProjection("gridSending");
+		    grid=(Grid) organicSpace.getProjection("gridSending");
+			pointSending = grid.getLocation(this);
+			grid.moveTo(this, corner.x, corner.y);
 	//		System.out.println("organic space sending"+grid.getName());
-		}
+		} else{
+			
+		}*/
+		   Grid<Object> grid;
+			
+
+			if(organicSpace.getId()=="organicSpaceReceiving") {
+				grid = (Grid) organicSpace.getProjection("Grid");
+		//		System.out.println("organic space receiving "+grid.getName());
+				
+			} else {
+				grid = (Grid) organicSpace.getProjection("gridSending");
+		//		System.out.println("organic space sending"+grid.getName());
+			}
+			
+		//	System.out.println(grid.getName());
+			    GridPoint point = grid.getLocation(this);
+			    grid.moveTo(this, corner.x, corner.y);
 		
 	//	System.out.println(grid.getName());
-		    GridPoint point = grid.getLocation(this);
-		    grid.moveTo(this, corner.x, corner.y);
+	//	    GridPoint point = grid.getLocation(this);
+	//	    grid.moveTo(this, corner.x, corner.y);
 		    
 		   
 		    
@@ -961,8 +992,8 @@ if(organicSpace.getTypeID()=="organicSpaceReceiving"){
 				 Point p=new Point(i,j);
 				 GridPoint pt = grid.getLocation(this);		
 				 //    System.out.println(pt.getX()+" "+pt.getY());	     
-				     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(grid, pt, LandCell.class,1,1);     
-				     List<GridCell<LandCell>> gridCells = nghCreator.getNeighborhood(true); 
+				     GridCellNgh<LandCell> nghCreatorReceiving = new GridCellNgh<LandCell>(grid, pt, LandCell.class,1,1);     
+				     List<GridCell<LandCell>> gridCells = nghCreatorReceiving.getNeighborhood(true); 
 				     
 				 LandCell c = new LandCell(organicSpace,grid,p.x,p.y,
 	 					 organicSpace.getElevationAt(p.x, p.y),
@@ -1138,20 +1169,6 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 							 
 							 c.setCellSize(cellsizeSending);
 							 
-							
-							 
-					//		 GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(grid, pp, LandCell.class, 1 ,1);
-							 
-				//			 VNQuery<GridPoint> queryPP = new VNQuery<GridPoint>(grid, pp,3, 3);
-							 
-							 
-							
-					//		 List<repast.simphony.query.space.grid.GridCell<LandCell>> ngh = nghCreator.getNeighborhood(true);
-							 
-					//		 for (int k=0;k<ngh.size();k++) {
-					//			 System.out.println(ngh.iterator().next().getClass());
-					//		 }
-							 
 							 //suitability
 							 c.setSSCount(organicSpace.getSSCountAt(i, j));
 							 //single soy
@@ -1161,7 +1178,12 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 							 //cotton
 							 c.setSCCount(organicSpace.getSCCountAt(i, j));
 							 //soy cotton
+							 c.setDisToUrban(organicSpace.getDisToUrbanAt(i, j));
 							 
+							 c.setDisToRoad(organicSpace.getDisToRoadAt(i, j));
+							 c.setElevation(organicSpace.getElevationAt(i, j));
+							 c.setSlope(organicSpace.getSlopeAt(i, j));
+							
 							 c.setSuitability(c.getSSCount()+c.getDSCount()+c.getCCount()+c.getSCCount());
 							 
 							 c.setRecommendedSoyPerHaFertilizerUse(300);
@@ -1211,21 +1233,6 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 							 if(organicSpace.getTwoYearsAgoLandUseAt(i, j)==9)
 								 c.setLastLandUse(LandUse.SOYCOTTON);
 							 
-							 
-					
-						/*	 while(query.query().iterator().hasNext()){
-								 LandCell x = query.query().iterator().next();
-								 System.out.println("big? "+x.cellsize);
-								 query.query().iterator().remove();
-							 }*/
-						//	 Iterator nghIterator = query.query(LandCell.class).iterator();
-						
-						//	 for(LandCell x: query.query().iterator()){
-						//		 System.out.println(query.query().iterator());
-						//		 System.out.println(" ");
-						//	 }
-						//	 System.out.println("created ngh "+query.query(iter));
-							 
 					 if(c.isTaken()==true || organicSpace.getLandHolder(i, j)>0){
 						 
 					 }
@@ -1239,11 +1246,6 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 							 organicSpace.setLandHolder((double) this.getID(), c.getXlocation(), c.getYlocation());
 							 this.tenureCells.add(c);							 
 							 c.setFertilizerInput(LandUse.DOUBLESOY);
-							 
-							
-							 
-							 
-					//		System.out.println("soy");
 					 }
 						 
 						 
@@ -1329,37 +1331,19 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 					//	 Grid<LandCell> gridCells = (Grid) organicSpace.getProjection("gridSending");
 					
 						 Grid gridTest = (Grid) organicSpace.getProjection("gridSending");
-				//		 System.out.println(this.tenureCells.size());
+				
 					    GridPoint pt = gridTest.getLocation(this);
-					
-					 //    System.out.println(pt.getX()+" "+pt.getY());
 					     
+				//	     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(gridTest, pt, LandCell.class,3,3);
 					     GridCellNgh<LandCell> nghCreator = new GridCellNgh<LandCell>(gridTest, pt, LandCell.class,1,1);
-					     
 					     List<GridCell<LandCell>> gridCells = nghCreator.getNeighborhood(true); 
-					//     SimUtilities.shuffle(gridCells, RandomHelper.getUniform());
 					 
-					     this.tenureCells.get(k).setNgh(gridCells);
-					  
-					     
-					/*     System.out.println("ngh "+gridCells.size()+" "+gridCells.get(0).getPoint());
-					     
-					     
-					     for(GridCell<LandCell> cell:gridCells) {
-							    	
-					    	System.out.println(organicSpace.getLandUseAt(cell.getPoint().getX(), cell.getPoint().getY()));
-					    		//	 .iterator().next().getSSCount());
-					     }
-					   */
-					  
-					   
-	                      
-				//		 VNQuery<LandCell> query = new VNQuery<LandCell>(gridTest,this.tenureCells.get(k), 3,3);
-						
-						
+					     this.tenureCells.get(k).setNgh(gridCells);					
 						 
 				}
-					}
+					
+
+}
 		
 		
 			
@@ -1507,7 +1491,9 @@ if (organicSpace.getTypeID()=="organicSpaceSending"){
 			public double getSoyPerHaYield() {
 				return soyPerHaYield;
 			}
-
+            public double getSoyPrice() {
+            	return soySoldToTraderAgent.getCommodityPrice(LandUse.SOY);
+            }
 
 			public void setSoyPerHaYield(double soyPerHaYield) {
 				this.soyPerHaYield = soyPerHaYield;

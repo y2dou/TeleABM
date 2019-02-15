@@ -37,6 +37,10 @@
 			<projection id="double soy count" type = "value layer"/>
 			<projection id="cotton count" type = "value layer"/>
 			<projection id="soy cotton count" type = "value layer"/> 
+			
+			<projection id="Distance to Urban" type = "value layer"/>
+			<projection id="Distance to Road" type = "value layer"/>
+			<projection id="Slope" type = "value layer"/>
 	     	
      </context>
 		

@@ -23,30 +23,30 @@ import repast.simphony.util.SimUtilities;
  */
 public class SendingSoybeanAgent extends SoybeanAgent {
 	
-	protected  FastTable<LandCell> planningSoyCells = new FastTable<LandCell>();
+	protected  FastTable<LandCell> planningSingleSoyCells = new FastTable<LandCell>();
 	protected  FastTable<LandCell> planningSoyMaizeCells = new FastTable<LandCell>();
 	protected FastTable<LandCell> planningCottonCells = new FastTable<LandCell>();
 	protected  FastTable<LandCell> planningSoyCottonCells = new FastTable<LandCell>();	
 	//these are to record all planning cells
 	
-	protected double soyMProduction;	
+	protected double soyMProduction=0;	
 	//this is to record the soy production when it's followed by corn
-	protected double soyCProduction;
+	protected double soyCProduction=0;
 	//this is to record the soy production when it's followed by cotton
-	protected double cottonSProduction;
+	protected double cottonSProduction=0;
 	
-	protected double soyMPerHaYield;
-	protected double soyCPerHaYield;
-	protected double cottonSPerHaYield;
+	protected double soyMPerHaYield=0;
+	protected double soyCPerHaYield=0;
+	protected double cottonSPerHaYield=0;
 	
-	protected double lastYearSoyCPerHaProfit;
-	protected double lastYearSoyMPerHaProfit;
+	protected double lastYearSoyCPerHaProfit=0;
+	protected double lastYearSoyMPerHaProfit=0;
 //	protected double lastYearCottonSPerHaProfit;
 	
-	protected double lastYearSoyPerHaCost;
-	protected double lastYearSoyMPerHaCost;
-	protected double lastYearSoyCPerHaCost;
-	protected double lastYearCottonPerHaCost;
+	protected double lastYearSoyPerHaCost=0;
+	protected double lastYearSoyMPerHaCost=0;
+	protected double lastYearSoyCPerHaCost=0;
+	protected double lastYearCottonPerHaCost=0;
 	
 	
 	protected boolean proDiversifying = false;
@@ -93,7 +93,33 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		} else this.proDiversifying = false;
 //		System.out.println(random+" this farmer is prof diversifying: "+ proDiversifying);
 		
+	//	this.proDiversifying=true;  //0209, this was not here.
+	/*	planningSingleSoyCells.clear();
+		planningSoyMaizeCells.clear();
+		planningCottonCells.clear();
+		planningSoyCottonCells.clear();
 		
+	//	singleSoyCells.clear();
+	//	soyMaizeCells.clear();
+	//	soyCottonCells.clear();
+	//	cottonCells.clear();
+		
+		 soyMProduction=0;	
+         soyCProduction=0;
+	      cottonSProduction=0;
+		
+	     soyMPerHaYield=0;
+		 soyCPerHaYield=0;
+		 cottonSPerHaYield=0;
+		
+		 lastYearSoyCPerHaProfit=0;
+		lastYearSoyMPerHaProfit=0;
+
+		 lastYearSoyPerHaCost=0;
+	     lastYearSoyMPerHaCost=0;
+		 lastYearSoyCPerHaCost=0;
+		 lastYearCottonPerHaCost=0;
+		*/
 	}
 	
 	public void decidingTradingPartner(){
@@ -113,7 +139,9 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	//	if (grownSoy) {
 			//check who has the highest price
 			for (int i=0; i<this.traderAgents.size();i++) {
-				soyPrice=traderAgents.get(i).getCommodityPrice(LandUse.SOY);
+				
+				soyPrice=traderAgents.get(i).getCommodityPrice(LandUse.SINGLESOY);
+				
 				if (soyPrice>highestPrice) {
 					highestPrice=soyPrice;
 					soySoldToTraderAgentID = i;
@@ -178,7 +206,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
  //       List<Integer> listToChange = new ArrayList<Integer>();
 //		List<Integer> listNotChange = new ArrayList<Integer>();
 		
-		planningSoyCells.clear();
+        planningSingleSoyCells.clear();
         planningSoyMaizeCells.clear();
         planningCottonCells.clear();
         planningSoyCottonCells.clear();
@@ -223,7 +251,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		//	c.setLandUse(highestLandUse);
 		//	organicSpace.setLandUse(landUseNumber, c.getXlocation(), c.getYlocation());
 			if(highestLandUse == LandUse.SINGLESOY)
-				planningSoyCells.add(c);
+				planningSingleSoyCells.add(c);
 			if(highestLandUse == LandUse.DOUBLESOY)
 				planningSoyMaizeCells.add(c);
 			if(highestLandUse == LandUse.COTTON)
@@ -251,7 +279,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 					{
 			//			c.setLandUse(LandUse.SINGLESOY);
 			//			organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
-						planningSoyCells.add(c);
+						planningSingleSoyCells.add(c);
 					} else {
 			//			c.setLandUse(LandUse.DOUBLESOY);
 			//			organicSpace.setLandUse(1, c.getXlocation(), c.getYlocation());
@@ -268,7 +296,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 			 { 
 				LandCell c = this.tenureCells.get(i);
 				c.setLastLandUse(c.getLandUse());
-				 planningSoyCells.add(c);				
+				planningSingleSoyCells.add(c);				
 				
 			 }
 	    	if(highestLandUse == LandUse.DOUBLESOY) 
@@ -314,7 +342,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		   this.cottonProduction = 0;
 		   this.cottonSProduction = 0;
 		   
-		   soyCells.clear();
+		   singleSoyCells.clear();
 		    soyMaizeCells.clear();
 		    cottonCells.clear();
 		    soyCottonCells.clear();
@@ -322,7 +350,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		    
 		    for(LandCell c:this.tenureCells) {
 		    	if(c.getLandUse()==LandUse.SINGLESOY)
-		    		soyCells.add(c);
+		    		singleSoyCells.add(c);
 		    	if(c.getLandUse()==LandUse.DOUBLESOY)
 		    		soyMaizeCells.add(c);
 		    	if(c.getLandUse()==LandUse.COTTON)
@@ -335,7 +363,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		   for(LandCell c: this.tenureCells) 
 		   {  
 			    c.transition();
-			   if( soyCells.contains(c))
+			   if( singleSoyCells.contains(c))
 			    	soyProduction+=c.getSoyYield();
 			     else if (soyMaizeCells.contains(c)){	   
 			    	soyMProduction+=c.getSoyYield();			    			
@@ -351,8 +379,8 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 			    }		    
 		   }
 			
-			   if(soyCells.size() > 0) { 
-			    soyPerHaYield = soyProduction/soyCells.size();
+			   if(singleSoyCells.size() > 0) { 
+			    soyPerHaYield = soyProduction/singleSoyCells.size();
 				soyPerHaYield = soyPerHaYield /(cellsizeSending*cellsizeSending)*10000.0;
 			   }
 			   if(soyMaizeCells.size() > 0){
@@ -400,7 +428,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	 boolean nextToAgricultural = false;
 	 int countChange = 0;	
 	  int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-	  double soyPriceDelta = getPriceDelta(LandUse.SOY);
+	  double soyPriceDelta = getPriceDelta(LandUse.SINGLESOY);
 	  double cornPriceDelta = getPriceDelta(LandUse.CORN);
 	  double cottonPriceDelta = getPriceDelta(LandUse.COTTON);	
 		
@@ -417,7 +445,13 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	   
 	   Collections.sort(this.tenureCells, new SortbyRoll());
 	   Collections.sort(this.agriculturalCells, new SortbyRoll());
-	   
+	   Collections.sort(planningSingleSoyCells, new SortbyRoll());
+  	 
+  /*	 for(int i=(int) (tick/20.0)*planningSoyCells.size();i<planningSoyCells.size();i++) {
+  		 LandCell c = planningSoyCells.get(i);
+  		 planningSoyMaizeCells.add(c);
+  		 planningSoyCells.remove(c);
+  	 }*/
 	
 	    for(LandCell c:this.tenureCells) {
 			     
@@ -432,7 +466,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 				 //           System.out.println("ngh is correct");
 			            	break;
 			        	}
-			         else if(landuseNumber == 3||landuseNumber ==5) 
+			         else if(landuseNumber == 3||landuseNumber ==9) 
 			         {
 			            	nextToAgricultural = true;
 				            break;
@@ -441,8 +475,9 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		
 		          }
 	        	
-		if(!c.isChangedThisTime()) {
-			
+	//	if(!c.isChangedThisTime()) {
+	        	
+	        	 
 		    if(agriculturalCells.contains(c) )
 		     {
 
@@ -450,23 +485,9 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	        	c.setLastLandUse(c.getLandUse());
 	        	//because nonagricultural cells have been updated in logistic regression
 		    	 
-		    	  if(planningSoyCells.contains(c) && capital> lastYearSoyPerHaCost*(cellsize*cellsize)/10000)
-		    	  {    		  
-		    			//	c.setLastLandUse(c.getLandUse());
-		    			c.setLandUse(LandUse.SINGLESOY);
-		    			organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
-		    			  c.setChangedThisTime(true);
-		    			c.setFertilizerInput(LandUse.SINGLESOY);
-		    			c.setFuelInput((soyPerHaFuelInput/10000.0)
-		    							*(cellsizeSending*cellsizeSending));
-		    					//the soy per ha fuel is in initialization function
-		    				  //	c.setWaterRequirement(LandUse.SOY);		
-		    			capital-= (c.getFertilizerInput()*fertilizerUnitCost +
-		    							  c.getFuelInput()*fuelUnitCost)/0.34;
-		    	 
-		          } else
+		    	
 		    	  
-		    	  if(planningSoyMaizeCells.contains(c) && capital > 2* lastYearSoyMPerHaCost*(cellsize*cellsize)/10000)
+		    	  if(planningSoyMaizeCells.contains(c) && (capital/agriculturalCells.size()) > 1.5* lastYearSoyMPerHaCost*(cellsize*cellsize)/10000)
 		    	  {
 		    			c.setLandUse(LandUse.DOUBLESOY);
 		    			organicSpace.setLandUse(1, c.getXlocation(), c.getYlocation());
@@ -478,8 +499,23 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		    			capital-= (c.getFertilizerInput()*fertilizerUnitCost +
 		    					  c.getFuelInput()*fuelUnitCost)/0.36;
 		    	  }
-		    	  
-		    	  else if(planningCottonCells.contains(c) && capital > 2* lastYearCottonPerHaCost*(cellsize*cellsize)/10000)
+		    //	  else if(planningSoyCells.contains(c) && capital> (tick)*lastYearSoyPerHaCost*(cellsize*cellsize)/10000)
+		    		  else if(planningSingleSoyCells.contains(c) && (capital/agriculturalCells.size())> 2.0*lastYearSoyPerHaCost*(cellsize*cellsize)/10000)
+		    	  {    		  
+		    			//	c.setLastLandUse(c.getLandUse());
+		    			c.setLandUse(LandUse.SINGLESOY);
+		    			organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
+		    			c.setChangedThisTime(true);
+		    			c.setFertilizerInput(LandUse.SINGLESOY);
+		    			c.setFuelInput((soyPerHaFuelInput/10000.0)
+		    							*(cellsizeSending*cellsizeSending));
+		    					//the soy per ha fuel is in initialization function
+		    				  //	c.setWaterRequirement(LandUse.SOY);		
+		    			capital-= (c.getFertilizerInput()*fertilizerUnitCost +
+		    							  c.getFuelInput()*fuelUnitCost)/0.34;
+		    	 
+		          } 
+		    	  else if(planningCottonCells.contains(c) && (capital/agriculturalCells.size())> 2.0* lastYearCottonPerHaCost*(cellsize*cellsize)/10000)
 		    	  {
 		    		  c.setLandUse(LandUse.COTTON);
 		  			  organicSpace.setLandUse(3, c.getXlocation(), c.getYlocation());
@@ -493,7 +529,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		  					  c.getFuelInput()*fuelUnitCost)/0.28;
 		    	  }
 		    	  else 
-		    	 if  (planningSoyCottonCells.contains(c) && capital > 3* lastYearSoyCPerHaCost*(cellsize*cellsize)/10000)
+		    	 if  (planningSoyCottonCells.contains(c) && (capital/agriculturalCells.size())> 1.5* lastYearSoyCPerHaCost*(cellsize*cellsize)/10000)
 		    	  {
 		    		  c.setLandUse(LandUse.SOYCOTTON);
 		  		      organicSpace.setLandUse(9, c.getXlocation(), c.getYlocation());
@@ -520,23 +556,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		    		   //has to have getSuitability....
 		    		   //otherwise the property shows up 
 		    	   {   
-		    		   if(planningSoyCells.contains(c) &&  lastYearSoyPerHaProfit> 1.5*lastYearSoyPerHaCost)
-				    	  {    		  
-				    			//	c.setLastLandUse(c.getLandUse());
-				    			c.setLandUse(LandUse.SINGLESOY);
-				    			organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
-				    			  c.setChangedThisTime(true);
-				    			c.setFertilizerInput(LandUse.SINGLESOY);
-				    			c.setFuelInput((soyPerHaFuelInput/10000.0)
-				    							*(cellsizeSending*cellsizeSending));
-				    					//the soy per ha fuel is in initialization function
-				    				  //	c.setWaterRequirement(LandUse.SOY);		
-				    			capital-= (c.getFertilizerInput()*fertilizerUnitCost +
-				    							  c.getFuelInput()*fuelUnitCost)/0.34;
-				    			countChange++;
-				    			agriculturalCells.add(c);
-				    	 
-				          }			    	  
+		    		   
 				    //	  if(planningSoyMaizeCells.contains(c) && capital > lastYearSoyMPerHaCost*(cellsize*cellsize)/10000)
 		    		   if(planningSoyMaizeCells.contains(c) && lastYearSoyMPerHaProfit> 1.5*lastYearSoyMPerHaCost)
 				    	  {
@@ -552,6 +572,42 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 				    			countChange++;
 				    			agriculturalCells.add(c);
 				    	  }
+		    		   
+		    		   if(planningSingleSoyCells.contains(c) )
+		    		   {
+		    			   if( lastYearSoyPerHaProfit> 1.5*lastYearSoyPerHaCost)
+		    			   {    		  
+		    		  
+				    			//	c.setLastLandUse(c.getLandUse());
+				    			c.setLandUse(LandUse.SINGLESOY);
+				    			organicSpace.setLandUse(2, c.getXlocation(), c.getYlocation());
+				    			  c.setChangedThisTime(true);
+				    			c.setFertilizerInput(LandUse.SINGLESOY);
+				    			c.setFuelInput((soyPerHaFuelInput/10000.0)
+				    							*(cellsizeSending*cellsizeSending));
+				    					//the soy per ha fuel is in initialization function
+				    				  //	c.setWaterRequirement(LandUse.SOY);		
+				    			capital-= (c.getFertilizerInput()*fertilizerUnitCost +
+				    							  c.getFuelInput()*fuelUnitCost)/0.34;
+				    			countChange++;
+				    			agriculturalCells.add(c);
+				    	 
+				          }	
+		    			   
+		    			   else {
+		    				   c.setLandUse(LandUse.DOUBLESOY);
+				    			organicSpace.setLandUse(1, c.getXlocation(), c.getYlocation());
+				    			  c.setChangedThisTime(true);
+				    			c.setFertilizerInput(LandUse.DOUBLESOY);
+				    			c.setFuelInput(((soyPerHaFuelInput+cornPerHaFuelInput)/10000.0)
+				    					*(cellsizeSending*cellsizeSending));
+				    		
+				    			capital-= (c.getFertilizerInput()*fertilizerUnitCost +
+				    					  c.getFuelInput()*fuelUnitCost)/0.36;
+				    			countChange++;
+				    			agriculturalCells.add(c);
+		    			   }
+		    	        }
 				    	  
 				    	  if(planningCottonCells.contains(c) && capital > lastYearCottonPerHaCost*(cellsize*cellsize)/10000)
 				    	  {
@@ -588,7 +644,8 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		    	   {
 		    		   if(c.getSuitability()>0) 
 		    		   {
-		    			   if(planningSoyCells.contains(c) && capital > 0)
+		    			   if(planningSingleSoyCells.contains(c) && lastYearSoyPerHaProfit> 1.5*lastYearSoyPerHaCost)
+		    			//   if(planningSoyCells.contains(c) && lastYearSoyPerHaProfit> tick*lastYearSoyPerHaCost)
 					    	  {    		  
 					    			//	c.setLastLandUse(c.getLandUse());
 					    			c.setLandUse(LandUse.SINGLESOY);
@@ -692,11 +749,11 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		    }	
 		
 	
-		}
-	    if(capital < 0) System.out.println("capital of sending "+capital);
+	//	}
+	  //  if(capital < 0) System.out.println("capital of sending "+capital);
 	    }
 	    
-	    soyCells.clear();
+	    singleSoyCells.clear();
 	    soyMaizeCells.clear();
 	    cottonCells.clear();
 	    soyCottonCells.clear();
@@ -704,7 +761,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	    
 	    for(LandCell c:this.tenureCells) {
 	    	if(c.getLandUse()==LandUse.SINGLESOY)
-	    		soyCells.add(c);
+	    		singleSoyCells.add(c);
 	    	if(c.getLandUse()==LandUse.DOUBLESOY)
 	    		soyMaizeCells.add(c);
 	    	if(c.getLandUse()==LandUse.COTTON)
@@ -724,15 +781,15 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		double totalCost = 0;
 		double totalfertilizeruse=0;
 		
-		if(soyCells.size()>0){
-		for (int i=0; i<soyCells.size();i++){
+		if(singleSoyCells.size()>0){
+		for (int i=0; i<singleSoyCells.size();i++){
 			//setFertilizerInput() has already been put at land use decision ();
-			cost+=soyCells.get(i).getFertilizerInput()*fertilizerUnitCost; 
-			cost+=soyCells.get(i).getFuelInput()*fuelUnitCost;
-			totalfertilizeruse+= soyCells.get(i).getFertilizerInput();
+			cost+=singleSoyCells.get(i).getFertilizerInput()*fertilizerUnitCost; 
+			cost+=singleSoyCells.get(i).getFuelInput()*fuelUnitCost;
+			totalfertilizeruse+= singleSoyCells.get(i).getFertilizerInput();
 		//	System.out.println("cell no. "+i+" use fertilizer "+soyCells.get(i).getFertilizerInput());
 		}
-		cost/=soyCells.size();
+		cost/=singleSoyCells.size();
 		cost/=0.34;  
 		//this is to convert the above calculated fertilizer and fuel cost to total cost, 
 		//based on empirical proportion
@@ -741,7 +798,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		cost/=(cellsizeSending*cellsizeSending)/10000.0;
 		setLastYearSoyPerHaCost(cost);
 		totalCost+=cost;
-		soyPerHaFertilizerInput=totalfertilizeruse/soyCells.size();    					
+		soyPerHaFertilizerInput=totalfertilizeruse/singleSoyCells.size();    					
 		soyPerHaFertilizerInput = soyPerHaFertilizerInput/(cellsizeSending*cellsizeSending)*10000.0;    			
 		setSoyPerHaFertilizerInput(soyPerHaFertilizerInput);
 		totalfertilizeruse = 0;
@@ -859,55 +916,57 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		}*/
 	    if(soyProduction >0) {
 	//    	cPrice = this.getCommodityPrice(LandUse.SINGLESOY);
-	    	cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SOY);
+	    	cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SINGLESOY);
+	//    	System.out.println("sending soy price="+cPrice);
 	    	profit+= cPrice*soyProduction;
 	    	lastYearSoyPerHaProfit = soyPerHaYield*cPrice-getSoyPerHaFuelInput()*fuelUnitCost
-	       //          -soyPerHaFertilizerInput*fertilizerUnitCost 
+	                 -soyPerHaFertilizerInput*fertilizerUnitCost 
 	        //         - 121 //seed cost
 	                 ;
 	    } else lastYearSoyPerHaProfit = 0.701*3071; //2010 price and average yield
-	    
+//	    lastYearSoyPerHaProfit = 0.701*3071; 
 	    if (soyMProduction > 0) {
 	    //	cPrice = this.getCommodityPrice(LandUse.SINGLESOY);
-	    	cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SOY);
+	    	cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SINGLESOY);
 	    	profit+=cPrice*soyMProduction;
 	    //	profit+= this.getCommodityPrice(LandUse.CORN)
 	    	csecondPrice = cornSoldToTraderAgent.getCommodityPrice(LandUse.CORN);
+	  //  	System.out.println(cPrice+"  price//"+csecondPrice);
 	    	profit+= csecondPrice
 	    			 *
 	    			cornProduction;
 	    	lastYearSoyMPerHaProfit = soyMPerHaYield*cPrice
-	    			//-getSoyPerHaFuelInput()*fuelUnitCost
-	               //  -soyPerHaFertilizerInput*fertilizerUnitCost 
+	    			-getSoyPerHaFuelInput()*fuelUnitCost
+	                 -soyPerHaFertilizerInput*fertilizerUnitCost 
 	               //  - 121 
 	                 //corn profit
 	                 + cornPerHaYield*csecondPrice - getCornPerHaFuelInput()*fuelUnitCost
-	               //  - cornPerHaFertilizerInput * fertilizerUnitCost
+	                 - cornPerHaFertilizerInput * fertilizerUnitCost
 	               //  - 238.0
 	                 //seed cost
 	                 ;
 	    	
 	    }  else lastYearSoyMPerHaProfit = 0.359*4200+0.701*3071; //2010 price and average yield
-		
+	//    lastYearSoyMPerHaProfit = 0.359*4200+0.701*3071; 
 	    if (soyCProduction > 0) {
-	    	cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SOY);
+	    	cPrice = soySoldToTraderAgent.getCommodityPrice(LandUse.SINGLESOY);
 	    	profit+=cPrice*soyCProduction;
 	    	csecondPrice = cottonSoldToTraderAgent.getCommodityPrice(LandUse.COTTON);
 	    	profit+=csecondPrice*cottonSProduction;
 	    	lastYearSoyCPerHaProfit = soyCPerHaYield*cPrice
-	    			//-getSoyPerHaFuelInput()*fuelUnitCost
-	               //  -soyPerHaFertilizerInput*fertilizerUnitCost 
+	    			-getSoyPerHaFuelInput()*fuelUnitCost
+	                 -soyPerHaFertilizerInput*fertilizerUnitCost 
 	               //  - 121 
 	                 //corn profit
 	                 + cottonSPerHaYield*csecondPrice - getCottonPerHaFuelInput()*fuelUnitCost
-	             //    - cottonPerHaFertilizerInput * fertilizerUnitCost
+	                 - cottonPerHaFertilizerInput * fertilizerUnitCost
 	              //   - 134.25
 	                 //seed cost
 	                 ;
 	    	
 	    }   else lastYearSoyCPerHaProfit = 3.14*3000+0.701*3071; 
 	    
-		
+	//    lastYearSoyCPerHaProfit = 3.14*3000+0.701*3071; 
 		
 	    if(cottonProduction > 0){
 	    	cPrice = cottonSoldToTraderAgent.getCommodityPrice(LandUse.COTTON);
@@ -919,10 +978,12 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	    			;
 	    } else lastYearCottonPerHaProfit = 3.14*3000;
 	    
+	//    lastYearCottonPerHaProfit = 3.14*3000;
+	    
 	    this.soySoldToTraderAgent.addSoyAmount(soyProduction+soyMProduction+soyCProduction);
 	
 	    this.soySoldToTraderAgent.purchaseCommodity((soyProduction+soyMProduction+soyCProduction)*
-				soySoldToTraderAgent.getCommodityPrice(LandUse.SOY));
+				soySoldToTraderAgent.getCommodityPrice(LandUse.SINGLESOY));
 		
 		this.cornSoldToTraderAgent.addCornAmount(cornProduction);
 		this.cornSoldToTraderAgent.purchaseCommodity(cornProduction*
@@ -947,7 +1008,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
  //       List<Integer> listToChange = new ArrayList<Integer>();
 //		List<Integer> listNotChange = new ArrayList<Integer>();
 		
-		planningSoyCells.clear();
+        planningSingleSoyCells.clear();
         planningSoyMaizeCells.clear();
         planningCottonCells.clear();
         planningSoyCottonCells.clear();
@@ -990,7 +1051,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		//	c.setLandUse(highestLandUse);
 		//	organicSpace.setLandUse(landUseNumber, c.getXlocation(), c.getYlocation());
 			if(highestLandUse == LandUse.SINGLESOY)
-				planningSoyCells.add(c);
+				planningSingleSoyCells.add(c);
 			if(highestLandUse == LandUse.DOUBLESOY)
 				planningSoyMaizeCells.add(c);
 			if(highestLandUse == LandUse.COTTON)
@@ -1008,14 +1069,12 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		
 		int tick = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		
-		planningSoyCells.clear();
+		planningSingleSoyCells.clear();
         planningSoyMaizeCells.clear();
         planningCottonCells.clear();
         planningSoyCottonCells.clear();
-        
-	
-		
-		
+        agriculturalCells.clear();
+        		
 		double[] profit = new double[4];
 		
 		profit[0] = lastYearSoyPerHaProfit;   //single soy profit , 2
@@ -1024,14 +1083,14 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		profit[3] = lastYearCottonPerHaProfit;  //single cotton profit, 3
 		
 		
-		double[] coef_1= new double[22];
+	/*	double[] coef_1= new double[22];
 		double[] coef_2= new double[22];
 		double[] coef_3= new double[22];
 		double[] coef_4= new double[22];
 		double[] coef_9= new double[22];
 	
 		        //title: sending logistic regression
-		        // sheet 4
+		        // sheet4: forest ref
 		        // base ref is forest
 				//location: google drive
 		
@@ -1088,8 +1147,32 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 				coef_9[17]+=tick*0.00008;
 				
 				coef_9[18]=0;coef_9[19]=-0.0001;
-				coef_9[20]=-0.0001;coef_9[21]=-0.0003;
+				coef_9[20]=-0.0001;coef_9[21]=-0.0003;*/
 				
+		double[] coef_1= new double[24];
+		double[] coef_2= new double[24];
+		double[] coef_3= new double[24];
+		
+		coef_1[0] = 0; coef_1[1] = 3.76; coef_1[2] = 4.18; coef_1[3] = 17.82;
+		coef_1[4] =1.48; coef_1[5] = 5.51; coef_1[6] = 0.04; coef_1[7] = 0.17;
+		coef_1[8] = -2.79; coef_1[9]=0.24;coef_1[10]=-4.486;coef_1[11]=1.025;
+		coef_1[12]=0.331;coef_1[13]=0.627;coef_1[14]=0.00044;coef_1[15]=0.00079;coef_1[16]=-0.00041;
+		coef_1[17]=-0.00026;coef_1[18]=-0.00063;coef_1[19]=-0.00115;coef_1[20]=-0.00001;
+		coef_1[21] = 0;coef_1[22]=0.0095;coef_1[23]=-0.0417;
+		
+		coef_2[0] = 0; coef_2[1] = 2.53; coef_2[2] = 2.88; coef_2[3] = 16.52;
+		coef_2[4] =0.27; coef_2[5] = -35.62; coef_2[6] = -0.02; coef_2[7] = -0.59;
+		coef_2[8] = -3.07; coef_2[9]=0.24;coef_2[10]=-3.869;coef_2[11]=0.564;
+		coef_2[12]=0.779;coef_2[13]=0.515;coef_2[14]=0.00018;coef_2[15]=0.00028;coef_2[16]=-0.00022;
+		coef_2[17]=-0.00011;coef_2[18]=-0.00028;coef_2[19]=-0.00050;coef_2[20]=0;
+		coef_2[21] = 0;coef_2[22]=0.001;coef_2[23]=-0.034;
+		
+		coef_3[0] = 0; coef_3[1] = -0.004; coef_3[2] = -1.010; coef_3[3] = 10.324;
+		coef_3[4] =-1.857; coef_3[5] = 1.919; coef_3[6] = 7.107; coef_3[7] = 5.842;
+		coef_3[8] = -15.612; coef_3[9]=6.966;coef_3[10]=1.533;coef_3[11]=1.270;
+		coef_3[12]=0.001;coef_3[13]=1.992;coef_3[14]=0.00079;coef_3[15]=0.00136;coef_3[16]=0.00020;
+		coef_3[17]=-0.00029;coef_3[18]=-0.00072;coef_3[19]=-0.00132;coef_3[20]=0;
+		coef_3[21] = 0;coef_3[22]=-0.046;coef_3[23]=0.663;
 				
 				double soyPriceDelta = 0;
 				
@@ -1098,18 +1181,17 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	    for(int i =0; i< this.tenureCells.size(); i++){
 				
 	 //     for (int i = 0; i < this.agriculturalCells.size(); i++)    {
-	    	double[] exp= new double[6];
-			double[] probability = new double[6];
+	    	double[] exp= new double[4];
+			double[] probability = new double[4];
 	    	
 	    	int[] landcover = new int[10];
 	    	
 	    	for(int j=0;j<10;j++)
 	    		landcover[j]=0;
-	    	
-	    	
+	    		    	
 	    	LandCell c = this.tenureCells.get(i);
 	    	c.setChangedThisTime(false);
-	    
+	 //       System.out.println(c.getElevation()+" :?"+c.getDisToUrban()+"?? "+c.getDisToRoad()+"~~"+c.getSlope());
 	    	boolean nextToCorn = false;
 	    	boolean nextToCotton = false;
 	//    	for(int r = 0; r<this.agriculturalCells.size();r++)	{
@@ -1119,7 +1201,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	//    	if(c.getSCCount()>0) {System.out.println("should grow sc "+c.getSCCount());}
 	    	for(GridCell<LandCell> cell:c.nghCell) 
         	{
-		    
+		         
         		int landuseNumber = organicSpace.getLandUseAt(cell.getPoint().getX(), cell.getPoint().getY());
         		if(landuseNumber==1)
         		{
@@ -1132,193 +1214,167 @@ public class SendingSoybeanAgent extends SoybeanAgent {
         	}
 	    	
 	    	if(c.getLastLandUse()==LandUse.DOUBLESOY) //1
-	    		landcover[0] = 1;
+	    		landcover[0] = 1; else landcover[0]=0;
 	    	if(c.getLastLandUse()==LandUse.SINGLESOY)  //2
-	    		landcover[1] = 1;
+	    		landcover[1] = 1; else landcover[1]=0;
 	    	if(c.getLastLandUse()==LandUse.COTTON) //3
-	    		landcover[2] = 1;
+	    		landcover[2] = 1; else landcover[2]=0;
 	    	if(c.getLastLandUse()==LandUse.GRASSLAND)  //4
-	    		landcover[3] = 1;
+	    		landcover[3] = 1;else landcover[3]=0;
 	    	if(c.getLastLandUse()==LandUse.SOYCOTTON)   //9
-	    		landcover[4] = 1;
+	    		landcover[4] = 1; else landcover[4]=0;
 	    	
 	    	
 	    	if(c.getLastLastLandUse()==LandUse.DOUBLESOY) //1
-	    		landcover[5] = 1;
+	    		landcover[5] = 1; else landcover[5]=0;
 	    	if(c.getLastLastLandUse()==LandUse.SINGLESOY)  //2
-	    		landcover[6] = 1;
+	    		landcover[6] = 1; else landcover[6]=0;
 	    	if(c.getLastLastLandUse()==LandUse.COTTON) //3
-	    		landcover[7] = 1;
+	    		landcover[7] = 1; else landcover[7]=0;
 	    	if(c.getLastLastLandUse()==LandUse.GRASSLAND)  //4
-	    		landcover[8] = 1;
+	    		landcover[8] = 1; else landcover[8]=0;
 	    	if(c.getLastLastLandUse()==LandUse.SOYCOTTON)   //9
-	    		landcover[9] = 1;
-	    	   	
-	            
-	    	
-	    	
-	    	exp[1] = coef_1[0]*landcover[0] +
-	    			coef_1[1]*landcover[1] +
-	    			coef_1[2]*landcover[2] +
-	    			coef_1[3]*landcover[3] +
-	    			coef_1[4]*landcover[4] +
-	    			coef_1[5]*landcover[5] +
-	    			coef_1[6]*landcover[6] +
-	    			coef_1[7]*landcover[7] +
-	    			coef_1[8]*landcover[8] +
-	    			coef_1[9]*landcover[9] +
-	    			coef_1[10]*c.getSSCount() +
-	    			coef_1[11]*c.getDSCount() +
-	    			coef_1[12]*c.getCCount() +
-	    			coef_1[13]*c.getSCCount() +
+	    		landcover[9] = 1; else landcover[9]=0;
+	    	   		    	
+	    	exp[1] = coef_1[0]+
+	    			coef_1[1]*landcover[0] +
+	    			coef_1[2]*landcover[1] +
+	    			coef_1[3]*landcover[2] +
+	    			coef_1[4]*landcover[3] +
+	    			coef_1[5]*landcover[4] +
+	    			coef_1[6]*landcover[5] +
+	    			coef_1[7]*landcover[6] +
+	    			coef_1[8]*landcover[7] +
+	    			coef_1[9]*landcover[8] +
+	    			coef_1[10]*landcover[9] +
+	    			coef_1[11]*c.getSSCount() +
+	    			coef_1[12]*c.getDSCount() +
+	    			coef_1[13]*(c.getCCount()+c.getSCCount()) +
 	    			coef_1[14]*lastYearSoyPerHaProfit +
 	    			coef_1[15]*lastYearSoyMPerHaProfit +
-	    			coef_1[16]*lastYearCottonPerHaProfit +
-	    			coef_1[17]*lastYearSoyCPerHaProfit + 
-	    			coef_1[18]*lastYearSoyPerHaCost +
-	    			coef_1[19]*lastYearSoyMPerHaCost +
-	    			coef_1[20]*lastYearCottonPerHaCost +
-	    			coef_1[21]*lastYearSoyCPerHaCost;	
+	    			coef_1[16]*lastYearSoyCPerHaProfit +
+	    			coef_1[17]*lastYearSoyPerHaCost +
+	    			coef_1[18]*lastYearSoyMPerHaCost + 
+	    			coef_1[19]*lastYearSoyCPerHaCost +
+	    			coef_1[20]* c.getDisToUrban() +
+	    			coef_1[21]*c.getDisToRoad() +
+	    			coef_1[22]* c.getElevation()+
+	    			coef_1[23] * c.getSlope();	
 	    	
 	    	
-	    	exp[2] = 
-	    			 coef_2[0]*landcover[0] +
-	    			 coef_2[1]*landcover[1] +
-	    			 coef_2[2]*landcover[2] +
-	    			 coef_2[3]*landcover[3] +
-	    			 coef_2[4]*landcover[4] +
-	    			 coef_2[5]*landcover[5] +
-	    			 coef_2[6]*landcover[6] +
-	    			 coef_2[7]*landcover[7] +
-	    			 coef_2[8]*landcover[8] +
-	    			 coef_2[9]*landcover[9] +
-	    			 coef_2[10]*c.getSSCount() +
-	    			 coef_2[11]*c.getDSCount() +
-	    			 coef_2[12]*c.getCCount() +
-	    			 coef_2[13]*c.getSCCount() +
-	    			 coef_2[14]*lastYearSoyPerHaProfit +
-	    			 coef_2[15]*lastYearSoyMPerHaProfit +
-	    			 coef_2[16]*lastYearCottonPerHaProfit +
-	    			 coef_2[17]*lastYearSoyCPerHaProfit + 
-	    			 coef_2[18]*lastYearSoyPerHaCost +
-	    			 coef_2[19]*lastYearSoyMPerHaCost +
-	    			 coef_2[20]*lastYearCottonPerHaCost +
-	    			 coef_2[21]*lastYearSoyCPerHaCost;
+	    	exp[2] =  coef_2[0]+
+	    			coef_2[1]*landcover[0] +
+	    			coef_2[2]*landcover[1] +
+	    			coef_2[3]*landcover[2] +
+	    			coef_2[4]*landcover[3] +
+	    			coef_2[5]*landcover[4] +
+	    			coef_2[6]*landcover[5] +
+	    			coef_2[7]*landcover[6] +
+	    			coef_2[8]*landcover[7] +
+	    			coef_2[9]*landcover[8] +
+	    			coef_2[10]*landcover[9] +
+	    			coef_2[11]*c.getSSCount() +
+	    			coef_2[12]*c.getDSCount() +
+	    			coef_2[13]*(c.getCCount()+c.getSCCount()) +
+	    			coef_2[14]*lastYearSoyPerHaProfit +
+	    			coef_2[15]*lastYearSoyMPerHaProfit +
+	    			coef_2[16]*lastYearSoyCPerHaProfit +
+	    			coef_2[17]*lastYearSoyPerHaCost +
+	    			coef_2[18]*lastYearSoyMPerHaCost + 
+	    			coef_2[19]*lastYearSoyCPerHaCost +
+	    			coef_2[20]* c.getDisToUrban() +
+	    			coef_2[21]*c.getDisToRoad() +
+	    			coef_2[22]* c.getElevation()+
+	    			coef_2[23] * c.getSlope();	
 	    	
-	    	exp[3] = coef_3[0]*landcover[0] +
-	    			coef_3[1]*landcover[1] +
-	    			coef_3[2]*landcover[2] +
-	    			coef_3[3]*landcover[3] +
-	    			coef_3[4]*landcover[4] +
-	    			coef_3[5]*landcover[5] +
-	    			coef_3[6]*landcover[6] +
-	    			coef_3[7]*landcover[7] +
-	    			coef_3[8]*landcover[8] +
-	    			coef_3[9]*landcover[9] +
-	    			coef_3[10]*c.getSSCount() +
-	    			coef_3[11]*c.getDSCount() +
-	    			coef_3[12]*c.getCCount() +
-	    			coef_3[13]*c.getSCCount() +
+	    	exp[3] =  coef_3[0]+
+	    			coef_3[1]*landcover[0] +
+	    			coef_3[2]*landcover[1] +
+	    			coef_3[3]*landcover[2] +
+	    			coef_3[4]*landcover[3] +
+	    			coef_3[5]*landcover[4] +
+	    			coef_3[6]*landcover[5] +
+	    			coef_3[7]*landcover[6] +
+	    			coef_3[8]*landcover[7] +
+	    			coef_3[9]*landcover[8] +
+	    			coef_3[10]*landcover[9] +
+	    			coef_3[11]*c.getSSCount() +
+	    			coef_3[12]*c.getDSCount() +
+	    			coef_3[13]*(c.getCCount()+c.getSCCount()) +
 	    			coef_3[14]*lastYearSoyPerHaProfit +
 	    			coef_3[15]*lastYearSoyMPerHaProfit +
-	    			coef_3[16]*lastYearCottonPerHaProfit +
-	    			coef_3[17]*lastYearSoyCPerHaProfit + 
-	    			coef_3[18]*lastYearSoyPerHaCost +
-	    			coef_3[19]*lastYearSoyMPerHaCost +
-	    			coef_3[20]*lastYearCottonPerHaCost +
-	    			coef_3[21]*lastYearSoyCPerHaCost;		 
+	    			coef_3[16]*lastYearSoyCPerHaProfit +
+	    			coef_3[17]*lastYearSoyPerHaCost +
+	    			coef_3[18]*lastYearSoyMPerHaCost + 
+	    			coef_3[19]*lastYearSoyCPerHaCost +
+	    			coef_3[20]* c.getDisToUrban() +
+	    			coef_3[21]*c.getDisToRoad() +
+	    			coef_3[22]* c.getElevation()+
+	    			coef_3[23] * c.getSlope();			 
 		
-	    	exp[4] = coef_4[0]*landcover[0] +
-	    			coef_4[1]*landcover[1] +
-	    			coef_4[2]*landcover[2] +
-	    			coef_4[3]*landcover[3] +
-	    			coef_4[4]*landcover[4] +
-	    			coef_4[5]*landcover[5] +
-	    			coef_4[6]*landcover[6] +
-	    			coef_4[7]*landcover[7] +
-	    			coef_4[8]*landcover[8] +
-	    			coef_4[9]*landcover[9] +
-	    			coef_4[10]*c.getSSCount() +
-	    			coef_4[11]*c.getDSCount() +
-	    			coef_4[12]*c.getCCount() +
-	    			coef_4[13]*c.getSCCount() +
-	    			coef_4[14]*lastYearSoyPerHaProfit +
-	    			coef_4[15]*lastYearSoyMPerHaProfit +
-	    			coef_4[16]*lastYearCottonPerHaProfit +
-	    			coef_4[17]*lastYearSoyCPerHaProfit + 
-	    			coef_4[18]*lastYearSoyPerHaCost +
-	    			coef_4[19]*lastYearSoyMPerHaCost +
-	    			coef_4[20]*lastYearCottonPerHaCost +
-	    			coef_4[21]*lastYearSoyCPerHaCost;	
-	    	
-	    	
-	    	exp[5] = coef_9[0]*landcover[0] +
-	    			coef_9[1]*landcover[1] +
-	    			coef_9[2]*landcover[2] +
-	    			coef_9[3]*landcover[3] +
-	    			coef_9[4]*landcover[4] +
-	    			coef_9[5]*landcover[5] +
-	    			coef_9[6]*landcover[6] +
-	    			coef_9[7]*landcover[7] +
-	    			coef_9[8]*landcover[8] +
-	    			coef_9[9]*landcover[9] +
-	    			coef_9[10]*c.getSSCount() +
-	    			coef_9[11]*c.getDSCount() +
-	    			coef_9[12]*c.getCCount() +
-	    			coef_9[13]*c.getSCCount() +
-	    			coef_9[14]*lastYearSoyPerHaProfit +
-	    			coef_9[15]*lastYearSoyMPerHaProfit +
-	    			coef_9[16]*lastYearCottonPerHaProfit +
-	    			coef_9[17]*lastYearSoyCPerHaProfit + 
-	    			coef_9[18]*lastYearSoyPerHaCost +
-	    			coef_9[19]*lastYearSoyMPerHaCost +
-	    			coef_9[20]*lastYearCottonPerHaCost +
-	    			coef_9[21]*lastYearSoyCPerHaCost;	
-	    	
-	    	
+	    	    	
 	    	double expSum= Math.exp(exp[1])+
 	    			       Math.exp(exp[2])+
 	    			       Math.exp(exp[3])+
-	    			       Math.exp(exp[4])+
-	    			       Math.exp(exp[5])+
+	    		//	       Math.exp(exp[4])+
+	    			//       Math.exp(exp[5])+
 	    			       1;
 			probability[0]=1/expSum;
-			probability[1]=Math.exp(exp[1])/expSum;
-			probability[2]=Math.exp(exp[2])/expSum;
-			probability[3]=Math.exp(exp[3])/expSum;
-			probability[4]=Math.exp(exp[4])/expSum;
-			probability[5]=Math.exp(exp[5])/expSum;
+			probability[1]=Math.exp(exp[1])/expSum;  //land use 1=double soy
+			probability[2]=Math.exp(exp[2])/expSum;  //land use 2=single soy
+			probability[3]=Math.exp(exp[3])/expSum;  //land use 3 = soy cotton
+		//	probability[4]=Math.exp(exp[4])/expSum;
+		//	probability[5]=Math.exp(exp[5])/expSum;
 			
 	//     if(soyPriceDelta/soyPrices.get(soyPrices.size()-1)<-0.05 )
-		   soyPriceDelta = getPriceDelta(LandUse.SOY)	;
+		   soyPriceDelta = getPriceDelta(LandUse.SINGLESOY)	;
 		
-			 if(soyPriceDelta < 0 )
+		/*	 if(soyPriceDelta < 0 )
 		        {   
+	    	           probability[1]-=0.025;
+		          //     probability[4]+=0.1;
+	    	           probability[2]-=0.05;
+	    	      //     probability[5]-=0.05;
+	    	        
+	    	           probability[3]-=0.025;
 	    	           probability[0]+=0.1;
-		               probability[4]+=0.1;
-	    	           probability[2]-=0.1;
-	    	           probability[5]-=0.05;
-	    	           probability[1]-=0.05;
-	    	           probability[3]-=0.1;
-		        }
+		        }		 */
 		 
 		  if ( this.proDiversifying) {
-			//  probability[1]+=0.05;
-			 // probability[2]-=0.05;
-			  //pro double soy+maize
-			  probability[3]-=0.05;
-			  probability[5]+=0.05;
+		
+			  probability[2]-=0.05*(tick-1);
 			  //pro soy cotton;
 		  }
+	//	  System.out.println(probability[1]+"really..."+probability[2]);
+	//	  probability[0] = probability[0] - (tick-1)*0.05;
+		 if(tick==1)
+		  {
+		//     probability[0] = probability[0] *Math.pow(0.7, tick-1);	   
+		//     probability[2] = probability[2] *Math.pow(0.9, tick-1);
+		//     probability[1] = probability[1] * Math.pow(1.10,tick);
+			  probability[2] = probability[2] + 0.2;
+		  }
+		 else {
+		//	if(tick<11) 
+			{
+				  probability[2] = probability[2] - (tick-1)*0.02;
+				  probability[0] = probability[0] - (tick-1)*0.05;
+				  probability[1] = probability[1] + (tick-1)* 0.02;
+				  }
 			
-			
+				
+			 
+		 }
+     //     probability[2] =0;
+	//	if(tick>11)
+	//	 System.out.println("now after "+probability[1]+"really..."+probability[2]);		
+		
 			double max = 0;
 			double maxProb = probability[0] ;
-			double second = 0;
-			double secondProb = 0;
+		//	double second = 0;
+		//	double secondProb = 0;
 			
-		
-			
+		/*		
 			for (int k=1;k<probability.length;k++) 
 			{
 				
@@ -1331,21 +1387,107 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 					  secondProb = probability[k];
 					  second = k;
 				}
-			}
+			}*/
 			
-          
-		//	for (int k = 0; k<probability.length; k++){
-		//		System.out.println(k+" : "+probability[k]);
-		//	}
-		//	System.out.println("max "+max);
-		//	System.out.println("second "+second);
+           for(int k=0;k<probability.length;k++){
+        	   if(probability[k]>maxProb) {
+        		   max=k;
+        		   maxProb = probability[k];
+        	   } 
+           }
+    //       max=1;
+	//	if(tick>5&&max==2)
+	//	System.out.println("max "+max);
+	//		System.out.println("second "+second);
 	//	max = 0;
 	//	second =4;
 			
-		if(agriculturalCells.contains(c))  //if c was an agricultural cells already;
+	   if(max==0) {
+		   if(c.getLandUse()==LandUse.FOREST)
+		   {   c.setLastLastLandUse(c.getLastLandUse());
+	           c.setLastLandUse(c.getLandUse());
+               c.setLandUse(LandUse.FOREST);
+	           organicSpace.setLandUse(5, c.getXlocation(), c.getYlocation());
+	           c.setChangedThisTime(true);
+	    //       agriculturalCells.remove(c);
+	           }
+		   else 
+		   {
+			   c.setLastLastLandUse(c.getLastLandUse());
+			      c.setLastLandUse(c.getLandUse());
+                  c.setLandUse(LandUse.GRASSLAND);
+			      organicSpace.setLandUse(4, c.getXlocation(), c.getYlocation());
+			      c.setChangedThisTime(true); 
+		//	      agriculturalCells.remove(c);
+		   } 
+		   		   
+	   }
+	   
+	    if(max==1 ) 
+	    {
+	    	
+	    	if(tick==1)
+	    	{
+		
+			   if(c.getLandUse()==LandUse.FOREST)
+			   {   c.setLastLastLandUse(c.getLastLandUse());
+		           c.setLastLandUse(c.getLandUse());
+	               c.setLandUse(LandUse.FOREST);
+		           organicSpace.setLandUse(5, c.getXlocation(), c.getYlocation());
+		           c.setChangedThisTime(true);
+		    //       agriculturalCells.remove(c);
+		           }
+			   else if(c.getLandUse()==LandUse.GRASSLAND){
+				   c.setLastLastLandUse(c.getLastLandUse());
+				      c.setLastLandUse(c.getLandUse());
+	                  c.setLandUse(LandUse.GRASSLAND);
+				      organicSpace.setLandUse(4, c.getXlocation(), c.getYlocation());
+				      c.setChangedThisTime(true); 
+			   }
+			   else {
+				    if(nextToCorn||c.getLandUse()==LandUse.DOUBLESOY)
+			       planningSoyMaizeCells.add(c);
+			        else 
+				   planningSingleSoyCells.add(c);
+				 
+				    agriculturalCells.add(c);
+			   }
+				   
+		   }
+	    	
+	    	else
+		      {  
+			      if(nextToCorn||c.getLandUse()==LandUse.DOUBLESOY)
+			       planningSoyMaizeCells.add(c);
+			      else if(c.getDSCount()>c.getSSCount())
+				   planningSoyMaizeCells.add(c);
+			      else
+			    	  planningSingleSoyCells.add(c);
+			   
+			      agriculturalCells.add(c);	 
+		      }
+		   
+		   
+	   }
+		
+	  
+		   if(max==2) 
+		    { 	
+			   planningSingleSoyCells.add(c);
+				   agriculturalCells.add(c);
+		     }
+		   
+	   if(max==3) {
+		   planningSoyCottonCells.add(c);
+		   agriculturalCells.add(c);
+	   }
+	   
+		/*
+		 * if(agriculturalCells.contains(c))  //if c was an agricultural cells already;
 		   {	
-	    		if (max == 0||max == 4)
-	    		{   if(tick<11) //was tick<7
+	    		if (max == 0)
+	    		{   
+	    			if(tick<11) //was tick<7
 	    		  {
 				     if (second == 1) 
 				     {  // if(RandomHelper.nextDoubleFromTo(0.0, 1.0)<0.8)
@@ -1359,9 +1501,8 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 				     }
    			         if (second == 2)
    			        	  planningSoyCells.add(c);
-   			         if (second == 3 && nextToCotton)
-   				          planningCottonCells.add(c);
-   			         if (second == 5 && nextToCotton)
+   			         if (second == 3)
+   			        		 //&& nextToCotton)
    			        	  planningSoyCottonCells.add(c);    
 	    			
 	    			if(c.getLastLandUse()==LandUse.FOREST)
@@ -1387,39 +1528,30 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 	    		    } 
 	    		
 	    		else { //this else is for tick <6
-	    		    	 if (second == 1) 
+	    		    	 if (second == 1 && c.getDSCount()>0) 
 	    		    	       // {   if(nextToCorn)
 	    		    	  	          planningSoyMaizeCells.add(c);
-	    		    	     //       else
-	    		    	      //        planningSoyCells.add(c);
-	    		    	        
-	    		    	      //  }
-	    	   			   if (second == 2)
+	    		    	 else  if (second == 2)
 	    	   			        	  planningSoyCells.add(c);
-	    	   			   if (second == 3 && nextToCotton)
-	    	   				          planningCottonCells.add(c);
-	    	   			   if (second == 5 && nextToCotton)
-	    	   			        	  planningSoyCottonCells.add(c);
+	    		    	 else 
+	    	   		//			   && nextToCotton)
+	    	   				          planningSoyCottonCells.add(c);
+	    	   			 
 	    		    }
+	    		
 			      }
 			    else //this else is for when max for agricultural 
 			    {
-			    	if(tick<11)  //was tick<7
+			    	if(tick==1)  //was tick<7
 			    	{  
-			        	if(max == 1)
-			        	 {  // if(RandomHelper.nextDoubleFromTo(0.0, 1.0)<0.8)
-			        		//if( c.getSSCount()>c.getDSCount() )
-			        	//	if(nextToCorn) 
+			        	if(max == 1 && c.getDSCount()>0) 
+			        			//&& nextToCorn)			        
 			        			planningSoyMaizeCells.add(c);
-					     //   else 
-			        	//	   planningSoyCells.add(c);
-					     }
-				 //       	planningSoyMaizeCells.add(c);
+				
 				       if(max == 2)
 				        	planningSoyCells.add(c);
-			        	if(max ==3 && nextToCotton)
-				        	planningCottonCells.add(c);
-				        if(max == 5)
+			        	if(max ==3 )
+			        	//		&& nextToCotton)
 				        	planningSoyCottonCells.add(c);
 			        	}
 			    	else {
@@ -1428,22 +1560,17 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 			    		if(max==2)
 			    			planningSoyCells.add(c);
 			    		if(max ==3)
-				        	planningCottonCells.add(c);
-				        if(max == 5)
 				        	planningSoyCottonCells.add(c);
 			    	}
 				    
 			    }
 		}
 		else {  //if c was NOT an agricultural cells ;
-						
-       //   if (tick < 11) 
-     //   if (tick <4) 	  
         	if(tick < 4)
           {  //before Soy Moratorium
         	  if (max == 0 ) 
         	  {
-        		  if(c.getLastLandUse()==LandUse.FOREST) 
+        		  if(c.getLandUse()==LandUse.FOREST) 
         		  {
         		    c.setLastLastLandUse(c.getLastLandUse());
  			        c.setLastLandUse(c.getLandUse());
@@ -1453,61 +1580,21 @@ public class SendingSoybeanAgent extends SoybeanAgent {
         	  
         		  }
         	      else 
-        	      {
-        			   /* if (second == 1 ) 
-        			    { if(nextToCorn)
-        				      planningSoyMaizeCells.add(c);  
-        			      else
-        			    	  planningSoyCells.add(c);
-        			    }
-        				  //  if (second == 1||second == 2)
-        	    	    if(second ==2)
-        	    	      planningSoyCells.add(c);
-        			    if (second == 3)
-        				   planningCottonCells.add(c);
-        			    if (second == 5)
-        				   planningSoyCottonCells.add(c); 
-        			    if (second == 4 && c.getLastLandUse()==LandUse.GRASSLAND) */
-        	    	  //<to-check>
-        	    	  //if(c.getLastLandUse()==LandUse.GRASSLAND && c.getLastLastLandUse()== LandUse.GRASSLAND)
-        			   // {*/
-        			    	 /* c.setLastLastLandUse(c.getLastLandUse());
-            			      c.setLastLandUse(c.getLandUse());
-                              c.setLandUse(LandUse.FOREST);
-            			      organicSpace.setLandUse(5, c.getXlocation(), c.getYlocation());
-            			      c.setChangedThisTime(true);*/
-        			   // }		    	
-        			 // if(c.getLastLandUse()==LandUse.GRASSLAND && c.getLastLastLandUse()!=LandUse.GRASSLAND)
-        			  //{
+        	      {        			  
         				  c.setLastLastLandUse(c.getLastLandUse());
            			      c.setLastLandUse(c.getLandUse());
                              c.setLandUse(LandUse.GRASSLAND);
            			      organicSpace.setLandUse(4, c.getXlocation(), c.getYlocation());
            			      c.setChangedThisTime(true); 
-        			  //}*/
+        			  //}
         	        }
         	  } //finish if max==0
-            
-        	  
-        	  if (max == 4 )
-        			  //&& c.getLastLandUse()==LandUse.GRASSLAND) //
-        	  { 
-        		  c.setLastLastLandUse(c.getLastLandUse());
-			      c.setLastLandUse(c.getLandUse());
-                  c.setLandUse(LandUse.GRASSLAND);
-			      organicSpace.setLandUse(4, c.getXlocation(), c.getYlocation());
-			      c.setChangedThisTime(true);
-        		  
-        	  }
-        	 
-        	  
-        	  if(max == 1||max==2)
-        	//	  planningSoyMaizeCells.add(c);
-        	//  if(max == 2)
+                   	  
+        	  if(max == 1)
+        		  planningSoyMaizeCells.add(c);
+        	  if(max == 2)
         		  planningSoyCells.add(c);
         	  if(max == 3)
-        		  planningCottonCells.add(c);
-        	  if(max == 5)
         		  planningSoyCottonCells.add(c);
         	    	  
           }
@@ -1521,7 +1608,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
       
         	  }
         	  else {
-        		  if( max ==0||max ==4 ) 
+        		  if( max ==0 ) 
         		  {
             		  //soyMoratorium
             		  c.setLastLastLandUse(c.getLastLandUse());
@@ -1536,17 +1623,16 @@ public class SendingSoybeanAgent extends SoybeanAgent {
                 	  if(max == 2)
                 		  planningSoyCells.add(c);
                 	  if(max == 3)
-                		  planningCottonCells.add(c);
-                	  if(max == 5)
                 		  planningSoyCottonCells.add(c);
         		  }
         	  }
           }
 	    
-	}
+	}*/
 	    
-	//	System.out.println("how many changed to agricultural cells "+changeCount);
 	    }
+	//   if(tick>8)
+	//		System.out.println("count "+planningSoyCells.size()+"?? 1: "+planningSoyMaizeCells.size());
 	}
 	
 	public void landUseDecisionCelluar(OrganicSpace organicSpace){
@@ -1586,9 +1672,9 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		this.lastYearCottonPerHaCost = lastYearCottonPerHaCost;
 	}
    
-	public int getSoySize(){
+	public int getSingleSoySize(){
 	//for data collection at accounting stage
-		return soyCells.size();
+		return singleSoyCells.size();
 	}
 	public int getSoyMaizeSize(){
 		return soyMaizeCells.size();
@@ -1606,7 +1692,7 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		double soyPriceDelta = 0;
 		double cornPriceDelta = 0;
 		double cottonPriceDelta = 0;
-		if(commodity == LandUse.SOY)
+		if(commodity == LandUse.SINGLESOY)
 		{ 
 			cPrice = soySoldToTraderAgent.getCommodityPrice(commodity);	
 	    	soyPrices.add(cPrice);
@@ -1689,5 +1775,10 @@ public class SendingSoybeanAgent extends SoybeanAgent {
 		
 		return priceDelta;
 	}
+	
+	   public double getSoyPrice() {
+       	return soySoldToTraderAgent.getCommodityPrice(LandUse.SINGLESOY);
+       }
+
 	
 }
